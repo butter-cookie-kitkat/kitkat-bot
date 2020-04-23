@@ -1,9 +1,19 @@
 import dedent from 'dedent';
 import { client } from '../utils/discord.js';
+import * as Wait from '../utils/wait.js';
 
 import * as Status from '../utils/status.js';
 
 import { ping } from '../utils/ping.js';
+
+export async function periodicallyRefreshStatuses(channelID, servers) {
+    while (true) {
+        await Promise.all([
+            refreshStatuses(channelID, servers),
+            Wait.wait(60000)
+        ]);
+    }
+}
 
 export async function refreshStatuses(channelID, servers) {
     console.log('Refreshing statuses...');
