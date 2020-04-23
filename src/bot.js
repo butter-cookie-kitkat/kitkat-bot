@@ -12,8 +12,6 @@ client.on('ready', async () => {
 
 client.on('message', ProcessCommand);
 
-client.on('error', (error) => {
-    console.error(error);
-});
+client.on('error', (error) => console.error(error));
 
 client.login(process.env.DISCORD_TOKEN);
