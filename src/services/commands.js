@@ -1,11 +1,12 @@
 import * as Random from '../utils/random.js';
 
-export async function roll20(message) {
+export async function rolld20(message) {
     await message.reply(`You rolled a ${Random.integer(0, 20)}!`);
 }
 
 const commands = {
-    roll20
+    roll20: rolld20,
+    rolld20
 };
 
 export function ProcessCommand(message) {
