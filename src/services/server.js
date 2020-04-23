@@ -34,13 +34,15 @@ export async function refreshStatuses(channelID, servers) {
         const content = dedent`
             **Servers**
     
-            ${responses.map(({ name, address, status }) => dedent`
+            ${responses.length > 0 ? responses.map(({ name, address, status }) => dedent`
                 > _**${name}**_
                 > 
                 > Connection Info: _${address}_
                 > Status: ${Status.available(status)}
                 > Response Time: ${Status.responseTime(status)}
-            `)}
+            `) : dedent`
+                There are no active servers at this time...
+            `}
     
             \`kitkat-bot.servers.refresh\`
         `;
