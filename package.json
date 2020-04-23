@@ -1,11 +1,10 @@
 {
   "name": "discord-bot",
   "version": "1.0.0",
-  "type": "module",
   "private": true,
-  "main": "src/bot.js",
+  "main": "src/bot.ts",
   "scripts": {
-    "start": "node .",
+    "start": "ts-node .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
@@ -14,11 +13,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/dedent": "^0.7.0",
+    "@types/node": "^13.13.2",
     "dedent": "^0.7.0",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
     "is-reachable": "^4.0.0",
     "moment": "^2.24.0",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "ts-node": "^8.9.0",
+    "typescript": "^3.8.3"
   }
 }

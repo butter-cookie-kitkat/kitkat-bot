@@ -1,8 +1,8 @@
 import 'dotenv/config.js';
-import { client } from './utils/discord.js';
-import { servers } from './config/servers.js';
-import { periodicallyRefreshStatuses } from './services/server.js';
-import { ProcessCommand } from './services/commands.js';
+import { client } from './utils/discord';
+import { servers } from './config/servers';
+import { periodicallyRefreshStatuses } from './services/server';
+import { ProcessCommand } from './services/commands';
 
 client.on('ready', async () => {
     console.log('Kitkat Bot initialized successfully!');

@@ -1,12 +1,16 @@
-import dedent from 'dedent';
-import { client } from '../utils/discord.js';
-import * as Wait from '../utils/wait.js';
+import * as dedent from 'dedent';
+import { client } from '../utils/discord';
+import * as Wait from '../utils/wait';
 
-import * as Status from '../utils/status.js';
+import * as Status from '../utils/status';
 
-import { ping } from '../utils/ping.js';
+import { ping } from '../utils/ping';
 
-export async function periodicallyRefreshStatuses(channelID, servers) {
+export async function periodicallyRefreshStatuses(channelID: string | undefined, servers: any) {
+    if (!channelID) {
+        throw new Error('Channel ID not provided!');
+    }
+
     while (true) {
         await Promise.all([
             refreshStatuses(channelID, servers),
@@ -15,17 +19,17 @@ export async function periodicallyRefreshStatuses(channelID, servers) {
     }
 }
 
-export async function refreshStatuses(channelID, servers) {
+export async function refreshStatuses(channelID: string, servers: any) {
     console.log('Refreshing statuses...');
 
     try {
-        const channel = await client.channels.fetch(channelID);
+        const channel = <any> await client.channels.fetch(channelID);
     
         const messages = await channel.messages.fetch();
     
-        const existingMessage = messages.find((message) => message.author.id === client.user.id && message.content.includes('`kitkat-bot.servers.refresh`'));
+        const existingMessage = messages.find((message: any) => client.user && message.author.id === client.user.id && message.content.includes('`kitkat-bot.servers.refresh`'));
     
-        const responses = await Promise.all(servers.map(async ({ name, address }) => ({
+        const responses = await Promise.all(servers.map(async ({ name, address }: any) => ({
             name,
             address,
             status: await ping(address)
@@ -34,7 +38,7 @@ export async function refreshStatuses(channelID, servers) {
         const content = dedent`
             **Servers**
     
-            ${responses.length > 0 ? responses.map(({ name, address, status }) => dedent`
+            ${responses.length > 0 ? responses.map(({ name, address, status }: any) => dedent`
                 > _**${name}**_
                 > 
                 > Connection Info: _${address}_
