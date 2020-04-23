@@ -1,15 +1,19 @@
 import dedent from 'dedent';
+import * as Normalize from '../utils/normalize.js';
 import * as Random from '../utils/random.js';
 import * as Concat from '../utils/concat.js';
 
-const commands = {
+const commands = Normalize.commands({
     help: {
         command: help,
         description: 'Display a list of the available commands.'
     },
     roll: {
         command: roll,
-        description: 'Roll a dice with the given max value.'
+        description: 'Roll a dice with the given max value.',
+        args: {
+            max: 'The maximum dice value.'
+        }
     },
     rolld4: {
         command: rolld4,
@@ -35,7 +39,7 @@ const commands = {
         command: rolld100,
         description: 'Roll a d100.'
     }
-};
+});
 
 const aliases = {
     halp: commands.help,
@@ -51,8 +55,11 @@ export async function help(message) {
     await message.reply(dedent`
         Here's a list of the available commands!
 
-        ${Object.entries(commands).map(([name, { description }]) => dedent`
-            \`.${name}\` - ${description}
+        ${Object.entries(commands).map(([name, { description, args }]) => dedent`
+            \`${Concat.concat(
+                `.${name}`,
+                ...Object.entries(args).map(([name]) => `<${name}>`)
+            )}\` - ${description}
         `).join('\r\n')}
     `);
 }
