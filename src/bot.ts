@@ -7,7 +7,13 @@ import { ProcessCommand } from './services/commands';
 client.on('ready', async () => {
     console.log('Kitkat Bot initialized successfully!');
 
-    periodicallyRefreshStatuses(process.env.ANNOUNCEMENTS_CHANNEL_ID, servers);
+    if (client.user) {
+        client.user.setActivity(`Use .help.`, {
+            type: 'PLAYING'
+        }); 
+    }
+
+    // periodicallyRefreshStatuses(process.env.ANNOUNCEMENTS_CHANNEL_ID, servers);
 });
 
 client.on('message', ProcessCommand);
