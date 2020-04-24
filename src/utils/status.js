@@ -1,8 +1,8 @@
-export function available(status: any) {
+export function available(status) {
     return status.available ? '_Online_ :green_circle:' : '_Offline_ :red_circle:';
 }
 
-export function responseTime(status: any) {
+export function responseTime(status) {
     if (status.responseTime) {
         return `_${status.responseTime}ms_ ${responseTimeEmoji(status)}`;
     }
@@ -10,7 +10,7 @@ export function responseTime(status: any) {
     return '_N/A_';
 }
 
-export function responseTimeEmoji(status: any) {
+export function responseTimeEmoji(status) {
     if (status.responseTime < 3000) {
         return ':sunny:';
     } else if (status.responseTime < 10000) {

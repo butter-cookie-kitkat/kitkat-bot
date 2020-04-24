@@ -1,3 +1,3 @@
-export function integer(start: number, end: number) {
+export function integer(start, ends) {
     return Math.round(Math.random() * (end - start)) + start;
 }

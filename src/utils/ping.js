@@ -1,6 +1,6 @@
-import * as isReachable from 'is-reachable';
+import isReachable from 'is-reachable';
 
-export async function ping(host: string) {
+export async function ping(host) {
     const startTime = Date.now();
 
     const available = await isReachable(host);
