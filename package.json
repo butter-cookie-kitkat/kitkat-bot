@@ -9,13 +9,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
-    "node": "13.x"
+    "node": "14.x"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/dedent": "^0.7.0",
-    "@types/node": "^13.13.2",
     "dedent": "^0.7.0",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
