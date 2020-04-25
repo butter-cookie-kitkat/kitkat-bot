@@ -92,10 +92,8 @@ export class Music {
       const dispatcher = this._connection.play(await ytdl(song.url), { type: 'opus' });
 
       dispatcher
-        .on('start', () => {
-          this._songs.shift();
-        })
         .on('finish', () => {
+          this._songs.shift();
           this.play(this._songs[0]);
         })
         .on('error', (error) => console.error(error));
