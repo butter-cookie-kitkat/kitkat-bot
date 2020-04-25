@@ -96,7 +96,11 @@ export class Music {
           this._songs.shift();
           this.play(this._songs[0]);
         })
-        .on('error', (error) => console.error(error));
+        .on('error', (error) => {
+          this._songs.shift();
+          this.play(this._songs[0]);
+          console.error(error);
+        });
     } else {
       this.leave();
     }
