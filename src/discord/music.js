@@ -53,7 +53,24 @@ export class Music {
     this._connection.dispatcher.end();
   }
 
-  async add(url) {
+  async unshift(url) {
+    const songInfo = await ytdl.getInfo(url);
+
+    const song = {
+      title: songInfo.title,
+      url: songInfo.video_url
+    };
+
+    this._songs.unshift(song);
+
+    if (this._songs.length === 1) {
+      this.play(this._songs[0]);
+    }
+
+    return song;
+  }
+
+  async push(url) {
     const songInfo = await ytdl.getInfo(url);
 
     const song = {
@@ -72,11 +89,19 @@ export class Music {
 
   async play(song) {
     if (song) {
-      const dispatcher = this._connection.play(ytdl(song.url));
+      const dispatcher = this._connection.play(ytdl(song.url, { filter: 'audioonly' }), {
+        quality: 'highestaudio',
+        // download part of the song before playing it
+        // helps reduces stuttering
+        highWaterMark: 1024 * 1024 * 10,
+        volume: 0.5
+      });
 
       dispatcher
-        .on('finish', () => {
+        .on('start', () => {
           this._songs.shift();
+        })
+        .on('finish', () => {
           this.play(this._songs[0]);
         })
         .on('error', (error) => console.error(error));

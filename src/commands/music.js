@@ -31,15 +31,25 @@ export const skip = {
 export const play = {
   description: 'Adds a song to the queue.',
   args: {
-    url: 'The song url'
+    url: 'The song url',
+    now: 'Whether the song should be played immediately.'
   },
-  command: async (message, url) => {
+  command: async (message, url, now) => {
     if (!client.music.isInVoiceChannel) {
       await join.command(message);
     }
-    const song = await client.music.add(url);
 
-    await message.channel.send(`\`${song.title}\` has been added to the queue!`);
+    if (now) {
+      const song = await client.music.unshift(url);
+
+      await client.music.play(song);
+
+      await message.channel.send(`Now playing \`${song.title}\`!`);
+    } else {
+      const song = await client.music.push(url);
+
+      await message.channel.send(`\`${song.title}\` has been added to the queue!`);
+    }
   }
 };
 
