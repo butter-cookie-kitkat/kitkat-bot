@@ -1,4 +1,4 @@
-import ytdl from 'ytdl-core';
+import ytdl from 'ytdl-core-discord';
 import DiscordJS from 'discord.js';
 
 export class Music {
@@ -89,13 +89,7 @@ export class Music {
 
   async play(song) {
     if (song) {
-      const dispatcher = this._connection.play(ytdl(song.url, { filter: 'audioonly' }), {
-        quality: 'highestaudio',
-        // download part of the song before playing it
-        // helps reduces stuttering
-        highWaterMark: 1<<25,
-        volume: 0.5
-      });
+      const dispatcher = this._connection.play(await ytdl(song.url), { type: 'opus' });
 
       dispatcher
         .on('start', () => {

@@ -23,7 +23,7 @@
     "is-reachable": "^4.0.0",
     "moment": "^2.24.0",
     "node-fetch": "^2.6.0",
-    "ytdl-core": "^2.1.1"
+    "ytdl-core-discord": "^1.2.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
