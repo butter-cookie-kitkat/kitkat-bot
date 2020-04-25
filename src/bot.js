@@ -5,19 +5,17 @@ import { periodicallyRefreshStatuses } from './services/server.js';
 import { ProcessCommand } from './services/commands.js';
 
 client.on('ready', async () => {
-    console.log('Kitkat Bot initialized successfully!');
+  console.log('Kitkat Bot initialized successfully!');
 
-    if (client.user) {
-        client.user.setActivity(`Use .help.`, {
-            type: 'PLAYING'
-        }); 
-    }
+  await client.setStatus(`Use .help.`);
 
-    periodicallyRefreshStatuses(process.env.ANNOUNCEMENTS_CHANNEL_ID, servers);
+  if (!process.env.IS_LIVE) {
+    await client.setOffline();
+  }
+
+  periodicallyRefreshStatuses(process.env.ANNOUNCEMENTS_CHANNEL_ID, servers);
 });
 
 client.on('message', ProcessCommand);
 
 client.on('error', (error) => console.error(error));
-
-client.login(process.env.DISCORD_TOKEN);

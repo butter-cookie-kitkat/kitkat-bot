@@ -1,5 +1,5 @@
-import { Client } from 'discord.js';
+import { Discord } from '../discord/discord.js';
 
-export const client = new Client();
-
-client.login(process.env.DISCORD_TOKEN);
+export const client = new Discord(
+  process.env.DISCORD_TOKEN
+);
