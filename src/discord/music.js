@@ -89,7 +89,9 @@ export class Music {
 
   async play(song) {
     if (song) {
-      const dispatcher = this._connection.play(await ytdl(song.url), { type: 'opus' });
+      const dispatcher = this._connection.play(await ytdl(song.url, {
+        highWaterMark: 1<<25
+      }), { type: 'opus' });
 
       dispatcher
         .on('finish', () => {
