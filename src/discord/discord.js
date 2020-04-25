@@ -1,4 +1,5 @@
 import DiscordJS from 'discord.js';
+import { Channel } from './channel.js';
 import { Music } from './music.js';
 
 export class DiscordError extends Error {
@@ -43,17 +44,7 @@ export class Discord {
     await this._client.user.setStatus('invisible');
   }
 
-  async findMessage(channelID, predicate) {
-    const channel = await this._client.channels.fetch(channelID);
-
-    if (!channel) {
-      throw new DiscordError(`The given channel does not exist! (${channelID})`);
-    } else if (channel.type !== 'text') {
-      throw new DiscordError(`Expected channel to be a text channel.`);
-    }
-
-    const messages = await channel.messages.fetch();
-
-    return messages.find(predicate);
+  async channel(channelID) {
+    return new Channel(this._client, channelID);
   }
 }

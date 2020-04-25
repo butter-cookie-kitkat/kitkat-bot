@@ -45,7 +45,9 @@ export async function refreshStatuses(channelID, servers) {
       \`kitkat-bot.servers.refresh\`
     `;
 
-    const existingMessage = await client.findMessage(channelID, (message) => message.author.id === client.userID && message.content.includes('`kitkat-bot.servers.refresh`'));
+    const channel = await client.channel(channelID);
+
+    const existingMessage = await channel.findMessage((message) => message.author.id === client.userID && message.content.includes('`kitkat-bot.servers.refresh`'));
 
     if (existingMessage) {
       await existingMessage.edit(content);
