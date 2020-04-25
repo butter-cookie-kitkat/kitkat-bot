@@ -93,7 +93,7 @@ export class Music {
         quality: 'highestaudio',
         // download part of the song before playing it
         // helps reduces stuttering
-        highWaterMark: 1024 * 1024 * 10,
+        highWaterMark: 1<<25,
         volume: 0.5
       });
 
