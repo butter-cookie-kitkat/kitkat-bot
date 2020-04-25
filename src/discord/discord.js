@@ -1,4 +1,5 @@
 import DiscordJS from 'discord.js';
+import { Music } from './music.js';
 
 export class DiscordError extends Error {
   constructor(message) {
@@ -13,6 +14,8 @@ export class Discord {
     this._client.on('error', (error) => console.error(error));
 
     this._client.login(token);
+
+    this.music = new Music(this._client);
   }
 
   get userID() {
@@ -30,8 +33,7 @@ export class Discord {
     console.log('Updating status...');
 
     await this._client.user.setActivity(status, {
-      type: 'PLAYING',
-      url: 'https://github.com/butter-cookie-kitkat/kitkat-bot'
+      type: 'PLAYING'
     });
 
     console.log('Status updated successfully!');
