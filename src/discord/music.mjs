@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import ytdl from 'ytdl-core-discord';
-import DiscordJS from 'discord.js';
+import DiscordJS from 'discord.js'; // eslint-disable-line no-unused-vars
 import { DiscordError } from './discord.mjs';
 import * as Debounce from '../utils/debounce.mjs';
 

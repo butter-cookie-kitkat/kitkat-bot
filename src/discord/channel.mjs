@@ -1,4 +1,4 @@
-import DiscordJS from 'discord.js';
+import DiscordJS from 'discord.js'; // eslint-disable-line no-unused-vars
 
 export class Channel {
   /**

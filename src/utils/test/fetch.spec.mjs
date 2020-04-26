@@ -1,7 +1,6 @@
 import { expect } from './expect.mjs';
 
 import { Fetch } from '../fetch.mjs';
-import { chance } from './chance.mjs';
 
 describe('Utils(Fetch)', () => {
   describe('func(Fetch)', () => {
