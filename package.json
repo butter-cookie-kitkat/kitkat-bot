@@ -6,14 +6,15 @@
   "main": "src/bot.js",
   "scripts": {
     "start": "node .",
-    "lint": "eslint src/**/*",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha",
+    "test:coverage": "nyc mocha",
+    "test:tdd": "mocha --watch",
+    "lint": "eslint --ignore-path .gitignore .",
+    "lint:fix": "eslint --ignore-path .gitignore --fix"
   },
   "engines": {
     "node": "14.x"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@discordjs/opus": "^0.1.0",
     "dedent": "^0.7.0",
@@ -27,7 +28,29 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
+    "chai": "^4.2.0",
+    "chance": "^1.1.4",
     "eslint": "^6.8.0",
-    "eslint-config-google": "^0.14.0"
-  }
+    "eslint-config-google": "^0.14.0",
+    "husky": "^4.2.5",
+    "jest-cli": "^25.4.0",
+    "lint-staged": "^10.1.7",
+    "mocha": "^7.1.2",
+    "nyc": "^15.0.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "npm run lint:fix",
+      "git add --force"
+    ],
+    "*.json": [
+      "git add --force"
+    ]
+  },
+  "mocha": {}
 }

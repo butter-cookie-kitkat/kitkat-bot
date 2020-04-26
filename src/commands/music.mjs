@@ -1,7 +1,7 @@
 import dedent from 'dedent';
 
-import { client } from '../utils/discord.js';
-import { concat } from '../utils/concat.js';
+import { client } from '../utils/discord.mjs';
+import { concat } from '../utils/concat.mjs';
 
 export const join = {
   name: 'join',

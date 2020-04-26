@@ -1,10 +1,10 @@
 import dedent from 'dedent';
-import { client } from '../utils/discord.js';
-import * as Wait from '../utils/wait.js';
+import { client } from '../utils/discord.mjs';
+import * as Wait from '../utils/wait.mjs';
 
-import * as Status from '../utils/status.js';
+import * as Status from '../utils/status.mjs';
 
-import { ping } from '../utils/ping.js';
+import { ping } from '../utils/ping.mjs';
 
 export async function periodicallyRefreshStatuses(channelID, servers) {
   if (!channelID) {

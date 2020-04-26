@@ -1,0 +1,10 @@
+{
+  "all": true,
+  "include": ["src/**/*.mjs"],
+  "exclude": ["src/**/test/*.mjs"],
+  "check-coverage": true,
+  "branches": 100,
+  "lines": 100,
+  "functions": 100,
+  "statements": 100
+}

@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import { concat } from '../utils/concat.js';
+import { concat } from '../utils/concat.mjs';
 
 function formatExample(name, args) {
   const example = concat(
@@ -31,7 +31,7 @@ export const help = {
   aliases: ['halp'],
   description: 'Display a list of the available commands.',
   command: async (message) => {
-    const { commands } = await import('./index.js');
+    const { commands } = await import('./index.mjs');
     const groupsOrder = [];
     const groups = commands.reduce((groups, command) => {
       const group = command.group || 'General';

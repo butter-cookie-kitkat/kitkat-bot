@@ -2,8 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import ytdl from 'ytdl-core-discord';
 import DiscordJS from 'discord.js';
-import { DiscordError } from './discord.js';
-import * as Debounce from '../utils/debounce.js';
+import { DiscordError } from './discord.mjs';
+import * as Debounce from '../utils/debounce.mjs';
 
 export const effects = {
   ayaya: './sound-effects/ayaya-ayaya.mp3'

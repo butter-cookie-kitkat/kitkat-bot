@@ -1,6 +1,6 @@
 import DiscordJS from 'discord.js';
-import { Channel } from './channel.js';
-import { Music } from './music.js';
+import { Channel } from './channel.mjs';
+import { Music } from './music.mjs';
 
 export class DiscordError extends Error {
   constructor(message) {
