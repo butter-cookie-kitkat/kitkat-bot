@@ -46,7 +46,11 @@ export const effects = {
   name: 'effects',
   description: 'Outputs a list of the available sound effects.',
   command: async (message) => {
-    // await client.music.effect(message.member.voice.channel, name);
+    await message.channel.send(dedent`
+      Here's a list of all the available sound effects.
+
+      ${Object.keys(client.music.effects).map((name) => `- ${name}`).join('\r\n')}
+    `);
   }
 };
 
