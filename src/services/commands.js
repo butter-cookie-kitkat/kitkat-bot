@@ -1,14 +1,9 @@
-import * as Normalize from '../utils/normalize.js';
-import * as Commands from '../commands/index.js';
-
-const commands = Normalize.commands(Commands);
+import { commands } from '../commands/index.js';
 
 export function FindCommand(name) {
-  if (commands[name]) return commands[name].command;
+  const command = Object.values(commands).find((command) => command.name === name || command.aliases.includes(name));
 
-  const command = Object.values(commands).find((command) => command.aliases.includes(name));
-
-  if (command) return command;
+  if (command) return command.command;
   else return null;
 }
 

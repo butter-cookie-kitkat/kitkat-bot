@@ -4,6 +4,7 @@ import { client } from '../utils/discord.js';
 import { concat } from '../utils/concat.js';
 
 export const join = {
+  name: 'join',
   description: 'Joins the Voice Chat.',
   command: async (message) => {
     if (message.member.voice.channel) {
@@ -15,6 +16,7 @@ export const join = {
 };
 
 export const leave = {
+  name: 'leave',
   description: 'Leaves the Voice Chat.',
   command: async () => {
     await client.music.leave();
@@ -22,13 +24,34 @@ export const leave = {
 };
 
 export const skip = {
+  name: 'skip',
   description: 'Skips the current songs.',
   command: async () => {
     await client.music.skip();
   }
 };
 
+export const effect = {
+  name: 'effect',
+  description: 'Plays a sound effect with the given name.',
+  args: {
+    name: 'The sound effect name'
+  },
+  command: async (message, name) => {
+    await client.music.effect(message.member.voice.channel.id, name);
+  }
+};
+
+export const effects = {
+  name: 'effects',
+  description: 'Outputs a list of the available sound effects.',
+  command: async (message) => {
+    // await client.music.effect(message.member.voice.channel, name);
+  }
+};
+
 export const play = {
+  name: 'play',
   description: 'Adds a song to the queue.',
   args: {
     url: 'The song url',
@@ -54,6 +77,7 @@ export const play = {
 };
 
 export const resume = {
+  name: 'resume',
   description: 'Resumes the current song.',
   command: async () => {
     await client.music.resume();
@@ -61,6 +85,7 @@ export const resume = {
 };
 
 export const pause = {
+  name: 'pause',
   description: 'Pauses the current song.',
   command: async () => {
     await client.music.pause();
@@ -77,12 +102,32 @@ function formatSong({ number, title }) {
 }
 
 export const queue = {
+  name: 'queue',
   description: 'Lists all of the songs currently in the queue.',
   command: async (message) => {
-    message.channel.send(dedent`
-      Here's a list of the current songs in the queue.
+    if (client.music.songs.length > 0) {
+      message.channel.send(dedent`
+        Here's a list of the current songs in the queue.
 
-      ${client.music.songs.map((song, index) => formatSong({ number: index + 1, ...song })).join('\n')}
-    `);
+        ${client.music.songs.map((song, index) => formatSong({ number: index + 1, ...song })).join('\n')}
+      `);
+    } else {
+      message.channel.send('There are currently no songs in the queue.');
+    }
   }
 };
+
+export default [
+  join,
+  leave,
+  skip,
+  effect,
+  effects,
+  play,
+  resume,
+  pause,
+  queue
+].map((command) => ({
+  ...command,
+  group: 'Music'
+}));

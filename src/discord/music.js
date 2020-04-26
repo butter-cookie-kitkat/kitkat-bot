@@ -1,5 +1,12 @@
+import fs from 'fs';
+import path from 'path';
 import ytdl from 'ytdl-core-discord';
 import DiscordJS from 'discord.js';
+import { DiscordError } from './discord.js';
+
+export const effects = {
+  ayaya: './sound-effects/ayaya-ayaya.mp3'
+};
 
 export class Music {
   /**
@@ -12,6 +19,7 @@ export class Music {
   }
 
   clear() {
+    /** @type {DiscordJS.VoiceConnection} */
     this._connection = null;
     /** @type {DiscordJS.VoiceChannel} */
     this._voiceChannel = null;
@@ -20,6 +28,7 @@ export class Music {
 
   /**
    * @param {String} channelID The voice channel id to join.
+   * @param {Boolean} [cache] If the voice channel info should be cached.
    * @return {DiscordJS.VoiceConnection} The requested channel.
    */
   async join(channelID) {
@@ -75,7 +84,9 @@ export class Music {
 
     const song = {
       title: songInfo.title,
-      url: songInfo.video_url
+      url: songInfo.video_url,
+      duration: songInfo.length_seconds,
+      timeElapsed: 0
     };
 
     this._songs.push(song);
@@ -105,6 +116,53 @@ export class Music {
         });
     } else {
       this.leave();
+    }
+  }
+
+  get effects() {
+    if (!this._effects) {
+      this._effects = fs.readdirSync('./effects').reduce((output, file) => {
+        const [name, extension] = file.split('.');
+        const types = {
+          ogg: 'ogg/opus',
+          webm: 'webm/opus'
+        };
+
+        output[name] = {
+          path: `./effects/${file}`,
+          type: types[extension] || 'mp3'
+        };
+        return output;
+      }, {});
+    }
+
+    return this._effects;
+  }
+
+  async effect(channelID, name) {
+    await this.pause();
+
+    if (!this._voiceChannel) {
+      await this.join(channelID);
+    }
+
+    const effect = this.effects[name];
+    if (effect) {
+      const dispatcher = await this._connection.play(path.resolve(effect.path), {
+        volume: false
+      });
+
+      dispatcher.on('finish', async () => {
+        console.log('done!');
+
+        if (this.songs.length === 0) {
+          channel.leave();
+        } else {
+          await this.play(this.songs[0]);
+        }
+      }).on('error', console.error);
+    } else {
+      throw new DiscordError(`The given effect doesn't exist. (${name})`);
     }
   }
 

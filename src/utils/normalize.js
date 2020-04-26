@@ -1,8 +1,5 @@
 export function commands(commands) {
-  return Object.entries(commands).reduce((output, [key, value]) => {
-    output[key] = command(value);
-    return output;
-  }, {});
+  return commands.filter((command) => !command.disabled).map((value) => command(value));
 }
 
 export function command(command) {
