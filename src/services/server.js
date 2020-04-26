@@ -36,7 +36,7 @@ export async function refreshStatuses(channelID, servers) {
         > _**${name}**_
         >
         > Connection Info: _${address}_
-        > Status: ${Status.available(status)}
+        > Status: ${Status.available(status.available)}
         > Response Time: ${Status.responseTime(status)}
       `) : outdent`
         There are no active servers at this time...
