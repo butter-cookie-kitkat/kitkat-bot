@@ -154,7 +154,7 @@ export class Music {
 
       dispatcher.on('finish', async () => {
         if (this.songs.length === 0) {
-          this._voiceChannel.leave();
+          this.leave();
         } else {
           await this.play(this.songs[0]);
         }
