@@ -6,15 +6,9 @@
 
 #### Testing Locally
 
-- Create a `.env` file at the root of the project.
+- You'll need to create a `.env` file at the root of the project with the contents provided [here](https://github.com/butter-cookie-kitkat/developer-guide/blob/master/kitkat-bot/.env)
 
-```env
-# .env
-DISCORD_TOKEN=NzAzNjAwNDE5MDc4OTMwNDky.XqQ9Dw.41wohP4V1oh2_v2jl45sJEtXwII
-ANNOUNCEMENTS_CHANNEL_ID=702570267745976371
-```
-
-- `npm start`
+- After that it's a simple as running `npm start`!
 
 #### Adding Sound Effects
 
