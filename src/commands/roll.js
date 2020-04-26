@@ -1,4 +1,4 @@
-import * as Random from '../utils/random.mjs';
+import * as Random from '../utils/random.js';
 
 export const roll = {
   name: 'roll',

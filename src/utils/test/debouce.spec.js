@@ -1,7 +1,7 @@
-import { chance } from './chance.mjs';
+import { chance } from './chance.js';
 
-import { debounce, clear } from '../debounce.mjs';
-import { expect } from './expect.mjs';
+import { debounce, clear } from '../debounce.js';
+import { expect } from './expect.js';
 
 describe('Utils(Debounce)', () => {
   describe('func(debounce)', () => {

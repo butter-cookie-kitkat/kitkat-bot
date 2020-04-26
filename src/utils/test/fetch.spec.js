@@ -1,6 +1,6 @@
-import { expect } from './expect.mjs';
+import { expect } from './expect.js';
 
-import { Fetch } from '../fetch.mjs';
+import { Fetch } from '../fetch.js';
 
 describe('Utils(Fetch)', () => {
   describe('func(Fetch)', () => {

@@ -1,7 +1,7 @@
 {
   "all": true,
-  "include": ["src/**/*.mjs"],
-  "exclude": ["src/**/test/*.mjs"],
+  "include": ["src/**/*.js"],
+  "exclude": ["src/**/test/*.js"],
   "check-coverage": true,
   "branches": 100,
   "lines": 100,

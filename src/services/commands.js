@@ -1,4 +1,4 @@
-import { commands } from '../commands/index.mjs';
+import { commands } from '../commands/index.js';
 
 export function FindCommand(name) {
   const command = Object.values(commands).find((command) => command.name === name || command.aliases.includes(name));
