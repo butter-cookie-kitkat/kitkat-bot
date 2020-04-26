@@ -1,4 +1,7 @@
+import DiscordJS from 'discord.js'; // eslint-disable-line no-unused-vars
+import { client } from '../utils/discord.js';
 import { commands } from '../commands/index.js';
+import outdent from 'outdent';
 
 export function FindCommand(name) {
   const command = Object.values(commands).find((command) => command.name === name || command.aliases.includes(name));
@@ -7,7 +10,10 @@ export function FindCommand(name) {
   else return null;
 }
 
-export function ProcessCommand(message) {
+/**
+ * @param {DiscordJS.Message} message
+ */
+export async function ProcessCommand(message) {
   const match = message.content.match(/^\.(.+)/);
 
   if (!match) return;
@@ -24,5 +30,25 @@ export function ProcessCommand(message) {
 
   console.log(`Match found, executing! (${rawCommand})`);
 
-  command(message, ...args);
+  try {
+    await command(message, ...args);
+  } catch (error) {
+    if (process.env.NOTIFICATIONS_CHANNEL_ID) {
+      const channel = await client.channel(process.env.NOTIFICATIONS_CHANNEL_ID);
+
+      await channel.send(outdent`
+        We encountered an error while processing the following commmand.
+
+        **Author**: ${message.author.username}
+        **Command**: \`${message.content}\`
+        **Message**: \`${error.message}\`
+
+        **~-~-~-~ Stack Trace ~-~-~-~**
+
+        \`\`\`
+        ${error.stack}
+        \`\`\`
+      `);
+    }
+  }
 }

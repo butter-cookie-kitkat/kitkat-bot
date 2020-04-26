@@ -1,4 +1,4 @@
-import dedent from 'dedent';
+import outdent from 'outdent';
 import { concat } from '../utils/concat.js';
 
 function formatExample(name, args) {
@@ -15,10 +15,10 @@ function formatGroup({ name, commands }) {
     return commands.map((command) => formatCommand(command)).join('\r\n');
   }
 
-  return dedent`
+  return outdent`
     **${name}**
 
-    ${commands.map((command) => formatCommand(command)).join('\r\n')}
+      ${commands.map((command) => formatCommand(command)).join('\r\n  ')}
   `;
 }
 
@@ -45,7 +45,7 @@ export const help = {
       return groups;
     }, {});
 
-    await message.reply(dedent`
+    await message.reply(outdent`
       Here's a list of the available commands!
 
       ${groupsOrder.map((name) => formatGroup({ name, commands: groups[name] })).join('\r\n\r\n')}

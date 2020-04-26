@@ -1,4 +1,4 @@
-import dedent from 'dedent';
+import outdent from 'outdent';
 import { client } from '../utils/discord.js';
 import * as Wait from '../utils/wait.js';
 
@@ -29,16 +29,16 @@ export async function refreshStatuses(channelID, servers) {
       status: await ping(address)
     })));
 
-    const content = dedent`
+    const content = outdent`
       **Servers**
 
-      ${responses.length > 0 ? responses.map(({ name, address, status }) => dedent`
+      ${responses.length > 0 ? responses.map(({ name, address, status }) => outdent`
         > _**${name}**_
         >
         > Connection Info: _${address}_
         > Status: ${Status.available(status)}
         > Response Time: ${Status.responseTime(status)}
-      `) : dedent`
+      `) : outdent`
         There are no active servers at this time...
       `}
 

@@ -1,4 +1,4 @@
-import dedent from 'dedent';
+import outdent from 'outdent';
 
 import { client } from '../utils/discord.js';
 import { concat } from '../utils/concat.js';
@@ -46,7 +46,7 @@ export const effects = {
   name: 'effects',
   description: 'Outputs a list of the available sound effects.',
   command: async (message) => {
-    await message.channel.send(dedent`
+    await message.channel.send(outdent`
       Here's a list of all the available sound effects.
 
       ${Object.keys(client.music.effects).map((name) => `- ${name}`).join('\r\n')}
@@ -110,7 +110,7 @@ export const queue = {
   description: 'Lists all of the songs currently in the queue.',
   command: async (message) => {
     if (client.music.songs.length > 0) {
-      message.channel.send(dedent`
+      message.channel.send(outdent`
         Here's a list of the current songs in the queue.
 
         ${client.music.songs.map((song, index) => formatSong({ number: index + 1, ...song })).join('\n')}
