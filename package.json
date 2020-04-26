@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "private": true,
-  "main": "src/bot.js",
+  "main": "src/bot.mjs",
   "scripts": {
     "start": "node .",
     "test": "mocha",
