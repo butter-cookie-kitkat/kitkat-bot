@@ -53,6 +53,20 @@ export const play = {
   }
 };
 
+export const resume = {
+  description: 'Resumes the current song.',
+  command: async () => {
+    await client.music.resume();
+  }
+};
+
+export const pause = {
+  description: 'Pauses the current song.',
+  command: async () => {
+    await client.music.pause();
+  }
+};
+
 function formatSong({ number, title }) {
   const isCurrentTrack = number === 1;
 

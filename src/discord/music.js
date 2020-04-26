@@ -108,6 +108,18 @@ export class Music {
     }
   }
 
+  async pause() {
+    if (this._connection && this._connection.dispatcher) {
+      this._connection.dispatcher.pause();
+    }
+  }
+
+  async resume() {
+    if (this._connection && this._connection.dispatcher) {
+      this._connection.dispatcher.resume();
+    }
+  }
+
   get isInVoiceChannel() {
     return !!this._voiceChannel;
   }
