@@ -1,6 +1,6 @@
 const cache = {};
 
-export function debounce(name, cb, delay = 5000) {
+export function debounce(name, cb, delay = 60000) {
   if (cache[name]) {
     clear(name);
   }
