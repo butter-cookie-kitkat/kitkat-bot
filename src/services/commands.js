@@ -50,5 +50,7 @@ export async function ProcessCommand(message) {
         \`\`\`
       `);
     }
+
+    await message.channel.send(error.userMessage);
   }
 }

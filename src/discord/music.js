@@ -147,7 +147,10 @@ export class Music {
     const effect = this.effects[name];
 
     if (!effect) {
-      throw new DiscordError(`The given effect doesn't exist. (${name})`);
+      throw new DiscordError(
+        `The given effect doesn't exist. (${name})`,
+        `Whoops looks like that effect doesn't exist!`
+      );
     }
 
     await this.pause();

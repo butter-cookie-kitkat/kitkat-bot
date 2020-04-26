@@ -3,8 +3,9 @@ import { Channel } from './channel.js';
 import { Music } from './music.js';
 
 export class DiscordError extends Error {
-  constructor(message) {
+  constructor(message, userMessage) {
     super(message);
+    this.userMessage = userMessage || message;
   }
 }
 
