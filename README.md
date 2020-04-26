@@ -15,3 +15,11 @@ ANNOUNCEMENTS_CHANNEL_ID=702570267745976371
 ```
 
 - `npm start`
+
+#### Adding Sound Effects
+
+> Caveats:
+> - Only supports MP3s at this time.
+
+- Find a sound effect you'd like to add.
+- Upload it to the `effects` folder.

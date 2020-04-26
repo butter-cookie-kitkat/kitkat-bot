@@ -3,6 +3,7 @@ import path from 'path';
 import ytdl from 'ytdl-core-discord';
 import DiscordJS from 'discord.js';
 import { DiscordError } from './discord.js';
+import * as Debounce from '../utils/debounce.js';
 
 export const effects = {
   ayaya: './sound-effects/ayaya-ayaya.mp3'
@@ -80,6 +81,8 @@ export class Music {
   }
 
   async push(url) {
+    Debounce.clear('auto-leave');
+
     const songInfo = await ytdl.getInfo(url);
 
     const song = {
@@ -115,7 +118,7 @@ export class Music {
           console.error(error);
         });
     } else {
-      this.leave();
+      Debounce.debounce('auto-leave', () => this.leave());
     }
   }
 
@@ -140,6 +143,7 @@ export class Music {
   }
 
   async effect(channelID, name) {
+    Debounce.clear('auto-leave');
     await this.pause();
 
     if (!this._voiceChannel) {
@@ -154,7 +158,7 @@ export class Music {
 
       dispatcher.on('finish', async () => {
         if (this.songs.length === 0) {
-          this.leave();
+          Debounce.debounce('auto-leave', () => this.leave());
         } else {
           await this.play(this.songs[0]);
         }
