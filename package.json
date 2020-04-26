@@ -10,7 +10,7 @@
     "test": "mocha",
     "test:coverage": "nyc mocha",
     "test:tdd": "mocha --watch",
-    "lint": "eslint --ignore-path .gitignore .",
+    "lint": "eslint --ignore-path .gitignore src/**/*",
     "lint:fix": "eslint --ignore-path .gitignore --fix"
   },
   "engines": {
