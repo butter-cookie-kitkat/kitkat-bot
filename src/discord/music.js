@@ -4,10 +4,12 @@ import ytdl from 'ytdl-core-discord';
 import DiscordJS from 'discord.js'; // eslint-disable-line no-unused-vars
 import { DiscordError } from './discord.js';
 import * as Debounce from '../utils/debounce.js';
+import { item, boolean } from '../utils/random.js';
 
-export const effects = {
-  ayaya: './sound-effects/ayaya-ayaya.mp3'
-};
+export const AUTO_LEAVE_EFFECTS = [
+  'faku',
+  'startupbass'
+];
 
 export class Music {
   /**
@@ -47,7 +49,11 @@ export class Music {
     this._connection = await this._voiceChannel.join();
   }
 
-  leave() {
+  async leave(auto) {
+    if (auto && boolean(10)) {
+      await this.effect(this._voiceChannel.id, item(AUTO_LEAVE_EFFECTS));
+    }
+
     this._voiceChannel.leave();
     this.clear();
   }
@@ -118,7 +124,7 @@ export class Music {
           console.error(error);
         });
     } else {
-      Debounce.debounce('auto-leave', () => this.leave());
+      Debounce.debounce('auto-leave', () => this.leave(true));
     }
   }
 
@@ -163,13 +169,19 @@ export class Music {
       volume: false
     });
 
-    dispatcher.on('finish', async () => {
-      if (this.songs.length === 0) {
-        Debounce.debounce('auto-leave', () => this.leave());
-      } else {
-        await this.play(this.songs[0]);
-      }
-    }).on('error', console.error);
+    return new Promise((resolve, reject) => {
+      dispatcher.on('finish', async () => {
+        if (this.songs.length === 0) {
+          Debounce.debounce('auto-leave', () => this.leave(true));
+        } else {
+          await this.play(this.songs[0]);
+        }
+        resolve();
+      }).on('error', (error) => {
+        console.error(error);
+        reject(error);
+      });
+    });
   }
 
   async pause() {
