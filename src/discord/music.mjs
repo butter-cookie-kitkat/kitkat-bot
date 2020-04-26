@@ -144,28 +144,29 @@ export class Music {
 
   async effect(channelID, name) {
     Debounce.clear('auto-leave');
+    const effect = this.effects[name];
+
+    if (!effect) {
+      throw new DiscordError(`The given effect doesn't exist. (${name})`);
+    }
+
     await this.pause();
 
     if (!this._voiceChannel) {
       await this.join(channelID);
     }
 
-    const effect = this.effects[name];
-    if (effect) {
-      const dispatcher = await this._connection.play(path.resolve(effect.path), {
-        volume: false
-      });
+    const dispatcher = await this._connection.play(path.resolve(effect.path), {
+      volume: false
+    });
 
-      dispatcher.on('finish', async () => {
-        if (this.songs.length === 0) {
-          Debounce.debounce('auto-leave', () => this.leave());
-        } else {
-          await this.play(this.songs[0]);
-        }
-      }).on('error', console.error);
-    } else {
-      throw new DiscordError(`The given effect doesn't exist. (${name})`);
-    }
+    dispatcher.on('finish', async () => {
+      if (this.songs.length === 0) {
+        Debounce.debounce('auto-leave', () => this.leave());
+      } else {
+        await this.play(this.songs[0]);
+      }
+    }).on('error', console.error);
   }
 
   async pause() {
