@@ -1,4 +1,4 @@
-import 'dotenv/config.mjs';
+import 'dotenv/config.js';
 import { client } from './utils/discord.mjs';
 import { servers } from './config/servers.mjs';
 import { periodicallyRefreshStatuses } from './services/server.mjs';
