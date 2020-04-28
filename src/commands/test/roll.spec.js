@@ -8,10 +8,6 @@ describe('Commands(Roll)', () => {
   });
 
   describe('command(roll)', () => {
-    it('should contain an alias of ...', () => {
-
-    });
-
     it('should support rolling a number between 1 and the given max', async () => {
       const max = chance.integer({ min: 2 });
       sinon.stub(Random, 'integer').returns(max);

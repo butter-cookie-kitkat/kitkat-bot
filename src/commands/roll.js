@@ -71,7 +71,6 @@ export const rolld100 = {
   }
 };
 
-
 export default [
   roll,
   rolld4,

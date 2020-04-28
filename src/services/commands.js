@@ -33,6 +33,8 @@ export async function ProcessCommand(message) {
   try {
     await command(message, ...args);
   } catch (error) {
+    console.error(error);
+
     if (process.env.NOTIFICATIONS_CHANNEL_ID) {
       const channel = await client.channel(process.env.NOTIFICATIONS_CHANNEL_ID);
 

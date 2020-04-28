@@ -4,6 +4,9 @@ import Sinon from 'sinon';
 
 export async function executeCommand(command, ...args) {
   const message = {
+    channel: {
+      send: Sinon.stub()
+    },
     reply: Sinon.stub()
   };
 
