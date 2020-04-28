@@ -4,7 +4,7 @@ import ytdl from 'ytdl-core-discord';
 import DiscordJS from 'discord.js'; // eslint-disable-line no-unused-vars
 import { DiscordError } from './discord.js';
 import * as Debounce from '../utils/debounce.js';
-import { item, boolean } from '../utils/random.js';
+import { Random } from '../utils/random.js';
 
 export const AUTO_LEAVE_EFFECTS = [
   'faku',
@@ -50,8 +50,8 @@ export class Music {
   }
 
   async leave(auto) {
-    if (auto && boolean(10)) {
-      await this.effect(this._voiceChannel.id, item(AUTO_LEAVE_EFFECTS));
+    if (auto && Random.boolean(10)) {
+      await this.effect(this._voiceChannel.id, Random.item(AUTO_LEAVE_EFFECTS));
     }
 
     this._voiceChannel.leave();

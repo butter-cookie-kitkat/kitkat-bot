@@ -1,5 +1,4 @@
-import { chance } from './chance.js';
-import { expect } from './expect.js';
+import { chance, expect } from './test-utils.js';
 import { available, responseTime, responseTimeEmoji } from '../status.js';
 
 describe('Utils(Status)', () => {

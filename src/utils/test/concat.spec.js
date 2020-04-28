@@ -1,7 +1,6 @@
-import { expect } from './expect.js';
+import { chance, expect } from './test-utils.js';
 
 import * as Concat from '../concat.js';
-import { chance } from './chance.js';
 
 describe('Utils(Concat)', () => {
   describe('func(concat)', () => {

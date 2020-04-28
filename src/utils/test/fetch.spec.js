@@ -1,4 +1,4 @@
-import { expect } from './expect.js';
+import { expect } from './test-utils.js';
 
 import { Fetch } from '../fetch.js';
 

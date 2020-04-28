@@ -1,7 +1,6 @@
-import { chance } from './chance.js';
+import { chance, expect } from './test-utils.js';
 
 import { debounce, clear } from '../debounce.js';
-import { expect } from './expect.js';
 
 describe('Utils(Debounce)', () => {
   describe('func(debounce)', () => {

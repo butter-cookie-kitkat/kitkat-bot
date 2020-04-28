@@ -51,6 +51,9 @@ export async function ProcessCommand(message) {
       `);
     }
 
-    await message.channel.send(error.userMessage);
+    await message.channel.send(error.userMessage || outdent`
+      Whoa, looks like something went wrong.
+      Don't worry though we're looking into it!
+    `);
   }
 }
