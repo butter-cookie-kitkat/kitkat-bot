@@ -1,3 +1,5 @@
+![CI](https://github.com/butter-cookie-kitkat/kitkat-bot/workflows/CI/badge.svg)
+
 ### Kitkat Bot
 
 #### Prerequisites

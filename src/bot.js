@@ -7,7 +7,7 @@ import { ProcessCommand } from './services/commands.js';
 client.on('ready', async () => {
   console.log('Kitkat Bot initialized successfully!');
 
-  await client.setStatus(`Use .help.`);
+  await client.setStatus(`Use .help`);
 
   if (!process.env.IS_LIVE) {
     await client.setOffline();
