@@ -61,9 +61,9 @@ export const play = {
     url: 'The song url',
     now: 'Whether the song should be played immediately.'
   },
-  command: async ({ client, message }, url, now) => {
+  command: async ({ client, message, ...extraInfo }, url, now) => {
     if (!client.music.isInVoiceChannel) {
-      await join.command(message);
+      await join.command({ client, message, ...extraInfo });
     }
 
     if (now) {
