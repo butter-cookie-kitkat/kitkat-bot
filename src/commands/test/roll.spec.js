@@ -1,5 +1,5 @@
 import { Random } from '../../utils/random.js';
-import { chance, expect, executeCommand, sinon } from '../../utils/test/test-utils.js';
+import { chance, expect, testable, sinon } from '../../utils/test/test-utils.js';
 import { roll, rolld4, rolld6, rolld8, rolld12, rolld20, rolld100 } from '../roll.js';
 
 describe('Commands(Roll)', () => {
@@ -8,11 +8,13 @@ describe('Commands(Roll)', () => {
   });
 
   describe('command(roll)', () => {
+    const test = testable(roll);
+
     it('should support rolling a number between 1 and the given max', async () => {
       const max = chance.integer({ min: 2 });
       sinon.stub(Random, 'integer').returns(max);
 
-      const message = await executeCommand(roll, max);
+      const { message } = await test(null, max);
 
       sinon.assert.calledOnce(Random.integer);
       sinon.assert.calledWithExactly(Random.integer, 1, max);
@@ -24,6 +26,8 @@ describe('Commands(Roll)', () => {
   });
 
   describe('command(rolld4)', () => {
+    const test = testable(rolld4);
+
     it('should have an alias of roll4', () => {
       expect(rolld4.aliases).deep.equals(['roll4']);
     });
@@ -33,7 +37,7 @@ describe('Commands(Roll)', () => {
 
       sinon.stub(Random, 'integer').returns(expectedResult);
 
-      const message = await executeCommand(rolld4);
+      const { message } = await test();
 
       sinon.assert.calledOnce(Random.integer);
       sinon.assert.calledWithExactly(Random.integer, 1, 4);
@@ -45,6 +49,8 @@ describe('Commands(Roll)', () => {
   });
 
   describe('command(rolld6)', () => {
+    const test = testable(rolld6);
+
     it('should have an alias of roll6', () => {
       expect(rolld6.aliases).deep.equals(['roll6']);
     });
@@ -54,7 +60,7 @@ describe('Commands(Roll)', () => {
 
       sinon.stub(Random, 'integer').returns(expectedResult);
 
-      const message = await executeCommand(rolld6);
+      const { message } = await test();
 
       sinon.assert.calledOnce(Random.integer);
       sinon.assert.calledWithExactly(Random.integer, 1, 6);
@@ -66,6 +72,8 @@ describe('Commands(Roll)', () => {
   });
 
   describe('command(rolld8)', () => {
+    const test = testable(rolld8);
+
     it('should have an alias of roll8', () => {
       expect(rolld8.aliases).deep.equals(['roll8']);
     });
@@ -75,7 +83,7 @@ describe('Commands(Roll)', () => {
 
       sinon.stub(Random, 'integer').returns(expectedResult);
 
-      const message = await executeCommand(rolld8);
+      const { message } = await test();
 
       sinon.assert.calledOnce(Random.integer);
       sinon.assert.calledWithExactly(Random.integer, 1, 8);
@@ -87,6 +95,8 @@ describe('Commands(Roll)', () => {
   });
 
   describe('command(rolld12)', () => {
+    const test = testable(rolld12);
+
     it('should have an alias of roll12', () => {
       expect(rolld12.aliases).deep.equals(['roll12']);
     });
@@ -96,7 +106,7 @@ describe('Commands(Roll)', () => {
 
       sinon.stub(Random, 'integer').returns(expectedResult);
 
-      const message = await executeCommand(rolld12);
+      const { message } = await test();
 
       sinon.assert.calledOnce(Random.integer);
       sinon.assert.calledWithExactly(Random.integer, 1, 12);
@@ -108,6 +118,8 @@ describe('Commands(Roll)', () => {
   });
 
   describe('command(rolld20)', () => {
+    const test = testable(rolld20);
+
     it('should have an alias of roll20', () => {
       expect(rolld20.aliases).deep.equals(['roll20']);
     });
@@ -117,7 +129,7 @@ describe('Commands(Roll)', () => {
 
       sinon.stub(Random, 'integer').returns(expectedResult);
 
-      const message = await executeCommand(rolld20);
+      const { message } = await test();
 
       sinon.assert.calledOnce(Random.integer);
       sinon.assert.calledWithExactly(Random.integer, 1, 20);
@@ -129,6 +141,8 @@ describe('Commands(Roll)', () => {
   });
 
   describe('command(rolld100)', () => {
+    const test = testable(rolld100);
+
     it('should have an alias of roll100', () => {
       expect(rolld100.aliases).deep.equals(['roll100']);
     });
@@ -138,7 +152,7 @@ describe('Commands(Roll)', () => {
 
       sinon.stub(Random, 'integer').returns(expectedResult);
 
-      const message = await executeCommand(rolld100);
+      const { message } = await test();
 
       sinon.assert.calledOnce(Random.integer);
       sinon.assert.calledWithExactly(Random.integer, 1, 100);

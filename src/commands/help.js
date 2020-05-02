@@ -30,7 +30,7 @@ export const help = {
   name: 'help',
   aliases: ['halp'],
   description: 'Display a list of the available commands.',
-  command: async (message) => {
+  command: async ({ message }) => {
     const { commands } = await import('./index.js');
     const groupsOrder = [];
     const groups = commands.reduce((groups, command) => {

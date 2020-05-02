@@ -31,7 +31,7 @@ export async function ProcessCommand(message) {
   console.log(`Match found, executing! (${rawCommand})`);
 
   try {
-    await command(message, ...args);
+    await command({ client, message }, ...args);
   } catch (error) {
     console.error(error);
 

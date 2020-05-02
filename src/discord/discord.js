@@ -15,9 +15,13 @@ export class Discord {
 
     this._client.on('error', (error) => console.error(error));
 
-    this._client.login(token);
+    this.login(token);
 
     this.music = new Music(this._client);
+  }
+
+  login(token) {
+    this._client.login(token);
   }
 
   get userID() {

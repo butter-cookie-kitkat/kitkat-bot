@@ -1,12 +1,12 @@
 import outdent from 'outdent';
 
-import { client } from '../utils/discord.js';
 import { concat } from '../utils/concat.js';
+import * as Duration from '../utils/duration.js';
 
 export const join = {
   name: 'join',
   description: 'Joins the Voice Chat.',
-  command: async (message) => {
+  command: async ({ client, message }) => {
     if (message.member.voice.channel) {
       await client.music.join(message.member.voice.channelID);
     } else {
@@ -18,7 +18,7 @@ export const join = {
 export const leave = {
   name: 'leave',
   description: 'Leaves the Voice Chat.',
-  command: async () => {
+  command: async ({ client }) => {
     await client.music.leave();
   }
 };
@@ -26,7 +26,7 @@ export const leave = {
 export const skip = {
   name: 'skip',
   description: 'Skips the current songs.',
-  command: async () => {
+  command: async ({ client }) => {
     await client.music.skip();
   }
 };
@@ -37,7 +37,7 @@ export const effect = {
   args: {
     name: 'The sound effect name'
   },
-  command: async (message, name) => {
+  command: async ({ client, message }, name) => {
     await client.music.effect(message.member.voice.channel.id, name);
   }
 };
@@ -45,7 +45,7 @@ export const effect = {
 export const effects = {
   name: 'effects',
   description: 'Outputs a list of the available sound effects.',
-  command: async (message) => {
+  command: async ({ client, message }) => {
     await message.channel.send(outdent`
       Here's a list of all the available sound effects.
 
@@ -61,7 +61,7 @@ export const play = {
     url: 'The song url',
     now: 'Whether the song should be played immediately.'
   },
-  command: async (message, url, now) => {
+  command: async ({ client, message }, url, now) => {
     if (!client.music.isInVoiceChannel) {
       await join.command(message);
     }
@@ -83,7 +83,7 @@ export const play = {
 export const resume = {
   name: 'resume',
   description: 'Resumes the current song.',
-  command: async () => {
+  command: async ({ client }) => {
     await client.music.resume();
   }
 };
@@ -91,24 +91,22 @@ export const resume = {
 export const pause = {
   name: 'pause',
   description: 'Pauses the current song.',
-  command: async () => {
+  command: async ({ client }) => {
     await client.music.pause();
   }
 };
 
-function formatSong({ number, title }) {
-  const isCurrentTrack = number === 1;
-
+function formatSong({ isCurrentSong, number, title, timeRemaining }) {
   return concat(
     `${number}) \`${title}\``,
-    isCurrentTrack && '<-- Current Track'
+    isCurrentSong && `<-- Current Track - ${Duration.humanize(timeRemaining)} remaining`
   );
 }
 
 export const queue = {
   name: 'queue',
   description: 'Lists all of the songs currently in the queue.',
-  command: async (message) => {
+  command: async ({ client, message }) => {
     if (client.music.songs.length > 0) {
       message.channel.send(outdent`
         Here's a list of the current songs in the queue.

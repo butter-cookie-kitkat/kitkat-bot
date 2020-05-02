@@ -1,5 +1,5 @@
 import { RS3, OSRS } from '../../services/runescape.js';
-import { chance, expect, executeCommand, sinon } from '../../utils/test/test-utils.js';
+import { chance, expect, testable, sinon } from '../../utils/test/test-utils.js';
 import { ge } from '../runescape.js';
 
 describe('Commands(RuneScape)', () => {
@@ -8,6 +8,8 @@ describe('Commands(RuneScape)', () => {
   });
 
   describe('command(ge)', () => {
+    const test = testable(ge);
+
     it('should support search RS3 and OSRS', async () => {
       const name = chance.string();
 
@@ -24,7 +26,7 @@ describe('Commands(RuneScape)', () => {
       sinon.stub(RS3, 'search').resolves(searchResults);
       sinon.stub(OSRS, 'search').resolves(searchResults);
 
-      const message = await executeCommand(ge, name);
+      const { message } = await test(null, name);
 
       sinon.assert.calledWithExactly(RS3.search, name);
       sinon.assert.calledWithExactly(OSRS.search, name);
@@ -74,7 +76,7 @@ describe('Commands(RuneScape)', () => {
       });
       sinon.stub(OSRS, 'search').resolves(searchResults);
 
-      const message = await executeCommand(ge, name);
+      const { message } = await test(null, name);
 
       sinon.assert.calledWithExactly(RS3.search, name);
       sinon.assert.calledWithExactly(OSRS.search, name);
@@ -115,7 +117,7 @@ describe('Commands(RuneScape)', () => {
       });
       sinon.stub(RS3, 'search').resolves(searchResults);
 
-      const message = await executeCommand(ge, name);
+      const { message } = await test(null, name);
 
       sinon.assert.calledWithExactly(RS3.search, name);
       sinon.assert.calledWithExactly(OSRS.search, name);

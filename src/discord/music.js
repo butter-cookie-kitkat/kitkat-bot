@@ -7,6 +7,7 @@ import * as Debounce from '../utils/debounce.js';
 import { Random } from '../utils/random.js';
 
 export const AUTO_LEAVE_EFFECTS = [
+  'wtf',
   'faku',
   'startupbass'
 ];
@@ -94,7 +95,7 @@ export class Music {
     const song = {
       title: songInfo.title,
       url: songInfo.video_url,
-      duration: songInfo.length_seconds,
+      duration: Number(songInfo.length_seconds) * 1000,
       timeElapsed: 0
     };
 
@@ -201,6 +202,17 @@ export class Music {
   }
 
   get songs() {
-    return [...this._songs];
+    const songs = [...this._songs].map((song, index) => ({
+      ...song,
+      number: index + 1,
+      isCurrentSong: index === 0
+    }));
+
+    const [currentSong] = songs;
+
+    currentSong.timeElapsed = this._connection.dispatcher.streamTime;
+    currentSong.timeRemaining = currentSong.duration - currentSong.timeElapsed;
+
+    return songs;
   }
 }
