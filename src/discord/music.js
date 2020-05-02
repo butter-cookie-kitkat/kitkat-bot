@@ -210,7 +210,7 @@ export class Music {
 
     const [currentSong] = songs;
 
-    currentSong.timeElapsed = this._connection.dispatcher.streamTime;
+    currentSong.timeElapsed = this._connection && this._connection.dispatcher && this._connection.dispatcher.streamTime;
     currentSong.timeRemaining = currentSong.duration - currentSong.timeElapsed;
 
     return songs;
