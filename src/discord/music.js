@@ -134,7 +134,8 @@ export class Music {
   get effects() {
     if (!this._effects) {
       this._effects = fs.readdirSync('./effects').reduce((output, file) => {
-        const [name, extension] = file.split('.');
+        const extension = path.extname(file);
+        const name = path.basename(file, extension);
         const types = {
           ogg: 'ogg/opus',
           webm: 'webm/opus'
@@ -142,7 +143,7 @@ export class Music {
 
         output[name] = {
           path: `./effects/${file}`,
-          type: types[extension] || 'mp3'
+          type: types[extension.replace('.', '')] || 'mp3'
         };
         return output;
       }, {});
@@ -151,9 +152,23 @@ export class Music {
     return this._effects;
   }
 
-  async effect(channelID, name) {
+  get publicEffects() {
+    if (!this._publicEffects) {
+      this._publicEffects = {...this.effects};
+
+      for (const name of Object.keys(this._publicEffects)) {
+        if (name.includes('private.')) {
+          delete this._publicEffects[name];
+        }
+      }
+    }
+
+    return this._publicEffects;
+  }
+
+  async effect(channelID, name, allowPrivate) {
     Debounce.clear('auto-leave');
-    const effect = this.effects[name];
+    const effect = allowPrivate ? this.effects[name] : this.publicEffects[name];
 
     if (!effect) {
       throw new DiscordError(

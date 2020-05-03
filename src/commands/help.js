@@ -11,14 +11,16 @@ function formatExample(name, args) {
 }
 
 function formatGroup({ name, commands }) {
+  const filteredCommands = commands.filter((command) => !command.hidden);
+
   if (name === '.') {
-    return commands.map((command) => formatCommand(command)).join('\r\n');
+    return filteredCommands.map((command) => formatCommand(command)).join('\r\n');
   }
 
   return outdent`
     **${name}**
 
-      ${commands.map((command) => formatCommand(command)).join('\r\n  ')}
+      ${filteredCommands.map((command) => formatCommand(command)).join('\r\n  ')}
   `;
 }
 

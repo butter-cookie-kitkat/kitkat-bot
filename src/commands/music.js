@@ -49,7 +49,7 @@ export const effects = {
     await message.channel.send(outdent`
       Here's a list of all the available sound effects.
 
-      ${Object.keys(client.music.effects).map((name) => `- ${name}`).join('\r\n')}
+      ${Object.keys(client.music.publicEffects).map((name) => `- ${name}`).join('\r\n')}
     `);
   }
 };
