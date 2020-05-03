@@ -7,9 +7,11 @@ import * as Debounce from '../utils/debounce.js';
 import { Random } from '../utils/random.js';
 
 export const AUTO_LEAVE_EFFECTS = [
-  'wtf',
   'faku',
-  'startupbass'
+  'startupbass',
+  'titanic',
+  'violin',
+  'wtf'
 ];
 
 export class Music {
