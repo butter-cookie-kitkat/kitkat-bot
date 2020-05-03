@@ -202,17 +202,25 @@ export class Music {
   }
 
   get songs() {
-    const songs = [...this._songs].map((song, index) => ({
-      ...song,
-      number: index + 1,
-      isCurrentSong: index === 0
-    }));
+    return [...this._songs].map((song, index) => {
+      const isCurrentSong = index === 0;
+      let timeElapsed, timeRemaining;
 
-    const [currentSong] = songs;
+      if (isCurrentSong) {
+        timeElapsed = this._connection && this._connection.dispatcher && this._connection.dispatcher.streamTime;
+        timeRemaining = song.duration - song.timeElapsed;
+      } else {
+        timeElapsed = 0;
+        timeRemaining = song.duration;
+      }
 
-    currentSong.timeElapsed = this._connection && this._connection.dispatcher && this._connection.dispatcher.streamTime;
-    currentSong.timeRemaining = currentSong.duration - currentSong.timeElapsed;
-
-    return songs;
+      return {
+        ...song,
+        number: index + 1,
+        isCurrentSong,
+        timeElapsed,
+        timeRemaining
+      };
+    });
   }
 }
