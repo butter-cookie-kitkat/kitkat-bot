@@ -11,7 +11,7 @@ export const AUTO_LEAVE_EFFECTS = [
   'startupbass',
   'titanic',
   'violin',
-  'wtf'
+  'wtf',
 ];
 
 export class Music {
@@ -48,8 +48,14 @@ export class Music {
       throw new DiscordError(`Expected channel to be a voice channel.`);
     }
 
-    this._voiceChannel = channel;
-    this._connection = await this._voiceChannel.join();
+    try {
+      this._voiceChannel = channel;
+      this._connection = await this._voiceChannel.join();
+    } catch (error) {
+      this.clear();
+
+      throw error;
+    }
   }
 
   async leave(auto) {
@@ -77,7 +83,7 @@ export class Music {
 
     const song = {
       title: songInfo.title,
-      url: songInfo.video_url
+      url: songInfo.video_url,
     };
 
     this._songs.unshift(song);
@@ -98,7 +104,7 @@ export class Music {
       title: songInfo.title,
       url: songInfo.video_url,
       duration: Number(songInfo.length_seconds) * 1000,
-      timeElapsed: 0
+      timeElapsed: 0,
     };
 
     this._songs.push(song);
@@ -113,7 +119,7 @@ export class Music {
   async play(song) {
     if (song) {
       const dispatcher = this._connection.play(await ytdl(song.url, {
-        highWaterMark: 1<<25
+        highWaterMark: 1<<25,
       }), { type: 'opus' });
 
       dispatcher
@@ -138,12 +144,12 @@ export class Music {
         const name = path.basename(file, extension);
         const types = {
           ogg: 'ogg/opus',
-          webm: 'webm/opus'
+          webm: 'webm/opus',
         };
 
         output[name] = {
           path: `./effects/${file}`,
-          type: types[extension.replace('.', '')] || 'mp3'
+          type: types[extension.replace('.', '')] || 'mp3',
         };
         return output;
       }, {});
@@ -173,7 +179,7 @@ export class Music {
     if (!effect) {
       throw new DiscordError(
         `The given effect doesn't exist. (${name})`,
-        `Whoops looks like that effect doesn't exist!`
+        `Whoops looks like that effect doesn't exist!`,
       );
     }
 
@@ -184,7 +190,7 @@ export class Music {
     }
 
     const dispatcher = await this._connection.play(path.resolve(effect.path), {
-      volume: false
+      volume: false,
     });
 
     return new Promise((resolve, reject) => {
@@ -236,7 +242,7 @@ export class Music {
         number: index + 1,
         isCurrentSong,
         timeElapsed,
-        timeRemaining
+        timeRemaining,
       };
     });
   }

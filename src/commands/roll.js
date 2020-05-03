@@ -5,11 +5,11 @@ export const roll = {
   name: 'roll',
   description: 'Roll a dice with the given max value.',
   args: {
-    max: 'The maximum dice value.'
+    max: 'The maximum dice value.',
   },
   command: async ({ message }, max) => {
     await message.reply(`You rolled a ${Random.integer(1, max)}.`);
-  }
+  },
 };
 
 export const rolld4 = {
@@ -18,7 +18,7 @@ export const rolld4 = {
   description: 'Roll a d4.',
   command: async (info) => {
     await roll.command(info, 4);
-  }
+  },
 };
 
 export const rolld6 = {
@@ -27,7 +27,7 @@ export const rolld6 = {
   description: 'Roll a d6.',
   command: async (info) => {
     await roll.command(info, 6);
-  }
+  },
 };
 
 export const rolld8 = {
@@ -36,7 +36,7 @@ export const rolld8 = {
   description: 'Roll a d8.',
   command: async (info) => {
     await roll.command(info, 8);
-  }
+  },
 };
 
 export const rolld12 = {
@@ -45,7 +45,7 @@ export const rolld12 = {
   description: 'Roll a d12.',
   command: async (info) => {
     await roll.command(info, 12);
-  }
+  },
 };
 
 export const rolld20 = {
@@ -57,9 +57,9 @@ export const rolld20 = {
 
     await message.reply(Concat.concat(
       `You rolled a ${result}.`,
-      result === 20 ? 'Critical Hit!' : null
+      result === 20 ? 'Critical Hit!' : null,
     ));
-  }
+  },
 };
 
 export const rolld100 = {
@@ -68,7 +68,7 @@ export const rolld100 = {
   description: 'Roll a d100.',
   command: async (info) => {
     await roll.command(info, 100);
-  }
+  },
 };
 
 export default [
@@ -78,8 +78,8 @@ export default [
   rolld8,
   rolld12,
   rolld20,
-  rolld100
+  rolld100,
 ].map((command) => ({
   ...command,
-  group: 'Roll'
+  group: 'Roll',
 }));

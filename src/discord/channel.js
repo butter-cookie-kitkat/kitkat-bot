@@ -1,4 +1,5 @@
 import DiscordJS from 'discord.js'; // eslint-disable-line no-unused-vars
+import { DiscordError } from './errors';
 
 export class Channel {
   /**
@@ -21,7 +22,7 @@ export class Channel {
     const channel = await this._client.channels.fetch(this._channelID);
 
     if (!channel) {
-      throw new DiscordError(`The given channel does not exist! (${channelID})`);
+      throw new DiscordError(`The given channel does not exist! (${this._channelID})`);
     } else if (channel.type !== 'text') {
       throw new DiscordError(`Expected channel to be a text channel.`);
     }

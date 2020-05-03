@@ -13,5 +13,5 @@ export const commands = Normalize.commands([
   ...runescapeCommands,
   ...rollCommands,
   ...trollCommands,
-  ...debugCommands
+  ...debugCommands,
 ]);

@@ -7,23 +7,23 @@ export function testable(command) {
     const info = {
       client: {
         music: {
-          songs: []
-        }
+          songs: [],
+        },
       },
       message: {
         channel: {
-          send: Sinon.stub()
+          send: Sinon.stub(),
         },
-        reply: Sinon.stub()
+        reply: Sinon.stub(),
       },
-      ...infoOverrides
+      ...infoOverrides,
     };
 
     await command.command(info, ...args);
 
     return info;
   };
-};
+}
 
 export const chance = new Chance();
 export const expect = chai.expect;

@@ -15,19 +15,19 @@ describe('Commands(Music)', () => {
         isCurrentSong: true,
         timeRemaining: chance.integer({
           min: 60001,
-          max: 69999
-        })
+          max: 69999,
+        }),
       }, {
         title: chance.string(),
-        isCurrentSong: false
+        isCurrentSong: false,
       }];
 
       const { message } = await test({
         client: {
           music: {
-            songs
-          }
-        }
+            songs,
+          },
+        },
       });
 
       sinon.assert.calledOnce(message.channel.send);
@@ -46,9 +46,9 @@ describe('Commands(Music)', () => {
       const { message } = await test({
         client: {
           music: {
-            songs: []
-          }
-        }
+            songs: [],
+          },
+        },
       });
 
       sinon.assert.calledOnce(message.channel.send);

@@ -11,7 +11,7 @@ export const HEADERS_TO_PROPERTY_NAME = {
   'Item': ITEM,
   'Members Only': MEMBERS,
   'Price': PRICE,
-  'Change': CHANGE
+  'Change': CHANGE,
 };
 
 export function convertResultsToJSON(html) {
@@ -43,9 +43,9 @@ export function convertResultsToJSON(html) {
         [ITEM]: $(name).find('img').get(0).attribs.alt,
         [MEMBERS]: getText(members) === 'Members Only' ? 'Yes' : 'No',
         [PRICE]: getText(price),
-        [CHANGE]: getText(change)
+        [CHANGE]: getText(change),
       };
-    })
+    }),
   };
 }
 
@@ -55,7 +55,7 @@ export class RS3 {
       'Item': ITEM,
       'Members Only': MEMBERS,
       'Price': PRICE,
-      'Change': CHANGE
+      'Change': CHANGE,
     };
   }
 

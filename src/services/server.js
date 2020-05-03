@@ -11,12 +11,12 @@ export async function periodicallyRefreshStatuses(channelID, servers) {
     throw new Error('Channel ID not provided!');
   }
 
-  while (true) {
-    await Promise.all([
-      refreshStatuses(channelID, servers),
-      Wait.wait(60000)
-    ]);
-  }
+  await Promise.all([
+    refreshStatuses(channelID, servers),
+    Wait.wait(60000),
+  ]);
+
+  periodicallyRefreshStatuses(channelID, servers);
 }
 
 export async function refreshStatuses(channelID, servers) {
@@ -26,7 +26,7 @@ export async function refreshStatuses(channelID, servers) {
     const responses = await Promise.all(servers.map(async ({ name, address }) => ({
       name,
       address,
-      status: await ping(address)
+      status: await ping(address),
     })));
 
     const content = outdent`

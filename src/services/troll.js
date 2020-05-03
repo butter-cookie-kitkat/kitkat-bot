@@ -3,7 +3,7 @@ import { Random } from '../utils/random.js';
 let activeTroll;
 
 const TROLL_EFFECTS = [
-  'private.discord-notification'
+  'private.discord-notification',
 ];
 
 export function ToggleTroll(client) {

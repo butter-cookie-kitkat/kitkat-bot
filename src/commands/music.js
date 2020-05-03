@@ -12,7 +12,7 @@ export const join = {
     } else {
       message.channel.send('You need to join a voice channel first!');
     }
-  }
+  },
 };
 
 export const leave = {
@@ -20,7 +20,7 @@ export const leave = {
   description: 'Leaves the Voice Chat.',
   command: async ({ client }) => {
     await client.music.leave();
-  }
+  },
 };
 
 export const skip = {
@@ -28,18 +28,18 @@ export const skip = {
   description: 'Skips the current songs.',
   command: async ({ client }) => {
     await client.music.skip();
-  }
+  },
 };
 
 export const effect = {
   name: 'effect',
   description: 'Plays a sound effect with the given name.',
   args: {
-    name: 'The sound effect name'
+    name: 'The sound effect name',
   },
   command: async ({ client, message }, name) => {
     await client.music.effect(message.member.voice.channel.id, name);
-  }
+  },
 };
 
 export const effects = {
@@ -51,7 +51,7 @@ export const effects = {
 
       ${Object.keys(client.music.publicEffects).map((name) => `- ${name}`).join('\r\n')}
     `);
-  }
+  },
 };
 
 export const play = {
@@ -59,7 +59,7 @@ export const play = {
   description: 'Adds a song to the queue.',
   args: {
     url: 'The song url',
-    now: 'Whether the song should be played immediately.'
+    now: 'Whether the song should be played immediately.',
   },
   command: async ({ client, message, ...extraInfo }, url, now) => {
     if (!client.music.isInVoiceChannel) {
@@ -77,7 +77,7 @@ export const play = {
 
       await message.channel.send(`\`${song.title}\` has been added to the queue!`);
     }
-  }
+  },
 };
 
 export const resume = {
@@ -85,7 +85,7 @@ export const resume = {
   description: 'Resumes the current song.',
   command: async ({ client }) => {
     await client.music.resume();
-  }
+  },
 };
 
 export const pause = {
@@ -93,13 +93,13 @@ export const pause = {
   description: 'Pauses the current song.',
   command: async ({ client }) => {
     await client.music.pause();
-  }
+  },
 };
 
 function formatSong({ isCurrentSong, number, title, timeRemaining }) {
   return concat(
     `${number}) \`${title}\``,
-    isCurrentSong && `<-- Current Track - ${Duration.humanize(timeRemaining)} remaining`
+    isCurrentSong && `<-- Current Track - ${Duration.humanize(timeRemaining)} remaining`,
   );
 }
 
@@ -116,7 +116,7 @@ export const queue = {
     } else {
       message.channel.send('There are currently no songs in the queue.');
     }
-  }
+  },
 };
 
 export default [
@@ -128,8 +128,8 @@ export default [
   play,
   resume,
   pause,
-  queue
+  queue,
 ].map((command) => ({
   ...command,
-  group: 'Music'
+  group: 'Music',
 }));

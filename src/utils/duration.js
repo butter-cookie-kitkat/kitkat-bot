@@ -12,6 +12,6 @@ export function humanize(milliseconds) {
   return concat(
     hours ? `${hours}h` : null,
     minutes ? `${minutes}m` : null,
-    seconds ? `${seconds}s` : null
+    seconds ? `${seconds}s` : null,
   );
 }

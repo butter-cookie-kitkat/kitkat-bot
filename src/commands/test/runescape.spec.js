@@ -19,8 +19,8 @@ describe('Commands(RuneScape)', () => {
           item: 'Dragon arrow',
           members: true,
           price: '539',
-          change: '+8'
-        }]
+          change: '+8',
+        }],
       };
 
       sinon.stub(RS3, 'search').resolves(searchResults);
@@ -66,13 +66,13 @@ describe('Commands(RuneScape)', () => {
           item: 'Dragon arrow',
           members: true,
           price: '539',
-          change: '+8'
-        }]
+          change: '+8',
+        }],
       };
 
       sinon.stub(RS3, 'search').resolves({
         columns: ['Item', 'Members Only', 'Price', 'Change'],
-        results: []
+        results: [],
       });
       sinon.stub(OSRS, 'search').resolves(searchResults);
 
@@ -107,13 +107,13 @@ describe('Commands(RuneScape)', () => {
           item: 'Dragon arrow',
           members: true,
           price: '539',
-          change: '+8'
-        }]
+          change: '+8',
+        }],
       };
 
       sinon.stub(OSRS, 'search').resolves({
         columns: ['Item', 'Members Only', 'Price', 'Change'],
-        results: []
+        results: [],
       });
       sinon.stub(RS3, 'search').resolves(searchResults);
 

@@ -4,13 +4,13 @@ export const kill = {
   command: async () => {
     console.log('Killing the bot.');
     process.exit();
-  }
+  },
 };
 
 export default [
-  kill
+  kill,
 ].map((command) => ({
   ...command,
   group: 'Debug',
-  disabled: !!process.env.IS_LIVE
+  disabled: !!process.env.IS_LIVE,
 }));

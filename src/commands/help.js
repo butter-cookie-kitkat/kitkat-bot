@@ -4,7 +4,7 @@ import { concat } from '../utils/concat.js';
 function formatExample(name, args) {
   const example = concat(
     `.${name}`,
-    ...Object.keys(args).map((name) => `<${name}>`)
+    ...Object.keys(args).map((name) => `<${name}>`),
   );
 
   return `\`${example}\``;
@@ -52,9 +52,9 @@ export const help = {
 
       ${groupsOrder.map((name) => formatGroup({ name, commands: groups[name] })).join('\r\n\r\n')}
     `);
-  }
+  },
 };
 
 export default [
-  help
+  help,
 ];

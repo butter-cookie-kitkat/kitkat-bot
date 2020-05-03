@@ -2,13 +2,6 @@ import DiscordJS from 'discord.js';
 import { Channel } from './channel.js';
 import { Music } from './music.js';
 
-export class DiscordError extends Error {
-  constructor(message, userMessage) {
-    super(message);
-    this.userMessage = userMessage || message;
-  }
-}
-
 export class Discord {
   constructor(token) {
     this._client = new DiscordJS.Client();
@@ -39,7 +32,7 @@ export class Discord {
     console.log('Updating status...');
 
     await this._client.user.setActivity(status, {
-      type: 'PLAYING'
+      type: 'PLAYING',
     });
 
     console.log('Status updated successfully!');

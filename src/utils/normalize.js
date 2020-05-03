@@ -6,6 +6,6 @@ export function command(command) {
   return {
     aliases: [],
     args: {},
-    ...command
+    ...command,
   };
 }

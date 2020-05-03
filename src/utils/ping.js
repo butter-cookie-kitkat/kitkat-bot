@@ -7,6 +7,6 @@ export async function ping(host) {
 
   return {
     available,
-    responseTime: available ? Date.now() - startTime : null
+    responseTime: available ? Date.now() - startTime : null,
   };
 }
