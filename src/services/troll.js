@@ -13,6 +13,8 @@ export function ToggleTroll(client) {
   } else {
     Troll(client);
   }
+
+  return Boolean(activeTroll);
 }
 
 export function Troll(client) {
