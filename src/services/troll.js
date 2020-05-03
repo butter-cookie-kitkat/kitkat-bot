@@ -1,4 +1,3 @@
-import { chance } from '../utils/test/test-utils.js';
 import { Random } from '../utils/random.js';
 
 let activeTroll;
@@ -23,8 +22,5 @@ export function Troll(client) {
     }
 
     Troll(client);
-  }, chance.integer({
-    min: 60000,
-    max: 3600000
-  }));
+  }, Random.integer(60000, 3600000));
 }
