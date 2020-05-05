@@ -24,7 +24,7 @@
     "dotenv": "^8.2.0",
     "ffmpeg-static": "^4.2.0",
     "is-reachable": "^4.0.0",
-    "moment": "^2.25.1",
+    "moment": "^2.25.3",
     "node-fetch": "^2.6.0",
     "outdent": "^0.7.1",
     "ytdl-core-discord": "^1.2.0"
