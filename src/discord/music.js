@@ -8,7 +8,7 @@ import { Random } from '../utils/random.js';
 
 export const AUTO_LEAVE_EFFECTS = [
   'faku',
-  'startupbass',
+  'private.startup-bass',
   'titanic',
   'violin',
   'wtf',
@@ -60,7 +60,7 @@ export class Music {
 
   async leave(auto) {
     if (auto && Random.boolean(10)) {
-      await this.effect(this._voiceChannel.id, Random.item(AUTO_LEAVE_EFFECTS));
+      await this.effect(this._voiceChannel.id, Random.item(AUTO_LEAVE_EFFECTS), true);
     }
 
     this._voiceChannel.leave();
