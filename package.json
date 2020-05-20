@@ -22,7 +22,7 @@
     "cheerio": "^1.0.0-rc.3",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
-    "ffmpeg-static": "^4.2.1",
+    "ffmpeg-static": "^4.2.2",
     "is-reachable": "^4.0.0",
     "moment": "^2.25.3",
     "node-fetch": "^2.6.0",
