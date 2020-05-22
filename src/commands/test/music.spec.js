@@ -14,8 +14,8 @@ describe('Commands(Music)', () => {
         title: chance.string(),
         isCurrentSong: true,
         timeRemaining: chance.integer({
-          min: 60001,
-          max: 69999,
+          min: 61000,
+          max: 69000,
         }),
       }, {
         title: chance.string(),
