@@ -1,6 +1,6 @@
-import { expect } from './test-utils.js';
+import { expect } from './test-utils';
 
-import { Fetch } from '../fetch.js';
+import { Fetch } from '../fetch';
 
 describe('Utils(Fetch)', () => {
   describe('func(Fetch)', () => {

@@ -1,5 +1,5 @@
-import * as Concat from '../utils/concat.js';
-import { Random } from '../utils/random.js';
+import * as Concat from '../utils/concat';
+import { Random } from '../utils/random';
 
 export const roll = {
   name: 'roll',

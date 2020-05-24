@@ -1,7 +1,7 @@
 import outdent from 'outdent';
 
-import { concat } from '../utils/concat.js';
-import * as Duration from '../utils/duration.js';
+import { concat } from '../utils/concat';
+import * as Duration from '../utils/duration';
 
 export const join = {
   name: 'join',

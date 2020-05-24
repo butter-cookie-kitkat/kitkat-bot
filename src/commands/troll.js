@@ -1,4 +1,4 @@
-import { ToggleTroll } from '../services/troll.js';
+import { ToggleTroll } from '../services/troll';
 
 export const troll = {
   name: 'troll',

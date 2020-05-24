@@ -1,5 +1,5 @@
-import { chance, expect } from '../../utils/test/test-utils.js';
-import { RS3, OSRS } from '../runescape.js';
+import { chance, expect } from '../../utils/test/test-utils';
+import { RS3, OSRS } from '../runescape';
 
 describe('Service(RuneScape)', () => {
   describe('class(RS3)', () => {

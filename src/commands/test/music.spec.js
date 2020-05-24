@@ -1,5 +1,5 @@
-import { chance, expect, testable, sinon } from '../../utils/test/test-utils.js';
-import { queue } from '../music.js';
+import { chance, expect, testable, sinon } from '../../utils/test/test-utils';
+import { queue } from '../music';
 
 describe('Commands(Music)', () => {
   afterEach(() => {

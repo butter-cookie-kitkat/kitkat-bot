@@ -1,6 +1,6 @@
-import { expect } from './test-utils.js';
+import { expect } from './test-utils';
 
-import { humanize } from '../duration.js';
+import { humanize } from '../duration';
 
 describe('Utils(Duration)', () => {
   describe('func(humanize)', () => {

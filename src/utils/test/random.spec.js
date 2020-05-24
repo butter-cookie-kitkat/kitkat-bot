@@ -1,8 +1,8 @@
 import sinon from 'sinon';
 
-import { chance, expect } from './test-utils.js';
+import { chance, expect } from './test-utils';
 
-import { Random } from '../random.js';
+import { Random } from '../random';
 
 describe('Utils(Random)', () => {
   afterEach(() => {

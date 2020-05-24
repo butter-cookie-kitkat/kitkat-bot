@@ -1,10 +1,10 @@
 import outdent from 'outdent';
-import { client } from '../utils/discord.js';
-import * as Wait from '../utils/wait.js';
+import { client } from '../utils/discord';
+import * as Wait from '../utils/wait';
 
-import * as Status from '../utils/status.js';
+import * as Status from '../utils/status';
 
-import { ping } from '../utils/ping.js';
+import { ping } from '../utils/ping';
 
 export async function periodicallyRefreshStatuses(channelID, servers) {
   if (!channelID) {

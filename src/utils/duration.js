@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { concat } from './concat.js';
+import { concat } from './concat';
 
 export function humanize(milliseconds) {
   const duration = moment.duration(milliseconds);

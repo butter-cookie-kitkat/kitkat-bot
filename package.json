@@ -1,12 +1,11 @@
 {
   "name": "discord-bot",
   "version": "1.0.0",
-  "type": "module",
   "private": true,
   "license": "MIT",
   "main": "src/bot.js",
   "scripts": {
-    "start": "node .",
+    "start": "node -r esm .",
     "test": "mocha",
     "test:coverage": "nyc mocha",
     "test:tdd": "mocha --watch",
@@ -22,6 +21,7 @@
     "cheerio": "^1.0.0-rc.3",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
+    "esm": "^3.2.25",
     "ffmpeg-static": "^4.2.2",
     "is-reachable": "^4.0.0",
     "moment": "^2.26.0",
@@ -55,6 +55,5 @@
     "*.json": [
       "git add --force"
     ]
-  },
-  "mocha": {}
+  }
 }

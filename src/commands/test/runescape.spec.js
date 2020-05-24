@@ -1,6 +1,6 @@
-import { RS3, OSRS } from '../../services/runescape.js';
-import { chance, expect, testable, sinon } from '../../utils/test/test-utils.js';
-import { ge } from '../runescape.js';
+import { RS3, OSRS } from '../../services/runescape';
+import { chance, expect, testable, sinon } from '../../utils/test/test-utils';
+import { ge } from '../runescape';
 
 describe('Commands(RuneScape)', () => {
   afterEach(() => {

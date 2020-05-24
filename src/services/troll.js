@@ -1,4 +1,4 @@
-import { Random } from '../utils/random.js';
+import { Random } from '../utils/random';
 
 let activeTroll;
 

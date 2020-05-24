@@ -2,9 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import ytdl from 'ytdl-core-discord';
 import DiscordJS from 'discord.js'; // eslint-disable-line no-unused-vars
-import { DiscordError } from './discord.js';
-import * as Debounce from '../utils/debounce.js';
-import { Random } from '../utils/random.js';
+import { DiscordError } from './errors';
+import * as Debounce from '../utils/debounce';
+import { Random } from '../utils/random';
 
 export const AUTO_LEAVE_EFFECTS = [
   'faku',

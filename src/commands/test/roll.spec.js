@@ -1,6 +1,6 @@
-import { Random } from '../../utils/random.js';
-import { chance, expect, testable, sinon } from '../../utils/test/test-utils.js';
-import { roll, rolld4, rolld6, rolld8, rolld12, rolld20, rolld100 } from '../roll.js';
+import { Random } from '../../utils/random';
+import { chance, expect, testable, sinon } from '../../utils/test/test-utils';
+import { roll, rolld4, rolld6, rolld8, rolld12, rolld20, rolld100 } from '../roll';
 
 describe('Commands(Roll)', () => {
   afterEach(() => {

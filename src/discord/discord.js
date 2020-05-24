@@ -1,6 +1,6 @@
 import DiscordJS from 'discord.js';
-import { Channel } from './channel.js';
-import { Music } from './music.js';
+import { Channel } from './channel';
+import { Music } from './music';
 
 export class Discord {
   constructor(token) {

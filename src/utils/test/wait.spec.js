@@ -1,5 +1,5 @@
-import { wait } from '../wait.js';
-import { expect } from './test-utils.js';
+import { wait } from '../wait';
+import { expect } from './test-utils';
 
 describe('Utils(Wait)', () => {
   describe('func(wait)', () => {

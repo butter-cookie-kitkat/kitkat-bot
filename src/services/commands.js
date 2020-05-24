@@ -1,6 +1,6 @@
 import DiscordJS from 'discord.js'; // eslint-disable-line no-unused-vars
-import { client } from '../utils/discord.js';
-import { commands } from '../commands/index.js';
+import { client } from '../utils/discord';
+import { commands } from '../commands/index';
 import outdent from 'outdent';
 
 export function FindCommand(name) {

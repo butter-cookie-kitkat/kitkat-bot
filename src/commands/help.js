@@ -1,5 +1,5 @@
 import outdent from 'outdent';
-import { concat } from '../utils/concat.js';
+import { concat } from '../utils/concat';
 
 function formatExample(name, args) {
   const example = concat(

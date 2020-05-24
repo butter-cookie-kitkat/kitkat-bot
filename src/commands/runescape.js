@@ -1,6 +1,6 @@
 import AsciiTable from 'ascii-table';
 import outdent from 'outdent';
-import { RS3, OSRS } from '../services/runescape.js';
+import { RS3, OSRS } from '../services/runescape';
 
 function CreateTable({ columns, results }) {
   const table = new AsciiTable();

@@ -1,6 +1,6 @@
 import cheerio from 'cheerio';
-import { Fetch } from '../utils/fetch.js';
-import { getText } from '../utils/cheerio.js';
+import { Fetch } from '../utils/fetch';
+import { getText } from '../utils/cheerio';
 
 export const ITEM = 'item';
 export const MEMBERS = 'members';

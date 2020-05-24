@@ -1,11 +1,11 @@
-import * as Normalize from '../utils/normalize.js';
+import * as Normalize from '../utils/normalize';
 
-import helpCommands from './help.js';
-import rollCommands from './roll.js';
-import musicCommands from './music.js';
-import runescapeCommands from './runescape.js';
-import trollCommands from './troll.js';
-import debugCommands from './debug.js';
+import helpCommands from './help';
+import rollCommands from './roll';
+import musicCommands from './music';
+import runescapeCommands from './runescape';
+import trollCommands from './troll';
+import debugCommands from './debug';
 
 export const commands = Normalize.commands([
   ...helpCommands,
