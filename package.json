@@ -33,7 +33,7 @@
     "babel-eslint": "^10.1.0",
     "chai": "^4.2.0",
     "chance": "^1.1.5",
-    "eslint": "^7.0.0",
+    "eslint": "^7.1.0",
     "eslint-config-google": "^0.14.0",
     "husky": "^4.2.5",
     "jest-cli": "^26.0.1",
