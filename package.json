@@ -27,7 +27,7 @@
     "moment": "^2.26.0",
     "node-fetch": "^2.6.0",
     "outdent": "^0.7.1",
-    "ytdl-core": "^2.1.5",
+    "ytdl-core": "^3.0.0",
     "ytdl-core-discord": "^1.2.0"
   },
   "devDependencies": {
