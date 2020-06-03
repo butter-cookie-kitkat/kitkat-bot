@@ -6,7 +6,7 @@ import * as Duration from '../utils/duration';
 export const join = {
   name: 'join',
   description: 'Joins the Voice Chat.',
-  command: async ({ client, message }) => {
+  exec: async ({ client, message }) => {
     if (message.member.voice.channel) {
       await client.music.join(message.member.voice.channelID);
     } else {
@@ -18,7 +18,7 @@ export const join = {
 export const leave = {
   name: 'leave',
   description: 'Leaves the Voice Chat.',
-  command: async ({ client }) => {
+  exec: async ({ client }) => {
     await client.music.leave();
   },
 };
@@ -26,7 +26,7 @@ export const leave = {
 export const skip = {
   name: 'skip',
   description: 'Skips the current songs.',
-  command: async ({ client }) => {
+  exec: async ({ client }) => {
     await client.music.skip();
   },
 };
@@ -37,7 +37,9 @@ export const effect = {
   args: {
     name: 'The sound effect name',
   },
-  command: async ({ client, message }, name) => {
+  exec: async ({ client, message }, args) => {
+    const [, name] = args._;
+
     await client.music.effect(message.member.voice.channel.id, name);
   },
 };
@@ -45,7 +47,7 @@ export const effect = {
 export const effects = {
   name: 'effects',
   description: 'Outputs a list of the available sound effects.',
-  command: async ({ client, message }) => {
+  exec: async ({ client, message }) => {
     await message.channel.send(outdent`
       Here's a list of all the available sound effects.
 
@@ -58,18 +60,25 @@ export const play = {
   name: 'play',
   description: 'Adds a song to the queue.',
   args: {
-    url: 'The song url',
-    now: 'Whether the song should be played immediately.',
+    url: {
+      type: String,
+      description: 'The song url',
+      positional: true,
+    },
+    now: {
+      type: Boolean,
+      description: 'Whether the song should be played immediately.',
+    },
   },
-  command: async ({ client, message, ...extraInfo }, url, now) => {
+  exec: async ({ client, message, ...extraInfo }, args) => {
     if (!client.music.isInVoiceChannel) {
-      await join.command({ client, message, ...extraInfo });
+      await join.exec({ client, message, ...extraInfo });
     }
 
-    if (now) {
-      const song = await client.music.unshift(url);
+    const [, url] = args._;
 
-      await client.music.play(song);
+    if (args.now) {
+      const song = await client.music.unshift(url);
 
       await message.channel.send(`Now playing \`${song.title}\`!`);
     } else {
@@ -83,7 +92,7 @@ export const play = {
 export const resume = {
   name: 'resume',
   description: 'Resumes the current song.',
-  command: async ({ client }) => {
+  exec: async ({ client }) => {
     await client.music.resume();
   },
 };
@@ -91,7 +100,7 @@ export const resume = {
 export const pause = {
   name: 'pause',
   description: 'Pauses the current song.',
-  command: async ({ client }) => {
+  exec: async ({ client }) => {
     await client.music.pause();
   },
 };
@@ -106,7 +115,7 @@ function formatSong({ isCurrentSong, number, title, timeRemaining }) {
 export const queue = {
   name: 'queue',
   description: 'Lists all of the songs currently in the queue.',
-  command: async ({ client, message }) => {
+  exec: async ({ client, message }) => {
     if (client.music.songs.length > 0) {
       message.channel.send(outdent`
         Here's a list of the current songs in the queue.

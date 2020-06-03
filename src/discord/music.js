@@ -88,9 +88,7 @@ export class Music {
 
     this._songs.unshift(song);
 
-    if (this._songs.length === 1) {
-      this.play(this._songs[0]);
-    }
+    this.play(song);
 
     return song;
   }

@@ -1,7 +1,7 @@
 export const kill = {
   name: 'kill',
   description: 'Kills the bot.',
-  command: async () => {
+  exec: async () => {
     console.log('Killing the bot.');
     process.exit();
   },

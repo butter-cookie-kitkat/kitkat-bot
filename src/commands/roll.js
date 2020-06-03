@@ -7,7 +7,9 @@ export const roll = {
   args: {
     max: 'The maximum dice value.',
   },
-  command: async ({ message }, max) => {
+  exec: async ({ message }, args) => {
+    const [, max] = args._;
+
     await message.reply(`You rolled a ${Random.integer(1, max)}.`);
   },
 };
@@ -16,8 +18,8 @@ export const rolld4 = {
   name: 'rolld4',
   aliases: ['roll4'],
   description: 'Roll a d4.',
-  command: async (info) => {
-    await roll.command(info, 4);
+  exec: async (info) => {
+    await roll.exec(info, 4);
   },
 };
 
@@ -25,8 +27,8 @@ export const rolld6 = {
   name: 'rolld6',
   aliases: ['roll6'],
   description: 'Roll a d6.',
-  command: async (info) => {
-    await roll.command(info, 6);
+  exec: async (info) => {
+    await roll.exec(info, 6);
   },
 };
 
@@ -34,8 +36,8 @@ export const rolld8 = {
   name: 'rolld8',
   aliases: ['roll8'],
   description: 'Roll a d8.',
-  command: async (info) => {
-    await roll.command(info, 8);
+  exec: async (info) => {
+    await roll.exec(info, 8);
   },
 };
 
@@ -43,8 +45,8 @@ export const rolld12 = {
   name: 'rolld12',
   aliases: ['roll12'],
   description: 'Roll a d12.',
-  command: async (info) => {
-    await roll.command(info, 12);
+  exec: async (info) => {
+    await roll.exec(info, 12);
   },
 };
 
@@ -52,7 +54,7 @@ export const rolld20 = {
   name: 'rolld20',
   aliases: ['roll20'],
   description: 'Roll a d20.',
-  command: async ({ message }) => {
+  exec: async ({ message }) => {
     const result = Random.integer(1, 20);
 
     await message.reply(Concat.concat(
@@ -66,8 +68,8 @@ export const rolld100 = {
   name: 'rolld100',
   aliases: ['roll100'],
   description: 'Roll a d100.',
-  command: async (info) => {
-    await roll.command(info, 100);
+  exec: async (info) => {
+    await roll.exec(info, 100);
   },
 };
 
@@ -79,7 +81,7 @@ export default [
   rolld12,
   rolld20,
   rolld100,
-].map((command) => ({
-  ...command,
+].map((exec) => ({
+  ...exec,
   group: 'Roll',
 }));

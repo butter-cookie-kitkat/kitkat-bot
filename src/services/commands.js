@@ -1,12 +1,14 @@
 import DiscordJS from 'discord.js'; // eslint-disable-line no-unused-vars
+import parser from 'yargs-parser';
 import { client } from '../utils/discord';
 import { commands } from '../commands/index';
 import outdent from 'outdent';
+import { argsToYargs } from '../utils/args-to-yargs';
 
 export function FindCommand(name) {
   const command = Object.values(commands).find((command) => command.name === name || command.aliases.includes(name));
 
-  if (command) return command.command;
+  if (command) return command;
   else return null;
 }
 
@@ -20,7 +22,7 @@ export async function ProcessCommand(message) {
 
   const [, rawCommand] = match;
 
-  const [name, ...args] = rawCommand.split(' ');
+  const [name] = parser(rawCommand)._;
 
   console.log(`Processing command... (${rawCommand})`);
 
@@ -30,8 +32,10 @@ export async function ProcessCommand(message) {
 
   console.log(`Match found, executing! (${rawCommand})`);
 
+  console.log(parser(rawCommand, argsToYargs(command.args)));
+
   try {
-    await command({ client, message }, ...args);
+    await command.exec({ client, message }, parser(rawCommand, argsToYargs(command.args)));
   } catch (error) {
     console.error(error);
 

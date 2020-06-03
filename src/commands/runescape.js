@@ -19,8 +19,9 @@ export const ge = {
   args: {
     name: 'The item name to search for.',
   },
-  command: async ({ message }, ...args) => {
-    const name = args.join(' ');
+  exec: async ({ message }, args) => {
+    const name = args._.splice(1).join(' ');
+
     const [rs3, osrs] = await Promise.all([
       RS3.search(name),
       OSRS.search(name),
