@@ -1,3 +1,4 @@
+import parser from 'yargs-parser';
 import * as Concat from '../utils/concat';
 import { Random } from '../utils/random';
 
@@ -19,7 +20,7 @@ export const rolld4 = {
   aliases: ['roll4'],
   description: 'Roll a d4.',
   exec: async (info) => {
-    await roll.exec(info, 4);
+    await roll.exec(info, parser(`roll ${4}`));
   },
 };
 
@@ -28,7 +29,7 @@ export const rolld6 = {
   aliases: ['roll6'],
   description: 'Roll a d6.',
   exec: async (info) => {
-    await roll.exec(info, 6);
+    await roll.exec(info, parser(`roll ${6}`));
   },
 };
 
@@ -37,7 +38,7 @@ export const rolld8 = {
   aliases: ['roll8'],
   description: 'Roll a d8.',
   exec: async (info) => {
-    await roll.exec(info, 8);
+    await roll.exec(info, parser(`roll ${8}`));
   },
 };
 
@@ -46,7 +47,7 @@ export const rolld12 = {
   aliases: ['roll12'],
   description: 'Roll a d12.',
   exec: async (info) => {
-    await roll.exec(info, 12);
+    await roll.exec(info, parser(`roll ${12}`));
   },
 };
 
@@ -69,7 +70,7 @@ export const rolld100 = {
   aliases: ['roll100'],
   description: 'Roll a d100.',
   exec: async (info) => {
-    await roll.exec(info, 100);
+    await roll.exec(info, parser(`roll ${100}`));
   },
 };
 

@@ -1,9 +1,11 @@
+import parser from 'yargs-parser';
 import chai from 'chai';
 import Chance from 'chance';
 import Sinon from 'sinon';
+import { concat } from '../concat';
 
 export function testable(command) {
-  return async (infoOverrides, ...args) => {
+  return async (infoOverrides, args) => {
     const info = {
       client: {
         music: {
@@ -19,7 +21,7 @@ export function testable(command) {
       ...infoOverrides,
     };
 
-    await command.command(info, ...args);
+    await command.exec(info, parser(concat(command.name, args)));
 
     return info;
   };
