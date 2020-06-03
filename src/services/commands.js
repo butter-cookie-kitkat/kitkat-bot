@@ -4,13 +4,7 @@ import { client } from '../utils/discord';
 import { commands } from '../commands/index';
 import outdent from 'outdent';
 import { argsToYargs } from '../utils/args-to-yargs';
-
-export function FindCommand(name) {
-  const command = Object.values(commands).find((command) => command.name === name || command.aliases.includes(name));
-
-  if (command) return command;
-  else return null;
-}
+import { FindCommand } from '../utils/commands';
 
 /**
  * @param {DiscordJS.Message} message
@@ -26,13 +20,11 @@ export async function ProcessCommand(message) {
 
   console.log(`Processing command... (${rawCommand})`);
 
-  const command = FindCommand(name);
+  const command = FindCommand(commands, name);
 
   if (!command) return;
 
   console.log(`Match found, executing! (${rawCommand})`);
-
-  console.log(parser(rawCommand, argsToYargs(command.args)));
 
   try {
     await command.exec({ client, message }, parser(rawCommand, argsToYargs(command.args)));

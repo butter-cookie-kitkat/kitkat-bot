@@ -16,10 +16,6 @@ export function getText(element) {
         output.push(child.attribs.alt);
       }
 
-      // if (child.type === 'tag' && child.name === 'img') {
-      //   console.log(child);
-      // }
-
       return output;
     }, [])
     .filter((item) => Boolean(item)).join(' ');

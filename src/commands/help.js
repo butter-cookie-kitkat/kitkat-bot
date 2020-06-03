@@ -1,57 +1,33 @@
 import outdent from 'outdent';
-import { concat } from '../utils/concat';
-
-function formatExample(name, args) {
-  const example = concat(
-    `.${name}`,
-    ...Object.entries(args).filter(([, arg]) => arg.positional).map(([name]) => `<${name}>`),
-  );
-
-  return `\`${example}\``;
-}
-
-function formatGroup({ name, commands }) {
-  const filteredCommands = commands.filter((command) => !command.hidden);
-
-  if (name === '.') {
-    return filteredCommands.map((command) => formatCommand(command)).join('\r\n');
-  }
-
-  return outdent`
-    **${name}**
-
-      ${filteredCommands.map((command) => formatCommand(command)).join('\r\n  ')}
-  `;
-}
-
-function formatCommand({ name, args, description }) {
-  return `${formatExample(name, args)} - ${description}`;
-}
+import { HelpFormatter } from '../utils/help';
+import { FindCommand } from '../utils/commands';
 
 export const help = {
   name: 'help',
   aliases: ['halp'],
+  args: {
+    command: 'Quick help on <command>',
+  },
   description: 'Display a list of the available commands.',
-  exec: async ({ message }) => {
-    const { commands } = await import('./index.js');
-    const groupsOrder = [];
-    const groups = commands.reduce((groups, command) => {
-      const group = command.group || 'General';
-      groups[group] = groups[group] || [];
-      groups[group].push(command);
+  exec: async ({ message }, args) => {
+    const { commands, order, groups } = await import('./index.js');
 
-      if (!groupsOrder.includes(group)) {
-        groupsOrder.push(group);
-      }
+    const [, name] = args._;
+    const command = FindCommand(commands, name);
 
-      return groups;
-    }, {});
+    if (command) {
+      await message.reply(outdent`
+        Here's some information about that command!
 
-    await message.reply(outdent`
-      Here's a list of the available commands!
+        ${HelpFormatter.command(command, true)}
+      `);
+    } else {
+      await message.reply(outdent`
+        Here's a list of the available commands!
 
-      ${groupsOrder.map((name) => formatGroup({ name, commands: groups[name] })).join('\r\n\r\n')}
-    `);
+        ${order.map((name) => HelpFormatter.group(name, groups[name])).join('\r\n\r\n')}
+      `);
+    }
   },
 };
 
