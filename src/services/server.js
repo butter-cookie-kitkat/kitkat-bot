@@ -1,10 +1,13 @@
 import outdent from 'outdent';
+import { Changelog } from './changelog';
 import { client } from '../utils/discord';
 import * as Wait from '../utils/wait';
 
 import * as Status from '../utils/status';
 
 import { ping } from '../utils/ping';
+
+const MARKER = '`kitkat-bot.servers.refresh`';
 
 export async function periodicallyRefreshStatuses(channelID, servers) {
   if (!channelID) {
@@ -42,12 +45,14 @@ export async function refreshStatuses(channelID, servers) {
         There are no active servers at this time...
       `}
 
-      \`kitkat-bot.servers.refresh\`
+      ${await Changelog.changelog()}
+
+      ${MARKER}
     `;
 
     const channel = await client.channel(channelID);
 
-    const existingMessage = await channel.findMessage((message) => message.author.id === client.userID && message.content.includes('`kitkat-bot.servers.refresh`'));
+    const existingMessage = await channel.findMessage((message) => message.author.id === client.userID && message.content.includes(MARKER));
 
     if (existingMessage) {
       await existingMessage.edit(content);
