@@ -1,4 +1,5 @@
 import outdent from 'outdent';
+import ytlist from 'youtube-playlist';
 
 import { concat } from '../utils/concat';
 import * as Duration from '../utils/duration';
@@ -69,6 +70,10 @@ export const play = {
       type: Boolean,
       description: 'Whether the song should be played immediately.',
     },
+    playlist: {
+      type: Boolean,
+      description: 'Whether the whole playlist should be added.',
+    },
   },
   exec: async ({ client, message, ...extraInfo }, args) => {
     if (!client.music.isInVoiceChannel) {
@@ -77,14 +82,27 @@ export const play = {
 
     const [, url] = args._;
 
+    let name, urls;
+    if (args.playlist) {
+      [name, urls] = await ytlist(url).then((res) => ([res.data.name, res.data.playlist.filter(({ isPrivate }) => !isPrivate).map(({ url }) => url)]));
+    } else {
+      urls = [url];
+    }
+
     if (args.now) {
-      const song = await client.music.unshift(url);
+      const song = await client.music.unshift(...urls);
 
       await message.channel.send(`Now playing \`${song.title}\`!`);
     } else {
-      const song = await client.music.push(url);
+      const songs = await client.music.push(...urls);
 
-      await message.channel.send(`\`${song.title}\` has been added to the queue!`);
+      if (songs.length === 1) {
+        const song = songs[0];
+
+        await message.channel.send(`\`${song.title}\` has been added to the queue!`);
+      } else {
+        await message.channel.send(`The \`${name}\` Playlist has been added to the queue! (${songs.length} songs)`);
+      }
     }
   },
 };
@@ -116,11 +134,14 @@ export const queue = {
   name: 'queue',
   description: 'Lists all of the songs currently in the queue.',
   exec: async ({ client, message }) => {
+    console.log('queue');
     if (client.music.songs.length > 0) {
+      const songs = client.music.songs.slice(0, 10);
       message.channel.send(outdent`
         Here's a list of the current songs in the queue.
 
-        ${client.music.songs.map((song, index) => formatSong({ number: index + 1, ...song })).join('\n')}
+        ${songs.map((song, index) => formatSong({ number: index + 1, ...song })).join('\n')}
+        ${songs.length < client.music.songs.length ? '...' : ''}
       `);
     } else {
       message.channel.send('There are currently no songs in the queue.');

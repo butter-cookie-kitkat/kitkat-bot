@@ -30,6 +30,7 @@ export class Music {
     /** @type {DiscordJS.VoiceChannel} */
     this._voiceChannel = null;
     this._songs = [];
+    this._playing = false;
   }
 
   /**
@@ -78,54 +79,90 @@ export class Music {
     this._connection.dispatcher.end();
   }
 
-  async unshift(url) {
-    const songInfo = await ytdl.getInfo(url);
+  async urlToSong(url) {
+    const info = await ytdl.getBasicInfo(url);
 
-    const song = {
-      title: songInfo.title,
-      url: songInfo.video_url,
-    };
-
-    this._songs.unshift(song);
-
-    this.play(song);
-
-    return song;
-  }
-
-  async push(url) {
-    Debounce.clear('auto-leave');
-
-    const songInfo = await ytdl.getInfo(url);
-
-    const song = {
-      title: songInfo.title,
-      url: songInfo.video_url,
-      duration: Number(songInfo.length_seconds) * 1000,
+    return {
+      title: info.title,
+      url: info.video_url,
+      duration: Number(info.length_seconds) * 1000,
       timeElapsed: 0,
     };
+  }
 
-    this._songs.push(song);
+  async urlsToSongs(...urls) {
+    return new Promise((resolve, reject) => {
+      const response = {
+        finished: Promise.all(urls.map(async (url, index) => {
+          try {
+            const song = await this.urlToSong(url);
 
-    if (this._songs.length === 1) {
-      this.play(this._songs[0]);
+            if (index === 0) {
+              response.song = song;
+              resolve(response);
+            }
+
+            return song;
+          } catch (error) {
+            reject(error);
+          }
+        })),
+      };
+    });
+  }
+
+  async unshift(...urls) {
+    Debounce.clear('auto-leave');
+
+    const { song, finished } = await this.urlsToSongs(...urls);
+
+    await this.play(song);
+
+    const songs = await finished;
+
+    this._songs = [
+      ...songs,
+      this._songs,
+    ];
+
+    return songs;
+  }
+
+  async push(...urls) {
+    Debounce.clear('auto-leave');
+
+    const { song, finished } = await this.urlsToSongs(...urls);
+
+    if (!this._playing) {
+      await this.play(song);
     }
 
-    return song;
+    const songs = await finished;
+
+    this._songs = [
+      ...this._songs,
+      ...songs,
+    ];
+
+    return songs;
   }
 
   async play(song) {
     if (song) {
+      this._playing = true;
+
       const dispatcher = this._connection.play(await ytdl(song.url, {
         highWaterMark: 1<<25,
       }), { type: 'opus' });
 
       dispatcher
         .on('finish', () => {
+          this._playing = false;
           this._songs.shift();
           this.play(this._songs[0]);
         })
         .on('error', (error) => {
+          this._playing = false;
           this._songs.shift();
           this.play(this._songs[0]);
           console.error(error);
