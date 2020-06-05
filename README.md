@@ -10,7 +10,7 @@
 
 - You'll need to create a `.env` file at the root of the project with the contents provided [here](https://github.com/butter-cookie-kitkat/developer-guide/blob/master/kitkat-bot/.env)
 
-- After that it's a simple as running `npm start`!
+- After that it's a simple as running `npm run start`!
 
 #### Adding Sound Effects
 

@@ -1,0 +1,292 @@
+import { outdent } from 'outdent';
+
+import { DiscordBot } from '../core';
+
+import { Effects } from '../services/effects';
+import { Messages } from '../services/messages';
+
+import { loading } from '../core/utils/loading';
+import { Songs } from '../services/songs';
+import { YouTube } from '../services/youtube';
+import { Concat } from '../utils/concat';
+
+/**
+ * Adds a song to the queue.
+ *
+ * @param {DiscordBot} bot - the discord bot.
+ */
+export function play(bot) {
+  bot.command('play <url>', async ({ message, args }) => {
+    if (!message.member.voice.channelID) {
+      return await message.reply(Messages.NOT_IN_VOICE_CHANNEL);
+    }
+
+    await bot.voice.join(message.member.voice.channelID);
+
+    if (args.playlist) {
+      const playlist = await YouTube.getPlaylist(args.url);
+      await Songs.add(...playlist.songs);
+
+      await message.channel.send(`The \`${playlist.name}\` Playlist has been added to the queue! (${playlist.songs.length} songs)`);
+    } else {
+      const song = await YouTube.getInfo(args.url);
+      await Songs.add(song);
+
+      if (bot.voice.isPlaying) {
+        await message.react('👍');
+
+        await message.channel.send(outdent`
+          \`${song.title}\` has been added to the queue!
+        `);
+      }
+    }
+
+    if (!bot.voice.isPlaying) {
+      const song = await Songs.current();
+
+      await loading({
+        message,
+        promise: bot.voice.play(song.url),
+      });
+
+      await message.channel.send(outdent`
+        \`${song.title}\` is now playing!
+      `);
+    }
+  }).help({
+    name: 'play',
+    description: 'Adds a song to the queue.',
+    group: 'Music',
+    args: {
+      url: {
+        type: 'string',
+        description: 'The song url',
+      },
+      now: {
+        type: 'boolean',
+        description: 'Whether the song should be played immediately.',
+      },
+      playlist: {
+        type: 'boolean',
+        description: 'Whether the whole playlist should be added.',
+      },
+    },
+  });
+}
+
+/**
+ * Lists all of the songs in the queue.
+ *
+ * @param {DiscordBot} bot - the discord bot.
+ */
+export function queue(bot) {
+  bot.command('queue', async ({ message }) => {
+    const {
+      songs,
+      hasMore,
+    } = await Songs.list({ limit: 10 });
+    if (songs.length > 0) {
+      await message.channel.send(outdent`
+        Here's a list of the current songs in the queue.
+
+        ${songs.map((song, index) => Concat.join(`${index + 1}) \`${song.title}\``, index === 0 && `<-- Current Track`)).join('\n')}
+        ${hasMore ? '...' : ''}
+      `);
+    } else {
+      await message.channel.send('There are currently no songs in the queue.');
+    }
+  }).help({
+    name: 'queue',
+    group: 'Music',
+    description: 'Lists all of the songs in the queue.',
+  });
+}
+
+/**
+ * Adds a song to the queue.
+ *
+ * @param {DiscordBot} bot - the discord bot.
+ */
+export function skip(bot) {
+  bot.command('skip', async ({ message }) => {
+    if (!bot.voice.isPlaying) {
+      return await message.reply(Messages.NOT_PLAYING_AUDIO);
+    }
+
+    bot.voice.stop();
+  }).help({
+    name: 'skip',
+    description: 'Adds a song to the queue.',
+    group: 'Music',
+    args: {
+      url: {
+        type: 'string',
+        description: 'The song url',
+      },
+      now: {
+        type: 'boolean',
+        description: 'Whether the song should be played immediately.',
+      },
+      playlist: {
+        type: 'boolean',
+        description: 'Whether the whole playlist should be added.',
+      },
+    },
+  });
+}
+
+/**
+ * Lists out the available commands.
+ *
+ * @param {DiscordBot} bot - the discord bot.
+ */
+export function effects(bot) {
+  bot.command('effects', async ({ message }) => {
+    await message.channel.send(outdent`
+      Here's a list of all the available sound effects.
+
+      ${Object.keys(Effects.effects).map((name) => `- ${name}`).join('\r\n')}
+    `);
+  }).help({
+    name: 'effects',
+    description: 'Lists all the available effects.',
+    group: 'Music',
+  });
+}
+
+/**
+ * Plays a sound effect.
+ *
+ * @param {DiscordBot} bot - the discord bot.
+ */
+export function effect(bot) {
+  bot.command('effect <name>', async ({ message, args }) => {
+    const effect = Effects.effect(args.name);
+
+    if (!effect) {
+      return await message.reply(Messages.BAD_EFFECT_NAME);
+    }
+
+    if (!message.member.voice.channelID) {
+      return await message.reply(Messages.NOT_IN_VOICE_CHANNEL);
+    }
+
+    if (!bot.voice.isConnected) {
+      await bot.voice.join(message.member.voice.channelID);
+    }
+
+    await Promise.all([
+      message.react('👍'),
+      bot.voice.play(effect.path),
+    ]);
+  }).help({
+    name: 'effect',
+    description: 'Plays a sound effect with the given name.',
+    group: 'Music',
+    args: {
+      name: 'The sound effect name',
+    },
+  });
+}
+
+/**
+ * Joins the users voice channel.
+ *
+ * @param {DiscordBot} bot - the discord bot.
+ */
+export function join(bot) {
+  bot.command('join', async ({ message }) => {
+    if (!message.member.voice.channelID) {
+      return await message.reply(Messages.NOT_IN_VOICE_CHANNEL);
+    }
+
+    await Promise.all([
+      message.react('👍'),
+      bot.voice.join(message.member.voice.channelID),
+    ]);
+  }).help({
+    name: 'join',
+    description: 'Joins the Voice Chat.',
+    group: 'Music',
+  });
+}
+
+/**
+ * Leaves the users voice channel.
+ *
+ * @param {DiscordBot} bot - the discord bot.
+ */
+export function leave(bot) {
+  bot.command('leave', async ({ message }) => {
+    if (!bot.voice.isConnected) {
+      return await message.reply(Messages.BOT_NOT_IN_VOICE_CHANNEL);
+    }
+
+    await Promise.all([
+      message.react('👍'),
+      bot.voice.leave(),
+    ]);
+  }).help({
+    name: 'leave',
+    description: 'Leaves the Voice Chat.',
+    group: 'Music',
+  });
+}
+
+/**
+ * Stops playing audio.
+ *
+ * @param {DiscordBot} bot - the discord bot.
+ */
+export function stop(bot) {
+  bot.command('stop', async ({ message }) => {
+    if (!bot.voice.isPlaying) {
+      return await message.reply(Messages.NOT_PLAYING_AUDIO);
+    }
+
+    await bot.voice.stop();
+    await Songs.clear();
+  }).help({
+    name: 'stop',
+    description: 'Stops all audio.',
+    group: 'Music',
+  });
+}
+
+/**
+ * Pauses the music.
+ *
+ * @param {DiscordBot} bot - the discord bot.
+ */
+export function pause(bot) {
+  bot.command('pause', async ({ message }) => {
+    if (!bot.voice.isPlaying) {
+      return await message.reply(Messages.NOT_PLAYING_AUDIO);
+    }
+
+    await bot.voice.pause();
+  }).help({
+    name: 'pause',
+    description: 'Pauses the music.',
+    group: 'Music',
+  });
+}
+
+/**
+ * Resumes the music.
+ *
+ * @param {DiscordBot} bot - the discord bot.
+ */
+export function resume(bot) {
+  bot.command('resume', async ({ message }) => {
+    if (!bot.voice.isPlaying) {
+      return await message.reply(Messages.NOT_PLAYING_AUDIO);
+    }
+
+    await bot.voice.resume();
+  }).help({
+    name: 'resume',
+    description: 'Resumes the music.',
+    group: 'Music',
+  });
+}

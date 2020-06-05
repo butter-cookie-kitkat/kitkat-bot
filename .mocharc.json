@@ -1,4 +1,4 @@
 {
-  "spec": "src/**/*.spec.js",
+  "spec": "bot/**/*.spec.js",
   "require": ["esm"]
 }

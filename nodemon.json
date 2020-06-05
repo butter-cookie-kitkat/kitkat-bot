@@ -1,0 +1,9 @@
+{
+  "watch": [
+    "bot",
+    ".env"
+  ],
+  "ignore": [
+    "**/test/*.spec.js"
+  ]
+}
