@@ -25,7 +25,7 @@ export function play(bot) {
 
     if (args.playlist) {
       const playlist = await YouTube.getPlaylist(args.url);
-      await Songs.add(...playlist.songs);
+      await Songs.add(message.channel.id, ...playlist.songs);
 
       if (args.now) {
         return await message.reply(Messages.STOP_TROLLING);
@@ -35,9 +35,9 @@ export function play(bot) {
     } else {
       const song = await YouTube.getInfo(args.url);
       if (args.now) {
-        await Songs.unshift(song);
+        await Songs.unshift(message.channel.id, song);
       } else {
-        await Songs.add(song);
+        await Songs.add(message.channel.id, song);
       }
 
       if (bot.voice.isPlaying && !args.now) {
@@ -56,10 +56,6 @@ export function play(bot) {
         message,
         promise: bot.voice.play(song.url),
       });
-
-      await message.channel.send(outdent`
-        \`${song.title}\` is now playing!
-      `);
     }
   }).help({
     name: 'play',

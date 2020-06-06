@@ -11,34 +11,39 @@ describe('Service(Songs)', () => {
 
   describe('func(add)', () => {
     it('should add the song to the queue', async () => {
+      const expectedChannelID = chance.string();
       const expectedSong = {
         title: chance.string(),
         url: chance.url(),
         duration: chance.integer(),
       }
 
-      const song = await Songs.add(expectedSong);
+      const song = await Songs.add(expectedChannelID, expectedSong);
 
       expect(song).deep.equals({
         ...expectedSong,
+        channelID: expectedChannelID,
         elapsed: 0,
       });
     });
 
     it('should support batching songs together', async () => {
+      const expectedChannelID = chance.string();
       const expectedSong = {
         title: chance.string(),
         url: chance.url(),
         duration: chance.integer(),
       }
 
-      const songs = await Songs.add(expectedSong, expectedSong);
+      const songs = await Songs.add(expectedChannelID, expectedSong, expectedSong);
 
       expect(songs).deep.equals([{
         ...expectedSong,
+        channelID: expectedChannelID,
         elapsed: 0,
       }, {
         ...expectedSong,
+        channelID: expectedChannelID,
         elapsed: 0,
       }]);
     });
@@ -46,8 +51,8 @@ describe('Service(Songs)', () => {
 
   describe('func(list)', () => {
     beforeEach(async () => {
-      await Songs.add({});
-      await Songs.add({});
+      await Songs.add(chance.string(), {});
+      await Songs.add(chance.string(), {});
     });
 
     it('should return a list of songs', async () => {
@@ -69,7 +74,7 @@ describe('Service(Songs)', () => {
 
   describe('func(get)', () => {
     it('should support retrieving songs by their url', async () => {
-      const expectedSong = await Songs.add({
+      const expectedSong = await Songs.add(chance.string(), {
         url: chance.url(),
       });
 
@@ -79,11 +84,11 @@ describe('Service(Songs)', () => {
 
   describe('func(current)', () => {
     it('should return the current song', async () => {
-      const expectedSong = await Songs.add({
+      const expectedSong = await Songs.add(chance.string(), {
         url: chance.url(),
       });
 
-      await Songs.add({
+      await Songs.add(chance.string(), {
         url: chance.url(),
       });
 
@@ -93,7 +98,7 @@ describe('Service(Songs)', () => {
 
   describe('func(remove)', () => {
     it('should support removing a song by its url', async () => {
-      const expectedSong = await Songs.add({
+      const expectedSong = await Songs.add(chance.string(), {
         url: chance.url(),
       });
 
@@ -108,9 +113,9 @@ describe('Service(Songs)', () => {
 
   describe('func(clear)', () => {
     it('should remove all of the songs', async () => {
-      await Songs.add({});
-      await Songs.add({});
-      await Songs.add({});
+      await Songs.add(chance.string(), {});
+      await Songs.add(chance.string(), {});
+      await Songs.add(chance.string(), {});
 
       await Songs.clear();
 

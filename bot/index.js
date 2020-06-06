@@ -20,6 +20,16 @@ bot.on('command:before', ({ message, args }) => {
   Loggers.messages(`Author: ${message.member.displayName}; Contents: ${message.content}; Args: ${JSON.stringify(args)}`);
 });
 
+bot.voice.on('start', async ({ uri }) => {
+  const song = await Songs.get(uri);
+
+  if (!song) return;
+
+  await bot.text.send(song.channelID, outdent`
+  \`${song.title}\` is now playing!
+`);
+});
+
 bot.voice.on('finish', async ({ uri, canceled }) => {
   Loggers.music(`Finished playing, "${uri}".`);
 

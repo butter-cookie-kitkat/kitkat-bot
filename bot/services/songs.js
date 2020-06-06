@@ -3,6 +3,7 @@
  * @property {string} title - the song name.
  * @property {string} url - the url.
  * @property {number} duration - the song duration. (in ms)
+ * @property {string} channelID - the channel the song request originated from.
  * @property {number} [elapsed=0] - the amount of time the song has been playing. (in ms)
  */
 
@@ -46,17 +47,23 @@ export class Songs {
     return Songs.#songs[0];
   }
 
-  /**
-   * Adds the songs to the end of the queue.
-   *
-   * @param {Song[]} songs - the songs to add.
-   * @returns {(Song[]|Song)} the updated song(s).
-   */
-  static async add(...songs) {
-    const updatedSongs = songs.map((song) => ({
+  static #format = (channelID, ...songs) => {
+    return songs.map((song) => ({
+      channelID,
       elapsed: 0,
       ...song,
     }));
+  }
+
+  /**
+   * Adds the songs to the end of the queue.
+   *
+   * @param {string} channelID - the channel the request originated from.
+   * @param {Song[]} songs - the songs to add.
+   * @returns {(Song[]|Song)} the updated song(s).
+   */
+  static async add(channelID, ...songs) {
+    const updatedSongs = Songs.#format(channelID, ...songs);
 
     Songs.#songs = Songs.#songs.concat(updatedSongs);
 
@@ -66,15 +73,12 @@ export class Songs {
   /**
    * Adds the songs to the beginning of the queue.
    *
+   * @param {string} channelID - the channel the request originated from.
    * @param  {Song[]} songs - the songs to add.
    * @returns {(Song[]|Song)} the updated song(s).
    */
-  static async unshift(...songs) {
-    const updatedSongs = songs.map((song) => ({
-      elapsed: 0,
-      ...song,
-    }));
-
+  static async unshift(channelID, ...songs) {
+    const updatedSongs = this.#format(channelID, ...songs);
 
     Songs.#songs = updatedSongs.concat(Songs.#songs);
 

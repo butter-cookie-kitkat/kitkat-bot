@@ -82,7 +82,10 @@ export class Voice extends ApiBase {
           this.emit('finish', { uri, canceled: this.isPlaying });
         })
         .once('error', (error) => reject(error))
-        .once('start', () => resolve());
+        .once('start', () => {
+          this.emit('start', { uri });
+          resolve();
+        });
     });
   }
 
