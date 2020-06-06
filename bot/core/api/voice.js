@@ -41,6 +41,10 @@ export class Voice extends ApiBase {
 
   async leave() {
     if (this.#connection) {
+      if (this.#connection.dispatcher) {
+        this.#connection.dispatcher.destroy();
+      }
+
       this.#connection.disconnect();
       this.#connection = null;
     }

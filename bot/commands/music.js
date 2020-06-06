@@ -222,6 +222,8 @@ export function leave(bot) {
       return await message.reply(Messages.BOT_NOT_IN_VOICE_CHANNEL);
     }
 
+    await Songs.clear();
+
     await Promise.all([
       message.react('👍'),
       bot.voice.leave(),
@@ -244,8 +246,8 @@ export function stop(bot) {
       return await message.reply(Messages.NOT_PLAYING_AUDIO);
     }
 
-    await bot.voice.stop();
     await Songs.clear();
+    await bot.voice.stop();
   }).help({
     name: 'stop',
     description: 'Stops all audio.',
