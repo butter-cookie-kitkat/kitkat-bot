@@ -28,7 +28,7 @@ export function play(bot) {
       await Songs.add(...playlist.songs);
 
       if (args.now) {
-        return message.channel.send(Messages.STOP_TROLLING);
+        return await message.reply(Messages.STOP_TROLLING);
       }
 
       await message.channel.send(`The \`${playlist.name}\` Playlist has been added to the queue! (${playlist.songs.length} songs)`);
@@ -121,6 +121,7 @@ export function skip(bot) {
       return await message.reply(Messages.NOT_PLAYING_AUDIO);
     }
 
+    await message.react('👍');
     bot.voice.stop();
   }).help({
     name: 'skip',
@@ -254,7 +255,11 @@ export function stop(bot) {
       return await message.reply(Messages.NOT_PLAYING_AUDIO);
     }
 
-    await Songs.clear();
+    await Promise.all([
+      message.react('👍'),
+      Songs.clear(),
+    ]);
+
     await bot.voice.stop();
   }).help({
     name: 'stop',
@@ -274,7 +279,10 @@ export function pause(bot) {
       return await message.reply(Messages.NOT_PLAYING_AUDIO);
     }
 
-    await bot.voice.pause();
+    await Promise.all([
+      message.react('👍'),
+      bot.voice.pause(),
+    ]);
   }).help({
     name: 'pause',
     description: 'Pauses the music.',
@@ -293,7 +301,10 @@ export function resume(bot) {
       return await message.reply(Messages.NOT_PLAYING_AUDIO);
     }
 
-    await bot.voice.resume();
+    await Promise.all([
+      message.react('👍'),
+      bot.voice.resume(),
+    ]);
   }).help({
     name: 'resume',
     description: 'Resumes the music.',
