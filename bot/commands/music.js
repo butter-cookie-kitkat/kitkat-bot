@@ -145,7 +145,7 @@ export function effects(bot) {
     await message.channel.send(outdent`
       Here's a list of all the available sound effects.
 
-      ${Object.keys(Effects.effects).map((name) => `- ${name}`).join('\r\n')}
+      ${Object.keys(Effects.public).map((name) => `- ${name}`).join('\r\n')}
     `);
   }).help({
     name: 'effects',
