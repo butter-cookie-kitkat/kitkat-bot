@@ -50,6 +50,7 @@ import { Normalize } from './utils/normalize';
 /**
  * @callback Listener
  * @param {Listener.Info}
+ * @returns {Promise<void>}
  */
 
 export const TYPES = {
@@ -159,8 +160,8 @@ export class Command {
    * @param {Listener.Info} info - the command information.
    * @returns {Promise<void>} the promise resolved by the listener
    */
-  exec(info) {
-    return this.#config.listener(info);
+  async exec(info) {
+    await this.#config.listener(info);
   }
 
   /**

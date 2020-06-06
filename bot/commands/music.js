@@ -33,7 +33,7 @@ export function play(bot) {
 
       await message.channel.send(`The \`${playlist.name}\` Playlist has been added to the queue! (${playlist.songs.length} songs)`);
     } else {
-      const song = await YouTube.getInfo(args.url);
+      const song = await YouTube.getVideo(args.url);
       if (args.now) {
         await Songs.unshift(message.channel.id, song);
       } else {

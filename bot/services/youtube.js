@@ -1,5 +1,5 @@
-import ytlist from 'youtube-playlist';
-import ytdl from 'ytdl-core-discord';
+import YT from 'youtube-node';
+import parse from 'url-parse';
 
 /**
  * @typedef {Object} PlaylistResponse
@@ -8,19 +8,54 @@ import ytdl from 'ytdl-core-discord';
  */
 
 export class YouTube {
+  static #api;
+
+  static get api() {
+    if (!YouTube.#api) {
+      YouTube.#api = new YT();
+      YouTube.#api.setKey(process.env.YOUTUBE_API_KEY);
+    }
+
+    return YouTube.#api;
+  }
+
+  static #formatVideo = (video) => {
+    // Playlist returns it as "contentDetails.videoId", individual returns it as "id".
+    const id = video.contentDetails.videoId || video.id;
+
+    return {
+      title: video.snippet.title,
+      url: `https://www.youtube.com/watch?v=${id}`,
+    };
+  }
+
   /**
+   * Retrieves the video associated with the given url.
    *
    * @param {string} url - the youtube url.
    * @returns {Promise<import('./songs').Song>} the video information.
    */
-  static async getInfo(url) {
-    const info = await ytdl.getBasicInfo(url);
+  static async getVideo(url) {
+    const { query } = parse(url, true);
 
-    return {
-      title: info.title,
-      url: info.video_url,
-      duration: Number(info.length_seconds) * 1000,
-    };
+    return YouTube.getVideoByID(query.v);
+  }
+
+  /**
+   * Retrieves the video associated with the given id.
+   *
+   * @param {string} id - the youtube video id.
+   * @returns {Promise<import('./songs').Song>} the video information.
+   */
+  static async getVideoByID(id) {
+    const video = await new Promise((resolve, reject) => {
+      YouTube.api.getById(id, (error, result) => {
+        if (error) reject(error);
+        else resolve(result.items[0]);
+      });
+    });
+
+    return YouTube.#formatVideo(video);
   }
 
   /**
@@ -30,17 +65,38 @@ export class YouTube {
    * @returns {Promise<PlaylistResponse>} the songs in the playlist.
    */
   static async getPlaylist(url) {
-    const playlist = await ytlist(url, ['name', 'url', 'duration']);
+    // Parse URL to get ID
+    const { query } = parse(url, true);
+
+    return YouTube.getPlaylistByID(query.list);
+  }
+
+  /**
+   * Retrieves the songs associated with a given playlist.
+   *
+   * @param {string} id - the playlist id.
+   * @returns {Promise<PlaylistResponse>} the songs in the playlist.
+   */
+  static async getPlaylistByID(id) {
+    const playlist = await new Promise((resolve, reject) => {
+      YouTube.api.getPlayListsById(id, (error, result) => {
+        if (error) reject(error);
+        else resolve(result.items[0]);
+      });
+    });
+
+    const videos = await new Promise((resolve, reject) => {
+      YouTube.api.getPlayListsItemsById(id, 100, (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      });
+    });
 
     return {
-      name: playlist.data.name,
-      songs: playlist.data.playlist
-        .filter(({ isPrivate }) => !isPrivate)
-        .map((video) => ({
-          title: video.name,
-          url: video.url.replace('https://youtube.com', 'https://www.youtube.com'),
-          duration: video.duration * 1000,
-        })),
+      name: playlist.snippet.title,
+      songs: videos.items
+        .filter(({ status }) => status.privacyStatus === 'public')
+        .map((video) => YouTube.#formatVideo(video)),
     };
   }
 }
