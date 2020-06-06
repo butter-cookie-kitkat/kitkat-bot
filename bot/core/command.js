@@ -157,9 +157,10 @@ export class Command {
    * Executes the command.
    *
    * @param {Listener.Info} info - the command information.
+   * @returns {Promise<void>} the promise resolved by the listener
    */
   exec(info) {
-    this.#config.listener(info);
+    return this.#config.listener(info);
   }
 
   /**
