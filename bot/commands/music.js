@@ -27,12 +27,20 @@ export function play(bot) {
       const playlist = await YouTube.getPlaylist(args.url);
       await Songs.add(...playlist.songs);
 
+      if (args.now) {
+        return message.channel.send(Messages.STOP_TROLLING);
+      }
+
       await message.channel.send(`The \`${playlist.name}\` Playlist has been added to the queue! (${playlist.songs.length} songs)`);
     } else {
       const song = await YouTube.getInfo(args.url);
-      await Songs.add(song);
+      if (args.now) {
+        await Songs.unshift(song);
+      } else {
+        await Songs.add(song);
+      }
 
-      if (bot.voice.isPlaying) {
+      if (bot.voice.isPlaying && !args.now) {
         await message.react('👍');
 
         await message.channel.send(outdent`
@@ -41,7 +49,7 @@ export function play(bot) {
       }
     }
 
-    if (!bot.voice.isPlaying) {
+    if (!bot.voice.isPlaying || args.now) {
       const song = await Songs.current();
 
       await loading({

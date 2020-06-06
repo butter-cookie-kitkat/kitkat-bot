@@ -21,5 +21,9 @@ export const Messages = {
     Whoa, looks like something went wrong.
     Don't worry though we're looking into it!
   `,
+
+  STOP_TROLLING: outdent`
+    Stop being a troll Senpai.
+  `,
 }
 

@@ -47,9 +47,9 @@ export class Songs {
   }
 
   /**
-   * Adds a song to the queue.
+   * Adds the songs to the end of the queue.
    *
-   * @param {Song[]} songs - the song to add.
+   * @param {Song[]} songs - the songs to add.
    * @returns {(Song[]|Song)} the updated song(s).
    */
   static async add(...songs) {
@@ -59,6 +59,24 @@ export class Songs {
     }));
 
     Songs.#songs = Songs.#songs.concat(updatedSongs);
+
+    return updatedSongs.length === 1 ? updatedSongs[0] : updatedSongs;
+  }
+
+  /**
+   * Adds the songs to the beginning of the queue.
+   *
+   * @param  {Song[]} songs - the songs to add.
+   * @returns {(Song[]|Song)} the updated song(s).
+   */
+  static async unshift(...songs) {
+    const updatedSongs = songs.map((song) => ({
+      elapsed: 0,
+      ...song,
+    }));
+
+
+    Songs.#songs = updatedSongs.concat(Songs.#songs);
 
     return updatedSongs.length === 1 ? updatedSongs[0] : updatedSongs;
   }
