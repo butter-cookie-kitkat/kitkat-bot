@@ -136,8 +136,20 @@ export class Command {
     const [, ...groups] = args._;
 
     return Object.entries(this.#help.args).reduce((output, [name, arg]) => {
-      const positionalIndex = pattern.names.indexOf(name);
-      const value = positionalIndex === -1 ? args[name] : groups[positionalIndex];
+      const positionalIndex = pattern.names.findIndex(({ name: patternName }) => name === patternName);
+
+      let value;
+      if (positionalIndex === -1) {
+        value = args[name];
+      } else {
+        const { rest } = pattern.names[positionalIndex];
+
+        if (rest) {
+          value = groups.slice(positionalIndex).join(' ');
+        } else {
+          value = groups[positionalIndex];
+        }
+      }
 
       output[name] = this.#coerce(arg.type, value || arg.default || null);
       return output;
@@ -147,11 +159,11 @@ export class Command {
   /**
    * Returns whether the given argument is positional.
    *
-   * @param {string} name - the name of the argument to test.
+   * @param {string} searchName - the name of the argument to test.
    * @returns {boolean} if the argument is positional.
    */
-  positional(name) {
-    return Boolean(this.#config.patterns.find((pattern) => pattern.names.includes(name)));
+  positional(searchName) {
+    return Boolean(this.#config.patterns.find((pattern) => pattern.names.some(({ name }) => searchName === name)));
   }
 
   /**

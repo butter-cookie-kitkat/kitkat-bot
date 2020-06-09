@@ -1,6 +1,12 @@
 /**
+ * @typedef {Object} Name
+ * @property {string} name - the name of the param.
+ * @property {boolean} rest - whether this param should include the remaining positional args.
+ */
+
+/**
  * @typedef {Object} Pattern
- * @property {string[]} names - the list of positional argument names
+ * @property {Name[]} names - the list of positional argument names
  * @property {RegExp} regex - the pattern's regular expression.
  * @property {string} original - the original format string.
  */
@@ -30,7 +36,12 @@ export class Normalize {
     const names = [];
 
     const regex = new RegExp(`^${format.replace(/<([^<>]+)>/g, (_, name) => {
-      names.push(name);
+      const rest = name.startsWith('...');
+      names.push({
+        name: rest ? name.replace(/^[.]{3}/, '') : name,
+        rest,
+      });
+
       return '';
     })}`);
 

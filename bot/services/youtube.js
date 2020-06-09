@@ -1,5 +1,6 @@
 import YT from 'youtube-node';
 import parse from 'url-parse';
+import { CONFIG } from '../config';
 
 /**
  * @typedef {Object} PlaylistResponse
@@ -13,7 +14,7 @@ export class YouTube {
   static get api() {
     if (!YouTube.#api) {
       YouTube.#api = new YT();
-      YouTube.#api.setKey(process.env.YOUTUBE_API_KEY);
+      YouTube.#api.setKey(CONFIG.YOUTUBE_API_KEY);
     }
 
     return YouTube.#api;

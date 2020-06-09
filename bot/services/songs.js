@@ -1,3 +1,5 @@
+import { database } from '../database';
+
 /**
  * @typedef {Object} Song
  * @property {string} title - the song name.
@@ -31,26 +33,59 @@ export class Songs {
    * @returns {Promise<ListResponse>} the response from list.
    */
   static async list(options = {}) {
-    let songs = options.limit ? [...Songs.#songs].slice(0, options.limit) : [...Songs.#songs];
+    const { song } = await database();
+
+    const songs = await song.findAll({
+      limit: options.limit,
+      order: [
+        ['order', 'ASC'],
+      ],
+    });
+
+    const totalSongs = await song.count();
 
     return {
       songs,
-      hasMore: songs.length < this.#songs.length,
+      hasMore: songs.length < totalSongs,
     };
   }
 
   static async get(url) {
-    return Songs.#songs.find((song) => song.url === url);
+    const { song } = await database();
+
+    return song.findOne({
+      where: {
+        url,
+      },
+      order: [
+        ['order', 'ASC'],
+      ],
+    });
   }
 
   static async current() {
-    return Songs.#songs[0];
+    const { song } = await database();
+
+    return song.findOne({
+      order: [
+        ['order', 'ASC'],
+      ],
+    });
+  }
+
+  static async last() {
+    const { song } = await database();
+
+    return song.findOne({
+      order: [
+        ['order', 'DESC'],
+      ],
+    });
   }
 
   static #format = (channelID, ...songs) => {
     return songs.map((song) => ({
       channelID,
-      elapsed: 0,
       ...song,
     }));
   }
@@ -63,9 +98,17 @@ export class Songs {
    * @returns {(Song[]|Song)} the updated song(s).
    */
   static async add(channelID, ...songs) {
-    const updatedSongs = Songs.#format(channelID, ...songs);
+    const { song } = await database();
+    const last = await Songs.last();
 
-    Songs.#songs = Songs.#songs.concat(updatedSongs);
+    const updatedSongs = Songs.#format(channelID, ...songs).map((song, index) => {
+      song.order = last ? last.order + index : index;
+      return song;
+    });
+
+    await song.bulkCreate(updatedSongs, {
+      validate: true,
+    });
 
     return updatedSongs.length === 1 ? updatedSongs[0] : updatedSongs;
   }
@@ -78,9 +121,17 @@ export class Songs {
    * @returns {(Song[]|Song)} the updated song(s).
    */
   static async unshift(channelID, ...songs) {
-    const updatedSongs = this.#format(channelID, ...songs);
+    const { song } = await database();
+    const current = await Songs.current();
 
-    Songs.#songs = updatedSongs.concat(Songs.#songs);
+    const updatedSongs = this.#format(channelID, ...songs).map((song, index) => {
+      song.order = current ? current.order - songs.length + index : index;
+      return song;
+    });
+
+    await song.bulkCreate(updatedSongs, {
+      validate: true,
+    });
 
     return updatedSongs.length === 1 ? updatedSongs[0] : updatedSongs;
   }
@@ -92,18 +143,25 @@ export class Songs {
    * @returns {boolean} whether a record was removed.
    */
   static async remove(url) {
-    const index = Songs.#songs.findIndex((song) => song.url === url);
+    const { song } = await database();
 
-    if (index === -1) return false;
+    const count = await song.destroy({
+      where: {
+        url,
+      },
+    })
 
-    Songs.#songs.splice(index, 1);
-    return true;
+    return count > 0;
   }
 
   /**
    * Clears all the songs from the queue.
    */
   static async clear() {
-    Songs.#songs = [];
+    const { song } = await database();
+
+    await song.destroy({
+      truncate: true,
+    });
   }
 }

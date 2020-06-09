@@ -25,6 +25,10 @@ export const Messages = {
   STOP_TROLLING: outdent`
     Stop being a troll Senpai.
   `,
+
+  FORBIDDEN: outdent`
+    Senpai, we're not supposed to touch that...
+  `,
 }
 
 export const DEBUG_MESSAGES = {

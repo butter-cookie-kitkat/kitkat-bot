@@ -13,9 +13,10 @@ import { announcements } from './announcements';
 import * as Loggers from './utils/loggers';
 import { Debounce } from './utils/debounce';
 import { format } from './utils/formatters';
+import { CONFIG } from './config';
 
 const bot = new DiscordBot({
-  token: process.env.DISCORD_TOKEN,
+  token: CONFIG.DISCORD_TOKEN,
   prefix: '.',
 });
 
@@ -68,8 +69,8 @@ bot.voice.on('leave', Songs.clear);
 bot.on('error', async ({ message, error }) => {
   Loggers.main(error);
 
-  if (process.env.NOTIFICATIONS_CHANNEL_ID) {
-    await bot.text.send(process.env.NOTIFICATIONS_CHANNEL_ID, outdent`
+  if (CONFIG.NOTIFICATIONS_CHANNEL_ID) {
+    await bot.text.send(CONFIG.NOTIFICATIONS_CHANNEL_ID, outdent`
       We encountered an error while processing the following commmand.
 
       ${format('Author').bold.value}: ${message.author.username}
@@ -90,7 +91,7 @@ bot.login().then(async () => {
 
   await bot.status.set(`Use .help`);
 
-  if (!process.env.IS_LIVE) {
+  if (!CONFIG.IS_LIVE) {
     await bot.status.offline();
     Loggers.main(`Beep! Boop! I'm hiding from you!`);
   }
@@ -107,7 +108,7 @@ bot.login().then(async () => {
   await Promise.all(announcements.map(async (announcement) => {
     const info = await announcement();
 
-    const channel = await bot.text.channel(process.env.ANNOUNCEMENTS_CHANNEL_ID);
+    const channel = await bot.text.channel(CONFIG.ANNOUNCEMENTS_CHANNEL_ID);
 
     const messages = await channel.messages.fetch();
 

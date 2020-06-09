@@ -23,7 +23,6 @@ describe('Service(Songs)', () => {
       expect(song).deep.equals({
         ...expectedSong,
         channelID: expectedChannelID,
-        elapsed: 0,
       });
     });
 
@@ -40,11 +39,9 @@ describe('Service(Songs)', () => {
       expect(songs).deep.equals([{
         ...expectedSong,
         channelID: expectedChannelID,
-        elapsed: 0,
       }, {
         ...expectedSong,
         channelID: expectedChannelID,
-        elapsed: 0,
       }]);
     });
   });

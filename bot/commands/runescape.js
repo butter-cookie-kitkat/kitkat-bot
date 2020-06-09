@@ -22,7 +22,7 @@ function CreateTable({ columns, results }) {
  * @param {DiscordBot} bot - the discord bot.
  */
 export function ge(bot) {
-  bot.command('ge <name>', async ({ message, args }) => {
+  bot.command('ge <...name>', async ({ message, args }) => {
     const [rs3, osrs] = await Promise.all([
       RS3.search(args.name),
       OSRS.search(args.name),
