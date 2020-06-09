@@ -8,7 +8,7 @@ export class Text extends ApiBase {
    * Sends a message to the text channel with the given id.
    *
    * @param {string} channelID - the id of the text channel to message.
-   * @param {string} message - the message to send to the channel.
+   * @param {(string|DiscordJS.MessageOptions)} message - the message to send to the channel.
    */
   async send(channelID, message) {
     const channel = await this.channel(channelID);

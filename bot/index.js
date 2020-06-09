@@ -12,6 +12,7 @@ import { announcements } from './announcements';
 
 import * as Loggers from './utils/loggers';
 import { Debounce } from './utils/debounce';
+import { format } from './utils/formatters';
 
 const bot = new DiscordBot({
   token: process.env.DISCORD_TOKEN,
@@ -71,15 +72,13 @@ bot.on('error', async ({ message, error }) => {
     await bot.text.send(process.env.NOTIFICATIONS_CHANNEL_ID, outdent`
       We encountered an error while processing the following commmand.
 
-      **Author**: ${message.author.username}
-      **Command**: \`${message.content}\`
-      **Message**: \`${error.message}\`
+      ${format('Author').bold.value}: ${message.author.username}
+      ${format('Command').bold.value}: ${message.content}
+      ${format('Message').bold.value}: ${error.message}
 
-      **~-~-~-~ Stack Trace ~-~-~-~**
+      ${format('~-~-~-~ Stack Trace ~-~-~-~').bold.value}
 
-      \`\`\`
-      ${error.stack}
-      \`\`\`
+      ${format(error.stack).code({ multi: true }).value}
     `);
   }
 

@@ -54,6 +54,14 @@ export class DiscordBot extends EventEmitter {
     return this.#client.user.id;
   }
 
+  get name() {
+    return this.#client.user.username;
+  }
+
+  get avatar() {
+    return this.#client.user.avatarURL;
+  }
+
   login() {
     return this.#client.login(this.#config.token);
   }
