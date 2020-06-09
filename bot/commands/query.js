@@ -1,7 +1,7 @@
 import AsciiTable from 'ascii-table';
 import { outdent } from 'outdent';
 
-import { DiscordBot } from '../core';
+import { DiscordBot } from 'kitkat-bot-core';
 import { database } from '../database';
 import { format } from '../utils/formatters';
 import { Messages } from '../services/messages';

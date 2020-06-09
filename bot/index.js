@@ -1,8 +1,8 @@
 import 'dotenv/config';
+import { DiscordBot, CommonCommands } from 'kitkat-bot-core';
 import { outdent } from 'outdent';
 
 import { AUTO_LEAVE_DEBOUNCE } from './constants';
-import { DiscordBot, CommonCommands } from './core';
 
 import { Messages, DEBUG_MESSAGES } from './services/messages';
 

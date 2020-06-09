@@ -1,4 +1,4 @@
-import { DiscordBot } from '../core';
+import { DiscordBot } from 'kitkat-bot-core';
 
 /**
  * Adds a song to the queue.

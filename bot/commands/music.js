@@ -1,11 +1,11 @@
 import { outdent } from 'outdent';
 
-import { DiscordBot } from '../core';
+import { DiscordBot } from 'kitkat-bot-core';
 
 import { Effects } from '../services/effects';
 import { Messages } from '../services/messages';
 
-import { loading } from '../core/utils/loading';
+import { loading } from '../utils/loading';
 import { Songs } from '../services/songs';
 import { YouTube } from '../services/youtube';
 import { Concat } from '../utils/concat';

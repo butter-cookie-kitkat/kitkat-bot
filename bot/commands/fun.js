@@ -1,4 +1,4 @@
-import { DiscordBot } from '../core';
+import { DiscordBot } from 'kitkat-bot-core';
 import { chance } from '../utils/chance';
 import { Concat } from '../utils/concat';
 

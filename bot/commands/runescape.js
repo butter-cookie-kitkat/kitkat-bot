@@ -1,7 +1,7 @@
 import AsciiTable from 'ascii-table';
 import { outdent } from 'outdent';
 
-import { DiscordBot } from '../core';
+import { DiscordBot } from 'kitkat-bot-core';
 import { RS3, OSRS } from '../services/runescape';
 
 // eslint-disable-next-line jsdoc/require-jsdoc
