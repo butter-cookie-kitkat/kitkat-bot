@@ -55,6 +55,7 @@ export class Songs {
       order: [
         ['order', 'ASC'],
       ],
+      raw: true,
     });
   }
 
@@ -65,6 +66,7 @@ export class Songs {
       order: [
         ['order', 'ASC'],
       ],
+      raw: true,
     });
   }
 
@@ -75,6 +77,7 @@ export class Songs {
       order: [
         ['order', 'DESC'],
       ],
+      raw: true,
     });
   }
 
@@ -97,7 +100,8 @@ export class Songs {
     const last = await Songs.last();
 
     const updatedSongs = Songs.#format(channelID, ...songs).map((song, index) => {
-      song.order = last ? last.order + index : index;
+      const order = index + 1;
+      song.order = last ? last.order + order : order;
       return song;
     });
 
