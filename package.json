@@ -4,6 +4,11 @@
   "private": true,
   "license": "MIT",
   "main": "bot/index.js",
+  "homepage": "https://github.com/butter-cookie-kitkat/kitkat-bot",
+  "bugs": "https://github.com/butter-cookie-kitkat/kitkat-bot/issues",
+  "contributors": [
+    "Nick Woodward <nick@salte.io>"
+  ],
   "scripts": {
     "start": "nodemon --exec npm run start:live",
     "start:live": "node -r esm .",
