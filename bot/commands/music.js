@@ -291,14 +291,21 @@ export function pause(bot) {
  */
 export function resume(bot) {
   bot.command('resume', async ({ message }) => {
-    if (!bot.voice.isPlaying) {
+    if (bot.voice.isPlaying) {
+      return await Promise.all([
+        message.react('👍'),
+        bot.voice.resume(),
+      ]);
+    }
+
+    const currentSong = await Songs.current();
+
+    if (!currentSong) {
       return await message.reply(Messages.NOT_PLAYING_AUDIO);
     }
 
-    await Promise.all([
-      message.react('👍'),
-      bot.voice.resume(),
-    ]);
+    await bot.voice.join(message.member.voice.channelID);
+    await bot.voice.play(currentSong.url);
   }).help({
     name: 'resume',
     description: 'Resumes the music.',

@@ -22,11 +22,6 @@ import { database } from '../database';
 
 export class Songs {
   /**
-   * @type {Song[]} the current queue.
-   */
-  static #songs = [];
-
-  /**
    * Returns a list of all the songs in the queue.
    *
    * @param {ListOptions} options - the list options.
