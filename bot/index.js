@@ -44,6 +44,17 @@ bot.voice.on('finish', async ({ uri, canceled }) => {
   await bot.voice.play(currentSong.url);
 });
 
+bot.voice.on('member:leave', () => {
+  const hasMembers = bot.voice.members.some((member) => member.id !== bot.id);
+
+  if (hasMembers) return;
+
+  Loggers.music('Automatically leaving voice channel. (Reason: No members remaining)');
+  bot.voice.leave();
+});
+
+bot.voice.on('leave', Songs.clear);
+
 bot.on('error', async ({ message, error }) => {
   Loggers.main(error);
 

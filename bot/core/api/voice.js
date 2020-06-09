@@ -16,6 +16,20 @@ export class Voice extends ApiBase {
    */
   #connection;
 
+  constructor(client) {
+    super(client);
+
+    this._client.on('voiceStateUpdate', (previously, currently) => {
+      if (!this.#channel) return;
+
+      if (previously.channelID === this.#channel.id) {
+        this.emit('member:leave');
+      } else if (currently.channelID) {
+        this.emit('member:join');
+      }
+    });
+  }
+
   /**
    * Joins a voice channel with the given id.
    *
@@ -53,6 +67,8 @@ export class Voice extends ApiBase {
       this.#channel.leave();
       this.#channel = null;
     }
+
+    this.emit('leave');
   }
 
   /**
@@ -114,6 +130,10 @@ export class Voice extends ApiBase {
     if (this.isPlaying) {
       this.#connection.dispatcher.resume();
     }
+  }
+
+  get members() {
+    return this.#channel.members;
   }
 
   get isConnected() {
