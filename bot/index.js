@@ -1,15 +1,17 @@
 import 'dotenv/config';
+import { outdent } from 'outdent';
 
+import { AUTO_LEAVE_DEBOUNCE } from './constants';
 import { DiscordBot, CommonCommands } from './core';
 
-import { Messages } from './services/messages';
+import { Messages, DEBUG_MESSAGES } from './services/messages';
 
-import { outdent } from 'outdent';
 import { commands } from './commands';
 import { Songs } from './services/songs';
 import { announcements } from './announcements';
 
 import * as Loggers from './utils/loggers';
+import { Debounce } from './utils/debounce';
 
 const bot = new DiscordBot({
   token: process.env.DISCORD_TOKEN,
@@ -25,9 +27,10 @@ bot.voice.on('start', async ({ uri }) => {
 
   if (!song) return;
 
+  Debounce.clear(AUTO_LEAVE_DEBOUNCE);
   await bot.text.send(song.channelID, outdent`
-  \`${song.title}\` is now playing!
-`);
+    \`${song.title}\` is now playing!
+  `);
 });
 
 bot.voice.on('finish', async ({ uri, canceled }) => {
@@ -39,9 +42,15 @@ bot.voice.on('finish', async ({ uri, canceled }) => {
 
   const currentSong = await Songs.current();
 
-  if (!currentSong) return;
+  if (currentSong) {
+    await bot.voice.play(currentSong.url);
+  } else {
+    Debounce.start(AUTO_LEAVE_DEBOUNCE, async () => {
+      Loggers.music(DEBUG_MESSAGES.AUTO_LEAVE('Idle for too long'));
 
-  await bot.voice.play(currentSong.url);
+      await bot.voice.leave();
+    });
+  }
 });
 
 bot.voice.on('member:leave', () => {
@@ -49,7 +58,7 @@ bot.voice.on('member:leave', () => {
 
   if (hasMembers) return;
 
-  Loggers.music('Automatically leaving voice channel. (Reason: No members remaining)');
+  Loggers.music(DEBUG_MESSAGES.AUTO_LEAVE('No members remaining'));
   bot.voice.leave();
 });
 

@@ -27,3 +27,6 @@ export const Messages = {
   `,
 }
 
+export const DEBUG_MESSAGES = {
+  AUTO_LEAVE: (reason) => `Automatically leaving voice channel. (Reason: ${reason})`,
+}
