@@ -1,6 +1,7 @@
 import 'dotenv/config';
 
 export const CONFIG = {
+  SEQUELIZE_LOGGING: Boolean(process.env.SEQUELIZE_LOGGING) && !process.env.CI,
   DATABASE_URL: process.env.DATABASE_URL || 'sqlite://:memory',
   DISCORD_TOKEN: process.env.DISCORD_TOKEN,
   YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,

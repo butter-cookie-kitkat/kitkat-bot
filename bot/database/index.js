@@ -21,7 +21,7 @@ let sequelize;
 export async function database() {
   if (!sequelize) {
     sequelize = new Sequelize(CONFIG.DATABASE_URL, {
-      logging: !CONFIG.IS_LIVE,
+      logging: CONFIG.SEQUELIZE_LOGGING,
       typeValidation: true,
       define: {
         timestamps: false,
