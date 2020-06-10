@@ -54,6 +54,7 @@ describe('Service(Songs)', () => {
       await Songs.add(chance.string(), {
         title: chance.string(),
         url: chance.url(),
+        duration: chance.integer(),
       });
     });
 
@@ -101,10 +102,12 @@ describe('Service(Songs)', () => {
       await Songs.add(chance.string(), {
         title: chance.string(),
         url: chance.url(),
+        duration: chance.integer(),
       });
       await Songs.add(chance.string(), {
         title: chance.string(),
         url: chance.url(),
+        duration: chance.integer(),
       });
     });
 
@@ -130,6 +133,7 @@ describe('Service(Songs)', () => {
       const expectedSong = await Songs.add(chance.string(), {
         title: chance.string(),
         url: chance.url(),
+        duration: chance.integer(),
       });
 
       const song = await Songs.get(expectedSong.url);
@@ -146,11 +150,13 @@ describe('Service(Songs)', () => {
       const expectedSong = await Songs.add(chance.string(), {
         title: chance.string(),
         url: chance.url(),
+        duration: chance.integer(),
       });
 
       await Songs.add(chance.string(), {
         title: chance.string(),
         url: chance.url(),
+        duration: chance.integer(),
       });
 
       const song = await Songs.current();
@@ -167,11 +173,13 @@ describe('Service(Songs)', () => {
       await Songs.add(chance.string(), {
         title: chance.string(),
         url: chance.url(),
+        duration: chance.integer(),
       });
 
       const expectedSong = await Songs.add(chance.string(), {
         title: chance.string(),
         url: chance.url(),
+        duration: chance.integer(),
       });
 
       const song = await Songs.last();
@@ -188,6 +196,7 @@ describe('Service(Songs)', () => {
       const expectedSong = await Songs.add(chance.string(), {
         title: chance.string(),
         url: chance.url(),
+        duration: chance.integer(),
       });
 
       expect(await Songs.remove(expectedSong.url)).equals(true);
@@ -204,14 +213,17 @@ describe('Service(Songs)', () => {
       await Songs.add(chance.string(), {
         title: chance.string(),
         url: chance.url(),
+        duration: chance.integer(),
       });
       await Songs.add(chance.string(), {
         title: chance.string(),
         url: chance.url(),
+        duration: chance.integer(),
       });
       await Songs.add(chance.string(), {
         title: chance.string(),
         url: chance.url(),
+        duration: chance.integer(),
       });
 
       await Songs.clear();
