@@ -34,7 +34,7 @@ export async function database() {
     await song(sequelize);
 
     await sequelize.authenticate();
-    await sequelize.sync();
+    await sequelize.sync({ alter: true });
   }
 
   return {
