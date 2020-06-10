@@ -9,6 +9,7 @@ import { loading } from '../utils/loading';
 import { Songs } from '../services/songs';
 import { YouTube } from '../services/youtube';
 import { Concat } from '../utils/concat';
+import { Duration } from '../utils/duration';
 
 /**
  * Adds a song to the queue.
@@ -90,10 +91,11 @@ export function queue(bot) {
       hasMore,
     } = await Songs.list({ limit: 10 });
     if (songs.length > 0) {
+      console.log(songs[0].duration - bot.voice.elapsed);
       await message.channel.send(outdent`
         Here's a list of the current songs in the queue.
 
-        ${songs.map((song, index) => Concat.join(`${index + 1}) \`${song.title}\``, index === 0 && `<-- Current Track`)).join('\n')}
+        ${songs.map((song, index) => Concat.join(`${index + 1}) \`${song.title}\``, index === 0 && `<-- Current Track - ${Duration.humanize(song.duration - bot.voice.elapsed)}`)).join('\n')}
         ${hasMore ? '...' : ''}
       `);
     } else {

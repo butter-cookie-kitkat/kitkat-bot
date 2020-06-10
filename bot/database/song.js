@@ -25,6 +25,10 @@ export function song(sequelize) {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    duration: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     order: {
       type: DataTypes.INTEGER,
       allowNull: false,

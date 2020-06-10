@@ -20,13 +20,20 @@ export class YouTube {
     return YouTube.#api;
   }
 
-  static #formatVideo = (video) => {
-    // Playlist returns it as "contentDetails.videoId", individual returns it as "id".
-    const id = video.contentDetails.videoId || video.id;
+  static #duration = (duration) => {
+    let [, hours = 0, minutes = 0, seconds = 0] = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/i);
 
+    if (hours) minutes = Number(minutes) + (Number(hours) * 60);
+    if (minutes) seconds = Number(seconds) + (minutes * 60);
+
+    return Number(seconds) * 1000;
+  }
+
+  static #formatVideo = (video) => {
     return {
       title: video.snippet.title,
-      url: `https://www.youtube.com/watch?v=${id}`,
+      url: `https://www.youtube.com/watch?v=${video.id}`,
+      duration: YouTube.#duration(video.contentDetails.duration),
     };
   }
 
@@ -89,15 +96,17 @@ export class YouTube {
     const videos = await new Promise((resolve, reject) => {
       YouTube.api.getPlayListsItemsById(id, 100, (error, result) => {
         if (error) reject(error);
-        else resolve(result);
+        else resolve(result.items);
       });
     });
 
     return {
       name: playlist.snippet.title,
-      songs: videos.items
-        .filter(({ status }) => status.privacyStatus === 'public')
-        .map((video) => YouTube.#formatVideo(video)),
+      songs: await Promise.all(
+        videos
+          .filter(({ status }) => status.privacyStatus === 'public')
+          .map((video) => YouTube.getVideoByID(video.contentDetails.videoId)),
+      ),
     };
   }
 }

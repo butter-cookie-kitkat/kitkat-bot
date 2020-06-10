@@ -1,4 +1,7 @@
+import debug from 'debug';
+
 import { Sequelize, ModelCtor, Model } from 'sequelize';
+
 import { CONFIG } from '../config';
 import { song } from './song';
 
@@ -21,7 +24,7 @@ let sequelize;
 export async function database() {
   if (!sequelize) {
     sequelize = new Sequelize(CONFIG.DATABASE_URL, {
-      logging: CONFIG.SEQUELIZE_LOGGING,
+      logging: CONFIG.SEQUELIZE_LOGGING ? debug('kitkat-bot:database') : () => {},
       typeValidation: true,
       define: {
         timestamps: false,
