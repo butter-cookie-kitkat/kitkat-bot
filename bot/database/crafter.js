@@ -16,8 +16,11 @@ export function crafter(sequelize) {
       autoIncrement: true,
     },
     job: {
-      type: DataTypes.ENUM(Object.keys(JOBS)),
+      type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        isIn: [Object.keys(JOBS)],
+      },
     },
     level: {
       type: DataTypes.INTEGER,

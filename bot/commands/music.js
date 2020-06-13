@@ -5,7 +5,6 @@ import { DiscordBot } from 'kitkat-bot-core';
 import { Effects } from '../services/effects';
 import { Messages } from '../services/messages';
 
-import { reactor } from '../utils/reactor';
 import { Songs } from '../services/songs';
 import { YouTube } from '../services/youtube';
 import { Concat } from '../utils/concat';
@@ -53,10 +52,7 @@ export function play(bot) {
     if (!bot.voice.isPlaying || args.now) {
       const song = await Songs.current();
 
-      await reactor.loading(
-        message,
-        bot.voice.play(song.url),
-      );
+      await bot.voice.play(song.url);
     }
   }).help({
     name: 'play',
@@ -91,7 +87,6 @@ export function queue(bot) {
       hasMore,
     } = await Songs.list({ limit: 10 });
     if (songs.length > 0) {
-      console.log(songs[0].duration - bot.voice.elapsed);
       await message.channel.send(outdent`
         Here's a list of the current songs in the queue.
 

@@ -94,8 +94,6 @@ export class FFXIV {
       !['RapidSynthesis', 'Observe', 'RemoveFinalAppraisal'].includes(constructor.name),
     );
 
-    console.log(solver.availableActions);
-
     return Promise.all(solver.run().map((ability) =>
       FFXIV.getAbility(ability.constructor.name),
     ));
