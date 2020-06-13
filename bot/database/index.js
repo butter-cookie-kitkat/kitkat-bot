@@ -16,16 +16,17 @@ import { crafter } from './crafter';
 /**
  * @type {Sequelize} the sequlize instance.
  */
-let sequelize;
+let db;
 
 /**
  * Returns the sequelize instance.
  *
+ * @param {boolean} excludeModels - doesn't attach the models to the sequelize instance.
  * @returns {Promise<DatabaseResponse>} the sequelize instance.
  */
-export async function database() {
-  if (!sequelize) {
-    sequelize = new Sequelize(CONFIG.DATABASE_URL, {
+export async function database(excludeModels) {
+  if (!db || excludeModels) {
+    const sequelize = new Sequelize(CONFIG.DATABASE_URL, {
       logging: CONFIG.SEQUELIZE_LOGGING ? debug('kitkat-bot:database') : () => {},
       typeValidation: true,
       define: {
@@ -33,15 +34,23 @@ export async function database() {
       },
     });
 
-    await song(sequelize);
-    await crafter(sequelize);
+    if (!excludeModels) {
+      await song(sequelize);
+      await crafter(sequelize);
+    }
 
     await sequelize.authenticate();
     await sequelize.sync({ alter: true });
+
+    if (excludeModels) {
+      return { db: sequelize };
+    } else {
+      db = sequelize;
+    }
   }
 
   return {
-    db: sequelize,
-    ...sequelize.models,
+    db,
+    ...db.models,
   };
 }

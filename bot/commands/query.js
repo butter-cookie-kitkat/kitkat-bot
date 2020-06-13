@@ -30,6 +30,10 @@ export function query(bot) {
         return await message.reply(outdent`
           Rows updated successfully!
         `);
+      } else if (args.sql.match(/^drop/i)) {
+        return await message.reply(outdent`
+          Table dropped successfully!
+        `);
       }
 
       return await message.reply(outdent`
