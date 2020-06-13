@@ -11,7 +11,7 @@ import { JOBS } from '../constants';
 export function crafter(sequelize) {
   return sequelize.define('crafter', {
     uid: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT,
       primaryKey: true,
       autoIncrement: true,
     },
