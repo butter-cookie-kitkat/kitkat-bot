@@ -5,7 +5,7 @@ import { DiscordBot } from 'kitkat-bot-core';
 import { Effects } from '../services/effects';
 import { Messages } from '../services/messages';
 
-import { loading } from '../utils/loading';
+import { reactor } from '../utils/reactor';
 import { Songs } from '../services/songs';
 import { YouTube } from '../services/youtube';
 import { Concat } from '../utils/concat';
@@ -53,10 +53,10 @@ export function play(bot) {
     if (!bot.voice.isPlaying || args.now) {
       const song = await Songs.current();
 
-      await loading({
+      await reactor.loading(
         message,
-        promise: bot.voice.play(song.url),
-      });
+        bot.voice.play(song.url),
+      );
     }
   }).help({
     name: 'play',

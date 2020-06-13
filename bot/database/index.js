@@ -4,11 +4,13 @@ import { Sequelize, ModelCtor, Model } from 'sequelize';
 
 import { CONFIG } from '../config';
 import { song } from './song';
+import { crafter } from './crafter';
 
 /**
  * @typedef {Object} DatabaseResponse
  * @property {Sequelize} db - the sequlize instance.
  * @property {ModelCtor<Model<any, any>>} song - the song model.
+ * @property {ModelCtor<Model<any, any>>} crafter - the crafter model.
  */
 
 /**
@@ -32,6 +34,7 @@ export async function database() {
     });
 
     await song(sequelize);
+    await crafter(sequelize);
 
     await sequelize.authenticate();
     await sequelize.sync({ alter: true });

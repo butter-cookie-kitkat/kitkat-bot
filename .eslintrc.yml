@@ -44,6 +44,7 @@ rules:
 overrides:
   - files:
     - '**/test/*.spec.js'
+    - '**/__test__/*.spec.js'
     env:
       mocha: true
 settings:

@@ -42,6 +42,12 @@ class Formatter {
     return this;
   }
 
+  get header() {
+    this.#value = ['~-~', this.#value, '~-~'].join(' ');
+
+    return this;
+  }
+
   /**
    * Formats the value as bold.
    *
