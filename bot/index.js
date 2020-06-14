@@ -21,7 +21,7 @@ const bot = new DiscordBot({
 });
 
 bot.on('command:before', ({ message, args }) => {
-  Loggers.messages(`Author: ${message.member.displayName}; Contents: ${message.content}; Args: ${JSON.stringify(args)}`);
+  Loggers.messages(`Author: ${message.author.username}#${message.author.discriminator}; Contents: ${message.content}; Args: ${JSON.stringify(args)}`);
 });
 
 bot.voice.on('start', async ({ uri }) => {
@@ -73,7 +73,7 @@ bot.on('error', async ({ message, error }) => {
     await bot.text.send(CONFIG.NOTIFICATIONS_CHANNEL_ID, outdent`
       We encountered an error while processing the following commmand.
 
-      ${format('Author').bold.value}: ${message.author.username}
+      ${format('Author').bold.value}: ${message.author.username}#${message.author.discriminator}
       ${format('Command').bold.value}: ${message.content}
       ${format('Message').bold.value}: ${error.message}
 

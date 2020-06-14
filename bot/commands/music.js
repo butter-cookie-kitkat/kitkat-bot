@@ -9,6 +9,7 @@ import { Songs } from '../services/songs';
 import { YouTube } from '../services/youtube';
 import { Concat } from '../utils/concat';
 import { Duration } from '../utils/duration';
+import { Protect } from '../services/protect';
 
 /**
  * Adds a song to the queue.
@@ -17,9 +18,7 @@ import { Duration } from '../utils/duration';
  */
 export function play(bot) {
   bot.command('play <url>', async ({ message, args }) => {
-    if (!message.member.voice.channelID) {
-      return await message.reply(Messages.NOT_IN_VOICE_CHANNEL);
-    }
+    if (Protect.voice(message)) return;
 
     await bot.voice.join(message.member.voice.channelID);
 
@@ -163,14 +162,12 @@ export function effects(bot) {
  */
 export function effect(bot) {
   bot.command('effect <name>', async ({ message, args }) => {
+    if (Protect.voice(message)) return;
+
     const effect = Effects.effect(args.name);
 
     if (!effect) {
       return await message.reply(Messages.BAD_EFFECT_NAME);
-    }
-
-    if (!message.member.voice.channelID) {
-      return await message.reply(Messages.NOT_IN_VOICE_CHANNEL);
     }
 
     if (!bot.voice.isConnected) {
@@ -198,9 +195,7 @@ export function effect(bot) {
  */
 export function join(bot) {
   bot.command('join', async ({ message }) => {
-    if (!message.member.voice.channelID) {
-      return await message.reply(Messages.NOT_IN_VOICE_CHANNEL);
-    }
+    if (Protect.voice(message)) return;
 
     await Promise.all([
       message.react('👍'),

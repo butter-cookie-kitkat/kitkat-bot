@@ -1,6 +1,10 @@
 import { outdent } from 'outdent';
 
 export const Messages = {
+  DMS_NOT_ALLOWED: outdent`
+    Baka! This command only works inside of a Server!
+  `,
+
   NOT_IN_VOICE_CHANNEL: outdent`
     I would if you were in a channel. Baka!
   `,
