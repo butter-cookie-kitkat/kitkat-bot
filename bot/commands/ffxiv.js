@@ -5,6 +5,7 @@ import { FFXIV } from '../services/ffxiv';
 import { crafters as Crafters } from '../services/crafters';
 import { format } from '../utils/formatters';
 import { JOBS, REVERSE_JOBS } from '../constants';
+import { worker } from '../workers/ffxiv';
 
 /**
  * Adds a new crafter.
@@ -91,7 +92,7 @@ export function craft(bot) {
       `);
     }
 
-    const solution = await FFXIV.solve(recipe, crafter.level, crafter.craftsmanship, crafter.control, crafter.cp);
+    const solution = await worker.run(recipe, crafter);
 
     await message.channel.send(outdent`
       Successfully generated a rotation for this item!

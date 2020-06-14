@@ -42,6 +42,7 @@ export class Crafters {
         uid,
         job,
       },
+      raw: true,
     });
   }
 
@@ -58,6 +59,7 @@ export class Crafters {
       where: {
         uid,
       },
+      raw: true,
     });
   }
 }
