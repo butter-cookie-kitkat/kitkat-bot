@@ -1,6 +1,6 @@
 import XIVAPI from 'xivapi-js';
 
-import { CrafterStats, CraftingJob } from '@ffxiv-teamcraft/simulator';
+import { Simulation, CrafterStats, CraftingJob } from '@ffxiv-teamcraft/simulator';
 import { Solver } from '@ffxiv-teamcraft/crafting-solver';
 
 const xivapi = new XIVAPI();
@@ -40,8 +40,6 @@ const ABILITIES = {
   'DelicateSynthesis': `Delicate Synthesis`,
 };
 
-export const BUFFS = ['']
-
 export class FFXIV {
   static #abilities = {};
 
@@ -58,6 +56,7 @@ export class FFXIV {
         'RequiredCraftsmanship',
         'RecipeLevelTable.Durability',
         'RecipeLevelTable.Difficulty',
+        'RecipeLevelTable.Quality',
         'RecipeLevelTable.ClassJobLevel',
         'RecipeLevelTable.SuggestedControl',
         'RecipeLevelTable.SuggestedCraftsmanship',
@@ -77,7 +76,7 @@ export class FFXIV {
       progress: recipe.RecipeLevelTable.Difficulty,
       rlvl: recipe.RecipeLevelTable.ClassJobLevel,
       hq: recipe.CanHq,
-      quality: recipe.RecipeLevelTable.quality,
+      quality: recipe.RecipeLevelTable.Quality,
       suggestedControl: recipe.RecipeLevelTable.SuggestedControl,
       suggestedCraftsmanship: recipe.RecipeLevelTable.SuggestedCraftsmanship,
       quickSynth: recipe.CanQuickSynth,
@@ -85,18 +84,28 @@ export class FFXIV {
   }
 
   static async solve(recipe, level, craftsmanship, control, cp, specialize = false) {
+    const stats = new CrafterStats(CraftingJob[recipe.job], craftsmanship, control, cp, specialize, level);
+
     const solver = new Solver(
       recipe,
-      new CrafterStats(CraftingJob[recipe.job], craftsmanship, control, cp, specialize, level),
+      stats,
     );
 
     solver.availableActions = solver.availableActions.filter(({ constructor }) =>
       !['RapidSynthesis', 'Observe', 'RemoveFinalAppraisal'].includes(constructor.name),
     );
 
-    return Promise.all(solver.run().map((ability) =>
-      FFXIV.getAbility(ability.constructor.name),
-    ));
+    const rotation = solver.run();
+
+    const simulation = new Simulation(recipe, rotation, stats);
+
+    return {
+      hqPercent: simulation.getHQPercent(),
+      ...simulation.getReliabilityReport(),
+      rotation: await Promise.all(rotation.map((action) =>
+        FFXIV.getAbility(action.constructor.name),
+      )),
+    };
   }
 
   static async getAbility(name) {

@@ -91,13 +91,19 @@ export function craft(bot) {
       `);
     }
 
-    const rotation = await FFXIV.solve(recipe, crafter.level, crafter.craftsmanship, crafter.control, crafter.cp);
+    const solution = await FFXIV.solve(recipe, crafter.level, crafter.craftsmanship, crafter.control, crafter.cp);
 
     await message.channel.send(outdent`
       Successfully generated a rotation for this item!
 
       ${format(outdent`
         Item: ${recipe.name}
+
+        ${format('Rotation Info').header.value}
+
+          Success Percentage: ${solution.successPercent}
+          HQ Percent (Average): ${solution.averageHQPercent || 'Unknown'}
+          HQ Percent (Median): ${solution.medianHQPercent || 'Unknown'}
 
         ${format('Class Info').header.value}
 
@@ -109,11 +115,11 @@ export function craft(bot) {
 
         ${format('Macro').header.value}
 
-        ${rotation.map((ability) => outdent`
-          /macrolock
+        /macrolock
+        ${solution.rotation.map((ability) => outdent`
           /ac ${ability.name} <wait.${ability.buff ? '2' : '3'}>
-          /echo Crafting macro complete! <se.14>
         `).join('\n')}
+        /echo Crafting macro complete! <se.14>
       `).code({ multi: true }).value}
     `);
   }).help({
