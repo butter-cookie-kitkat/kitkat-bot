@@ -11,8 +11,8 @@ describe('Service(Effects)', () => {
       const effect = Effects.effect('wow');
 
       expect(effect).deep.equals({
-        path: path.resolve('./effects/wow.mp3'),
-        type: 'mp3',
+        path: path.resolve('./effects/wow.webm'),
+        type: 'webm/opus',
       });
     });
 
@@ -20,8 +20,8 @@ describe('Service(Effects)', () => {
       const effect = Effects.effect('private.discord-notification', true);
 
       expect(effect).deep.equals({
-        path: path.resolve('./effects/private.discord-notification.mp3'),
-        type: 'mp3',
+        path: path.resolve('./effects/private.discord-notification.webm'),
+        type: 'webm/opus',
       });
     });
 
