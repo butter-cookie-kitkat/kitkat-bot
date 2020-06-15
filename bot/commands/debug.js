@@ -5,6 +5,7 @@ import { DiscordBot } from 'kitkat-bot-core';
 import { database } from '../database';
 import { format } from '../utils/formatters';
 import { Messages } from '../services/messages';
+import { CONFIG } from '../config';
 
 
 /**
@@ -22,6 +23,7 @@ export function info(bot) {
 
           ID: ${bot.id}
           Name: ${bot.name}
+          Version: ${CONFIG.VERSION}
 
         ${bot.voice.isConnected ? outdent`
           ${format('Voice').header.value}

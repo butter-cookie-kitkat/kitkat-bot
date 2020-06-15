@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import pkg from '../package.json';
 
 export const CONFIG = {
   SEQUELIZE_LOGGING: Boolean(process.env.SEQUELIZE_LOGGING) && !process.env.CI,
@@ -9,4 +10,6 @@ export const CONFIG = {
   IS_LIVE: process.env.IS_LIVE || false,
   NOTIFICATIONS_CHANNEL_ID: process.env.NOTIFICATIONS_CHANNEL_ID,
   ANNOUNCEMENTS_CHANNEL_ID: process.env.ANNOUNCEMENTS_CHANNEL_ID,
+
+  VERSION: pkg.sha,
 }
