@@ -40,7 +40,6 @@ export function play(bot) {
       }
 
       if (bot.voice.isPlaying && !args.now) {
-        await message.react('👍');
 
         await message.channel.send(outdent`
           \`${song.title}\` has been added to the queue!
@@ -113,7 +112,6 @@ export function skip(bot) {
       return await message.reply(Messages.NOT_PLAYING_AUDIO);
     }
 
-    await message.react('👍');
     bot.voice.stop();
   }).help({
     name: 'skip',
@@ -166,8 +164,6 @@ export function effect(bot) {
 
     const effect = Effects.effect(args.name);
 
-    console.log(effect);
-
     if (!effect) {
       return await message.reply(Messages.BAD_EFFECT_NAME);
     }
@@ -176,10 +172,7 @@ export function effect(bot) {
       await bot.voice.join(message.member.voice.channelID);
     }
 
-    await Promise.all([
-      message.react('👍'),
-      bot.voice.play(effect.path),
-    ]);
+    await bot.voice.play(effect.path);
   }).help({
     name: 'effect',
     description: 'Plays a sound effect with the given name.',
@@ -199,10 +192,7 @@ export function join(bot) {
   bot.command('join', async ({ message }) => {
     if (await Protect.voice(message)) return;
 
-    await Promise.all([
-      message.react('👍'),
-      bot.voice.join(message.member.voice.channelID),
-    ]);
+    await bot.voice.join(message.member.voice.channelID);
   }).help({
     name: 'join',
     description: 'Joins the Voice Chat.',
@@ -221,10 +211,7 @@ export function leave(bot) {
       return await message.reply(Messages.BOT_NOT_IN_VOICE_CHANNEL);
     }
 
-    await Promise.all([
-      message.react('👍'),
-      bot.voice.leave(),
-    ]);
+    await bot.voice.leave();
   }).help({
     name: 'leave',
     description: 'Leaves the Voice Chat.',
@@ -243,10 +230,7 @@ export function stop(bot) {
       return await message.reply(Messages.NOT_PLAYING_AUDIO);
     }
 
-    await Promise.all([
-      message.react('👍'),
-      Songs.clear(),
-    ]);
+    await Songs.clear();
 
     await bot.voice.stop();
   }).help({
@@ -267,10 +251,7 @@ export function pause(bot) {
       return await message.reply(Messages.NOT_PLAYING_AUDIO);
     }
 
-    await Promise.all([
-      message.react('👍'),
-      bot.voice.pause(),
-    ]);
+    await bot.voice.pause();
   }).help({
     name: 'pause',
     description: 'Pauses the music.',
@@ -286,10 +267,7 @@ export function pause(bot) {
 export function resume(bot) {
   bot.command('resume', async ({ message }) => {
     if (bot.voice.isPlaying) {
-      return await Promise.all([
-        message.react('👍'),
-        bot.voice.resume(),
-      ]);
+      return await bot.voice.resume();
     }
 
     const currentSong = await Songs.current();
