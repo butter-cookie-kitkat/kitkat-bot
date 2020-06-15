@@ -1,8 +1,8 @@
 import * as Music from './music';
 import * as Fun from './fun';
 import * as RuneScape from './runescape';
-import * as Debug from './debug';
-import * as Query from './query';
+import * as DebugLocal from './debug.local';
+import * as Query from './debug';
 import * as FFXIV from './ffxiv';
 
 import { CONFIG } from '../config';
@@ -13,5 +13,5 @@ export const commands = [
   FFXIV,
   RuneScape,
   Query,
-  ...(CONFIG.IS_LIVE ? [] : [Debug]),
+  ...(CONFIG.IS_LIVE ? [] : [DebugLocal]),
 ];

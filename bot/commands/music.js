@@ -18,7 +18,7 @@ import { Protect } from '../services/protect';
  */
 export function play(bot) {
   bot.command('play <url>', async ({ message, args }) => {
-    if (Protect.voice(message)) return;
+    if (await Protect.voice(message)) return;
 
     await bot.voice.join(message.member.voice.channelID);
 
@@ -162,7 +162,7 @@ export function effects(bot) {
  */
 export function effect(bot) {
   bot.command('effect <name>', async ({ message, args }) => {
-    if (Protect.voice(message)) return;
+    if (await Protect.voice(message)) return;
 
     const effect = Effects.effect(args.name);
 
@@ -195,7 +195,7 @@ export function effect(bot) {
  */
 export function join(bot) {
   bot.command('join', async ({ message }) => {
-    if (Protect.voice(message)) return;
+    if (await Protect.voice(message)) return;
 
     await Promise.all([
       message.react('👍'),

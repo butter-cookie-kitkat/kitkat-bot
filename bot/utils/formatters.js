@@ -60,6 +60,17 @@ class Formatter {
   }
 
   /**
+   * Formats the value as italicized.
+   *
+   * @returns {Formatter} the instance.
+   */
+  get italics() {
+    this.#value = ['_', this.#value, '_'].join('');
+
+    return this;
+  }
+
+  /**
    * @returns {string} the built value!
    */
   get value() {

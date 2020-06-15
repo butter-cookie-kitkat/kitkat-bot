@@ -16,5 +16,6 @@ export class Protect {
       return await message.reply(Messages.NOT_IN_VOICE_CHANNEL);
     }
 
+    return false;
   }
 }
