@@ -36,7 +36,7 @@
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
     "esm": "^3.2.25",
-    "kitkat-bot-core": "git+https://git@github.com/butter-cookie-kitkat/kitkat-bot-core.git#v1.2.0",
+    "kitkat-bot-core": "git+https://git@github.com/butter-cookie-kitkat/kitkat-bot-core.git#v1.2.1",
     "node-fetch": "^2.6.0",
     "outdent": "^0.7.1",
     "pad-left": "^2.1.0",

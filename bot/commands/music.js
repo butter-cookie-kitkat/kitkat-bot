@@ -166,6 +166,8 @@ export function effect(bot) {
 
     const effect = Effects.effect(args.name);
 
+    console.log(effect);
+
     if (!effect) {
       return await message.reply(Messages.BAD_EFFECT_NAME);
     }
