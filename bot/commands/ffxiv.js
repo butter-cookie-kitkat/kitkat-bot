@@ -1,4 +1,6 @@
 import { outdent } from 'outdent';
+import Canvas from 'canvas';
+import Discord from 'discord.js';
 
 import { DiscordBot } from 'kitkat-bot-core';
 import { FFXIV } from '../services/ffxiv';
@@ -6,6 +8,56 @@ import { crafters as Crafters } from '../services/crafters';
 import { format } from '../utils/formatters';
 import { JOBS, REVERSE_JOBS } from '../constants';
 import { worker } from '../workers/ffxiv';
+import { database } from '../database';
+import { Op } from 'sequelize';
+
+/**
+ * Searches for a given items gathering info.
+ *
+ * @param {DiscordBot} bot - the discord bot.
+ */
+export function gathering(bot) {
+  bot.command('gathering <...name>', async ({ message, args }) => {
+    const { gathering } = await database();
+
+    const info = await gathering.findOne({
+      where: {
+        name: {
+          [Op.like]: `%${args.name}%`,
+        },
+      },
+    });
+
+    const map = await Canvas.loadImage(info.map_image);
+    const canvas = Canvas.createCanvas(map.width, map.height);
+    const ctx = canvas.getContext('2d');
+
+    ctx.drawImage(map, 0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    ctx.arc(info.x, info.y, 100, 0, Math.PI * 2, true);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(52, 152, 219, 0.5)';
+    ctx.fill();
+
+    const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `${info.id}-map.png`);
+
+    await message.channel.send(outdent`
+      Here's your gathering information!
+
+      ${format('Item:').bold.value} ${info.name}
+      ${format('Zone:').bold.value} ${info.zone}
+      ${format('Region:').bold.value} ${info.region}
+      ${format('Place:').bold.value} ${info.place}
+    `, attachment);
+  }).help({
+    name: 'gathering',
+    description: 'Searches for the gathering information of a given item.',
+    group: 'FFXIV',
+    args: {
+      name: 'The name of the item to search for.',
+    },
+  });
+}
 
 /**
  * Adds a new crafter.

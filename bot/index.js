@@ -13,7 +13,11 @@ import { announcements } from './announcements';
 import * as Loggers from './utils/loggers';
 import { Debounce } from './utils/debounce';
 import { format } from './utils/formatters';
+import { math } from './utils/math';
 import { CONFIG } from './config';
+import { worker as xivapi_worker } from './workers/xivapi';
+import { database } from './database';
+import { Arrays } from './utils/arrays';
 
 const bot = new DiscordBot({
   token: CONFIG.DISCORD_TOKEN,
@@ -84,6 +88,68 @@ bot.on('error', async ({ message, error }) => {
   }
 
   await message.channel.send(Messages.UNHANDLED_ERROR);
+});
+
+xivapi_worker.run().then(async (info) => {
+  Loggers.workers(`Generating chunks from rows... (${info.length})`);
+
+  const CHUNK_SIZE = 100;
+
+  const chunks = Arrays.chunk(info.map((gatheringInfo) => {
+    const nodes = gatheringInfo.location.nodes || [];
+
+    const { x, y, z } = nodes.reduce((output, node) => {
+      output.x.push(node.pos_x);
+      output.y.push(node.pos_y);
+      output.z.push(node.pos_z);
+
+      return output;
+    }, { x: [], y: [], z: [] });
+
+    return {
+      id: gatheringInfo.id,
+      name: gatheringInfo.name,
+      hidden: gatheringInfo.hidden,
+      type: gatheringInfo.type,
+      map_image: gatheringInfo.location.map_image,
+      zone: gatheringInfo.location.zone,
+      region: gatheringInfo.location.region,
+      place: gatheringInfo.location.place,
+      x: math.center(...x),
+      y: math.center(...y),
+      z: math.center(...z),
+    };
+  }), CHUNK_SIZE);
+
+  Loggers.workers(`Chunks generated successfully! (${chunks.length})`);
+
+  const { gathering } = await database();
+
+  Loggers.workers('Destroying old rows!');
+
+  await gathering.destroy({
+    truncate: true,
+  });
+
+  for (let i = 0; i < chunks.length; i++) {
+    const rows = chunks[i];
+    const range = `${i * CHUNK_SIZE}-${i * CHUNK_SIZE + rows.length}`;
+
+    Loggers.workers(`Saving Gathering Info Rows... (${range})`);
+
+    try {
+      await gathering.bulkCreate(rows);
+    } catch (error) {
+      console.log(rows.map((row) => row.id));
+      throw error;
+    }
+
+    Loggers.workers(`Successfully saved gathering rows! (${range})`);
+  }
+
+  Loggers.workers(`Finished dumping gathering info!`);
+}).catch((error) => {
+  Loggers.workers(error);
 });
 
 bot.login().then(async () => {

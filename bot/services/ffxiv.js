@@ -45,7 +45,7 @@ export class FFXIV {
 
   static async getRecipe(name) {
     const response = await xivapi.search(name, {
-      filters: 'RecipeLevelTable.ClassJobLevel>0',
+      indexes: 'Recipe',
       limit: 1,
       columns: [
         'Name',
@@ -114,6 +114,7 @@ export class FFXIV {
     if (!FFXIV.#abilities[realName]) {
       FFXIV.#abilities[realName] = Promise.resolve().then(async () => {
         const response = await xivapi.search(realName, {
+          indexes: ['Action', 'CraftAction'],
           limit: 1,
           columns: 'Name,Icon,AnimationEnd.Key',
         });

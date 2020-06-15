@@ -1,16 +1,18 @@
 import debug from 'debug';
 
-import { Sequelize, ModelCtor, Model } from 'sequelize';
+import { Sequelize } from 'sequelize';
 
 import { CONFIG } from '../config';
 import { song } from './song';
 import { crafter } from './crafter';
+import { gathering } from './gathering';
 
 /**
  * @typedef {Object} DatabaseResponse
  * @property {Sequelize} db - the sequlize instance.
- * @property {ModelCtor<Model<any, any>>} song - the song model.
- * @property {ModelCtor<Model<any, any>>} crafter - the crafter model.
+ * @property {import('sequelize').ModelCtor<import('sequelize').Model<any, any>>} song - the song model.
+ * @property {import('sequelize').ModelCtor<import('sequelize').Model<any, any>>} crafter - the crafter model.
+ * @property {import('sequelize').ModelCtor<import('sequelize').Model<any, any>>} gathering - the gathering model.
  */
 
 /**
@@ -37,6 +39,7 @@ export async function database(excludeModels) {
     if (!excludeModels) {
       await song(sequelize);
       await crafter(sequelize);
+      await gathering(sequelize);
     }
 
     await sequelize.authenticate();
