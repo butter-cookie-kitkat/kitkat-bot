@@ -130,5 +130,14 @@ bot.login().then(async () => {
 
   Loggers.main(`Executing batch jobs...`);
 
-  await Promise.all(batch_jobs.map(async (job) => job()));
+  await Promise.all(batch_jobs.map(async (job) => {
+    try {
+      Loggers.main(`Executing batch job... (${job.name})`);
+      await job();
+      Loggers.main(`Successfully executed batch job! (${job.name})`);
+    } catch (error) {
+      Loggers.main(`Failed to execute batch job! (${job.name})`);
+      Loggers.main(error);
+    }
+  }));
 });
