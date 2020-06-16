@@ -20,10 +20,7 @@ export async function retry(cb, count = 3, delay = 3000) {
     } catch (error) {
       count--;
 
-      if (count == 0) {
-        console.error('Call count exceeded...');
-        throw error;
-      }
+      if (count == 0) throw error;
 
       await wait(delay);
     }

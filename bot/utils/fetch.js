@@ -25,13 +25,17 @@ export function buildUrl(url, params) {
  * @param {import('node-fetch').RequestInit} options - the fetch options.
  * @returns {any} the response.
  */
-export async function Fetch(url, options) {
+export function Fetch(url, options) {
   options = options || {};
 
   const builtUrl = buildUrl(url, options.query);
-  const response = await retry(() => fetch(builtUrl, options), options.retry);
 
-  const content = (response.headers.get('content-type') || '').includes('application/json') ? await response.json() : await response.text();
+  return retry(async () => {
+    const response = await fetch(builtUrl, options);
 
-  return response.status >= 400 ? Promise.reject(content) : Promise.resolve(content);
+    const content = (response.headers.get('content-type') || '').includes('application/json') ? await response.json() : await response.text();
+
+    return response.status >= 400 ? Promise.reject(content) : Promise.resolve(content);
+  }, options.retry);
+
 }

@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import { xivapi } from '../index';
 
-describe.only('Service(XIVAPI.Dump)', () => {
+describe('Service(XIVAPI.Dump)', () => {
   describe('func(items)', () => {
     it('should retrieve item information', async () => {
       const items = await xivapi.dump.items([2], false);
