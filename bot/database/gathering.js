@@ -50,9 +50,5 @@ export function gathering(sequelize) {
       type: DataTypes.FLOAT,
       allowNull: true,
     },
-    z: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
-    },
   });
 }

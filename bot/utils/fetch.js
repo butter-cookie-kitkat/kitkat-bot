@@ -1,32 +1,5 @@
 import fetch from 'node-fetch';
-
-/**
- * @template T
- * @callback RetryFunction
- * @returns {Promise<T>}
- */
-
-/**
- * Retries an async callback.
- *
- * @template T
- * @param {RetryFunction<T>} cb - the async callback
- * @param {number} count - the number of remaining retries
- * @returns {Promise<T>} the callback response
- */
-export async function retry(cb, count = 3) {
-  try {
-    return cb();
-  } catch (error) {
-    if (count !== 0) {
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-
-      return retry(cb, count - 1);
-    }
-
-    throw error;
-  }
-}
+import { retry } from './promise';
 
 /**
  * @param url
@@ -34,6 +7,7 @@ export async function retry(cb, count = 3) {
  */
 export function buildUrl(url, params) {
   const formattedParams = Object.entries(params || {})
+    .filter(([, value]) => Boolean(value))
     .map(([key, value]) => `${key}=${encodeURIComponent(Array.isArray(value) ? value.join(',') : value)}`)
     .join('&');
 

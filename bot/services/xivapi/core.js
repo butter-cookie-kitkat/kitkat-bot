@@ -1,4 +1,5 @@
 import { Fetch } from '../../utils/fetch';
+import { CONFIG } from '../../config';
 
 export class Core {
   #key;
@@ -7,8 +8,13 @@ export class Core {
     this.#key = key;
   }
 
-  getPage = (url, page = 1) => {
-    return Fetch(url, {
+  url(url) {
+    if (CONFIG.IS_LIVE) return `https://xivapi.com${url}`;
+    else return `https://staging.xivapi.com${url}`;
+  }
+
+  getPage(url, page = 1) {
+    return Fetch(this.url(url), {
       query: {
         private_key: this.#key,
         page,

@@ -10,9 +10,8 @@ const EXCLUDED_ITEM_IDS = [0];
  * @typedef {Object} GatheringInfo.Location.Node
  * @property {number} node_id - the gathering point id.
  * @property {number} map_id - the map id.
- * @property {number} pos_x - the x position of the node.
- * @property {number} pos_y - the y position of the node.
- * @property {number} pos_z - the z position of the node.
+ * @property {number} x - the x position of the node.
+ * @property {number} y - the y position of the node.
  */
 
 /**
@@ -44,29 +43,57 @@ export class Dump {
     this.#core = core;
   }
 
-  /**
-   * Dumps gathering information from XIV API.
-   *
-   * @returns {Promise<GatheringInfo[]>} the gathering information from xivapi
-   */
-  async gatheringInfo() {
-    const map = await Fetch('https://xivapi.com/mappy/json', { retry: -1 }).then((data) => data.filter(({ Type }) => Type === 'Node').map((row) => ({
-      ...row,
-    })).map((node) => ({
-      node_id: node.NodeID,
-      map_id: node.MapID,
-      pos_x: node.PixelX,
-      pos_y: node.PixelY,
-      pos_z: node.PosZ,
-    })));
+  async items(item_ids, event) {
+    const ids = item_ids.filter((id) => !EXCLUDED_ITEM_IDS.includes(id));
 
-    const gatheringItems = await this.#core.getAllPages(buildUrl('https://xivapi.com/GatheringItem', {
+    return Arrays.flatten(await Promise.all(Arrays.chunk(ids, 100).map((items) =>
+      this.#core.getAllPages(buildUrl(event ? '/EventItem' : '/Item', {
+        columns: ['ID', 'Icon', 'Name'],
+        ids: items.join(','),
+      })),
+    )))
+      .filter(Boolean)
+      .reduce((output, row) => ({
+        ...output,
+        [row.ID]: {
+          id: row.ID,
+          event: Boolean(event),
+          icon: this.#core.url(row.Icon),
+          name: row.Name,
+        },
+      }), {});
+  }
+
+  async gatheringItems() {
+    const gatheringItems = await this.#core.getAllPages(buildUrl('/GatheringItem', {
       columns: ['ID', 'Item', 'IsHidden'],
-    })).then((items) => items.filter(({ Item }) => !EXCLUDED_ITEM_IDS.includes(Item)));
+    }));
 
-    const points = await this.#core.getAllPages(buildUrl('https://xivapi.com/GatheringItemPoint', {
-      columns: ['GatheringPoint.ID', 'GatheringPoint.GatheringPointBase', 'GatheringPoint.PlaceName', 'GatheringPoint.TerritoryType.PlaceName', 'GatheringPoint.TerritoryType.PlaceNameRegion', 'GatheringPoint.TerritoryType.PlaceNameZone', 'GatheringPoint.TerritoryType.Map'],
-    })).then((results) => results.map((point) => {
+    return gatheringItems.filter(({ Item }) => !EXCLUDED_ITEM_IDS.includes(Item));
+  }
+
+  async map() {
+    const map = await Fetch(this.#core.url('/mappy/json'), { retry: -1 });
+
+    return map
+      .filter(({ Type }) => Type === 'Node')
+      .map((node) => ({
+        node_id: node.NodeID,
+        map_id: node.MapID,
+        x: node.PixelX,
+        y: node.PixelY,
+      }));
+  }
+
+  async gatheringPoints() {
+    const [map, points] = await Promise.all([
+      this.map(),
+      this.#core.getAllPages(buildUrl('/GatheringItemPoint', {
+        columns: ['GatheringPoint.ID', 'GatheringPoint.GatheringPointBase', 'GatheringPoint.PlaceName', 'GatheringPoint.TerritoryType.PlaceName', 'GatheringPoint.TerritoryType.PlaceNameRegion', 'GatheringPoint.TerritoryType.PlaceNameZone', 'GatheringPoint.TerritoryType.Map'],
+      })),
+    ]);
+
+    return points.map((point) => {
       const nodes = map.filter((row) =>
         row.node_id === point.GatheringPoint.ID,
       );
@@ -77,7 +104,7 @@ export class Dump {
         place: point.GatheringPoint.PlaceName && point.GatheringPoint.PlaceName.Name,
         region: point.GatheringPoint.TerritoryType.PlaceName.Name,
         zone: point.GatheringPoint.TerritoryType.PlaceNameZone.Name,
-        map_image: `https://xivapi.com${point.GatheringPoint.TerritoryType.Map.MapFilename}`,
+        map_image: this.#core.url(point.GatheringPoint.TerritoryType.Map.MapFilename),
         nodes,
         items: Object.entries(point.GatheringPoint.GatheringPointBase).reduce((output, [key, value]) => {
           if (key.startsWith('Item')) {
@@ -87,54 +114,26 @@ export class Dump {
           return output;
         }, []),
       };
-    }));
+    });
+  }
+
+  /**
+   * Dumps gathering information from XIV API.
+   *
+   * @returns {Promise<GatheringInfo[]>} the gathering information from xivapi
+   */
+  async gatheringInfo() {
+    const [gatheringItems, points] = await Promise.all([
+      this.gatheringItems(),
+      this.gatheringPoints(),
+    ]);
 
     const item_ids = gatheringItems.map(({ Item }) => Item);
 
-    const items = await Promise.all(Arrays.chunk(item_ids, 100).map((items) =>
-      this.#core.getAllPages(buildUrl('https://xivapi.com/Item', {
-        ids: items.join(','),
-      })),
-    )).then((results) =>
-      results.reduce((output, rows) => ({
-        ...output,
-        // TODO: Where are the rows containing "false" coming from... ?
-        ...rows.filter((row) => Boolean(row) && !EXCLUDED_ITEM_IDS.includes(row.ID)).reduce((output, row) => {
-          return ({
-            ...output,
-            [row.ID]: {
-              id: row.ID,
-              event: false,
-              icon: row.Icon,
-              name: row.Name,
-            },
-          });
-        }, {}),
-      }), {}),
-    );
-
-    const eventItems = await Promise.all(Arrays.chunk(item_ids, 100).map((items) =>
-      this.#core.getAllPages(buildUrl('https://xivapi.com/EventItem', {
-        columns: ['ID', 'Icon', 'Name'],
-        ids: items.join(','),
-      })),
-    )).then((results) =>
-      results.filter((row) => Boolean(row)).reduce((output, rows) => ({
-        ...output,
-        // TODO: Where are the rows containing "false" coming from... ?
-        ...rows.reduce((output, row) => {
-          return ({
-            ...output,
-            [row.ID]: {
-              id: row.ID,
-              event: true,
-              icon: row.Icon,
-              name: row.Name,
-            },
-          });
-        }, {}),
-      }), {}),
-    );
+    const [items, eventItems] = await Promise.all([
+      this.items(item_ids),
+      this.items(item_ids, true),
+    ]);
 
     return gatheringItems.map((gatheringItem) => {
       const item = items[gatheringItem.Item] || eventItems[gatheringItem.Item];

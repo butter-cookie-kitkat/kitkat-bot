@@ -17,13 +17,12 @@ export async function gathering() {
   const chunks = Arrays.chunk(info.map((gatheringInfo) => {
     const nodes = gatheringInfo.location.nodes || [];
 
-    const { x, y, z } = nodes.reduce((output, node) => {
-      output.x.push(node.pos_x);
-      output.y.push(node.pos_y);
-      output.z.push(node.pos_z);
+    const { x, y } = nodes.reduce((output, node) => {
+      output.x.push(node.x);
+      output.y.push(node.y);
 
       return output;
-    }, { x: [], y: [], z: [] });
+    }, { x: [], y: [] });
 
     return {
       id: gatheringInfo.id,
@@ -36,7 +35,6 @@ export async function gathering() {
       place: gatheringInfo.location.place,
       x: math.center(...x),
       y: math.center(...y),
-      z: math.center(...z),
     };
   }), CHUNK_SIZE);
 
