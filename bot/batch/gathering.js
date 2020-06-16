@@ -9,7 +9,6 @@ import { xivapi } from '../services/xivapi';
  *
  */
 export async function gathering() {
-  Loggers.workers(`Executing gathering batch job...`);
   const info = await xivapi.dump.gatheringInfo();
   Loggers.workers(`Generating chunks from rows... (${info.length})`);
 
@@ -66,6 +65,4 @@ export async function gathering() {
 
     Loggers.workers(`Successfully saved gathering rows! (${range})`);
   }
-
-  Loggers.workers(`Finished dumping gathering info!`);
 }
