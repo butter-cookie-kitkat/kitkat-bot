@@ -2,10 +2,10 @@ import { isMainThread, parentPort, workerData } from 'worker_threads';
 import { BaseWorker } from './base';
 import { FFXIV } from '../services/ffxiv';
 
-export class FFXIVWorker extends BaseWorker {
+export class CraftingSolverWorker extends BaseWorker {
   async run(recipe, crafter) {
     if (isMainThread) {
-      return super.run(require.resolve('./ffxiv.js'), recipe, crafter);
+      return super.run(require.resolve('./crafting-solver.js'), recipe, crafter);
     } else {
       const [recipe, crafter] = workerData;
 
@@ -15,7 +15,7 @@ export class FFXIVWorker extends BaseWorker {
   }
 }
 
-export const worker = new FFXIVWorker();
+export const worker = new CraftingSolverWorker();
 
 if (!isMainThread) {
   worker.run();

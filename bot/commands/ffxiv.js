@@ -7,7 +7,7 @@ import { FFXIV } from '../services/ffxiv';
 import { crafters as Crafters } from '../services/crafters';
 import { format } from '../utils/formatters';
 import { JOBS, REVERSE_JOBS } from '../constants';
-import { worker } from '../workers/ffxiv';
+import { worker as crafting_solver_worker } from '../workers/crafting-solver';
 import { database } from '../database';
 import { Op } from 'sequelize';
 
@@ -144,7 +144,7 @@ export function craft(bot) {
       `);
     }
 
-    const solution = await worker.run(recipe, crafter);
+    const solution = await crafting_solver_worker.run(recipe, crafter);
 
     await message.channel.send(outdent`
       Successfully generated a rotation for this item!
