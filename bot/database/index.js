@@ -6,6 +6,7 @@ import { CONFIG } from '../config';
 import { song } from './song';
 import { crafter } from './crafter';
 import { gathering } from './gathering';
+import { announcement } from './announcement';
 
 /**
  * @typedef {Object} DatabaseResponse
@@ -13,6 +14,7 @@ import { gathering } from './gathering';
  * @property {import('sequelize').ModelCtor<import('sequelize').Model<any, any>>} song - the song model.
  * @property {import('sequelize').ModelCtor<import('sequelize').Model<any, any>>} crafter - the crafter model.
  * @property {import('sequelize').ModelCtor<import('sequelize').Model<any, any>>} gathering - the gathering model.
+ * @property {import('sequelize').ModelCtor<import('sequelize').Model<any, any>>} announcement - the announcement model.
  */
 
 /**
@@ -40,6 +42,7 @@ export async function database(excludeModels) {
       await song(sequelize);
       await crafter(sequelize);
       await gathering(sequelize);
+      await announcement(sequelize);
     }
 
     await sequelize.authenticate();

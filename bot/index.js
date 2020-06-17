@@ -15,6 +15,7 @@ import { Debounce } from './utils/debounce';
 import { format } from './utils/formatters';
 import { CONFIG } from './config';
 import { batch_jobs } from './batch';
+import { Announcements } from './services/announcements';
 
 const bot = new DiscordBot({
   token: CONFIG.DISCORD_TOKEN,
@@ -106,27 +107,27 @@ bot.login().then(async () => {
 
   Loggers.main(`Setup complete, ready for input!`);
 
-  await Promise.all(announcements.map(async (announcement) => {
-    const info = await announcement();
+  await Promise.all(announcements
+    .map(async (job) => {
+      const info = await job();
 
-    const channel = await bot.text.channel(CONFIG.ANNOUNCEMENTS_CHANNEL_ID);
+      const announcement = await Announcements.get(info.marker);
 
-    const messages = await channel.messages.fetch();
+      const channel = await bot.text.channel(CONFIG.ANNOUNCEMENTS_CHANNEL_ID);
 
-    const message = messages.find((message) => message.author.id === bot.id && message.content.includes(info.marker));
+      if (announcement && announcement.message_id) {
+        const message = await channel.messages.fetch(announcement.message_id);
 
-    const content = outdent`
-      ${info.message}
+        await message.edit(info.message);
+      } else {
+        const message = await channel.send(info.message);
 
-      \`${info.marker}\`
-    `;
-
-    if (message) {
-      await message.edit(content);
-    } else {
-      await channel.send(content);
-    }
-  }));
+        await Announcements.save({
+          message_id: message.id,
+          marker: info.marker,
+        });
+      }
+    }));
 
   Loggers.main(`Executing batch jobs...`);
 
