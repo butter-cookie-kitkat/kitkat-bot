@@ -121,6 +121,6 @@ describe('Service(XIVAPI.Dump)', () => {
           }],
         },
       });
-    }).timeout(10000);
+    }).timeout(30000);
   });
 });

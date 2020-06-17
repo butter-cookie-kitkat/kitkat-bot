@@ -1,4 +1,4 @@
-![CI](https://github.com/butter-cookie-kitkat/kitkat-bot/workflows/CI/badge.svg)
+[![CI](https://github.com/butter-cookie-kitkat/kitkat-bot/workflows/CI/badge.svg)](https://github.com/butter-cookie-kitkat/kitkat-bot/actions)
 
 ### Kitkat Bot
 
