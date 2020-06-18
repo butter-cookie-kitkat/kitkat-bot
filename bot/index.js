@@ -107,8 +107,8 @@ bot.login().then(async () => {
 
   Loggers.main(`Setup complete, ready for input!`);
 
-  await Promise.all(announcements
-    .map(async (job) => {
+  if (CONFIG.ANNOUNCEMENTS_CHANNEL_ID) {
+    await Promise.all(announcements.map(async (job) => {
       const info = await job();
 
       const announcement = await Announcements.get(info.marker);
@@ -128,6 +128,7 @@ bot.login().then(async () => {
         });
       }
     }));
+  }
 
   Loggers.main(`Executing batch jobs...`);
 

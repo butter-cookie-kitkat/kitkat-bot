@@ -1,3 +1,10 @@
+/**
+ * @template T
+ * @callback IdentifierFunction
+ * @param {T} item - the item to identify.
+ * @returns {any} the identifier.
+ */
+
 export class Arrays {
   /**
    * Chunks a list into a list of lists.
@@ -32,5 +39,28 @@ export class Arrays {
 
       return output;
     }, []);
+  }
+
+  /**
+   * Returns a list of unique items.
+   *
+   * @template T
+   * @param {(T|T[])[]} list - the list remove duplicates from.
+   * @param {IdentifierFunction<T>} identifier - the function that returns the identifier.
+   * @returns {T[]} the unique array.
+   */
+  static unique(list, identifier) {
+    const ids = [];
+
+    return list.filter((item) => {
+      const id = identifier(item);
+
+      if (ids.includes(id)) {
+        return false;
+      }
+
+      ids.push(id);
+      return true;
+    })
   }
 }

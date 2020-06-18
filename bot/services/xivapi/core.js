@@ -9,14 +9,23 @@ export class Core {
   }
 
   url(url) {
-    if (CONFIG.IS_LIVE) return `https://xivapi.com${url}`;
+    if (url.startsWith('/m/') || CONFIG.IS_LIVE) return `https://xivapi.com${url}`;
     else return `https://staging.xivapi.com${url}`;
   }
 
-  getPage(url, page = 1) {
+  fetch(url, options = {}) {
     return Fetch(this.url(url), {
+      ...options,
       query: {
+        ...options.query,
         private_key: this.#key,
+      },
+    });
+  }
+
+  getPage(url, page = 1) {
+    return this.fetch(url, {
+      query: {
         page,
       },
       retry: -1,

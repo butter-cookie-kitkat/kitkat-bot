@@ -20,7 +20,7 @@ const EXCLUDED_ITEM_IDS = [0];
  * @property {string} place - the place name.
  * @property {string} region - the region name.
  * @property {string} zone - the zone name.
- * @property {string} map_image - the map associated with this item.
+ * @property {number} map_id - the map associated with this item.
  * @property {GatheringInfo.Location.Node[]} nodes - the gathering point node locations.
  */
 
@@ -30,7 +30,7 @@ const EXCLUDED_ITEM_IDS = [0];
  * @property {string} type - the gathering type.
  * @property {boolean} hidden - whether the gathering item is hidden within the node.
  * @property {string} name - the name of the item.
- * @property {GatheringInfo.Location} location - the item's gathering information.
+ * @property {GatheringInfo.Location[]} locations - the item's gathering information.
  */
 
 export class Dump {
@@ -94,18 +94,16 @@ export class Dump {
     ]);
 
     return points.map((point) => {
-      const nodes = map.filter((row) =>
-        row.node_id === point.GatheringPoint.ID,
-      );
-
       return {
         id: point.GatheringPoint.ID,
         type: point.GatheringPoint.GatheringPointBase.GatheringType.Name,
         place: point.GatheringPoint.PlaceName && point.GatheringPoint.PlaceName.Name,
         region: point.GatheringPoint.TerritoryType.PlaceName.Name,
         zone: point.GatheringPoint.TerritoryType.PlaceNameZone.Name,
-        map_image: this.#core.url(point.GatheringPoint.TerritoryType.Map.MapFilename),
-        nodes,
+        map_id: point.GatheringPoint.TerritoryType.Map.ID,
+        nodes: map.filter((row) =>
+          row.node_id === point.GatheringPoint.ID,
+        ),
         items: Object.entries(point.GatheringPoint.GatheringPointBase).reduce((output, [key, value]) => {
           if (key.startsWith('Item')) {
             output.push(value);
@@ -142,22 +140,20 @@ export class Dump {
         throw new Error(`Unable to find item with the given id. (${gatheringItem.Item})`);
       }
 
-      const point = points.find((point) => point.items.includes(gatheringItem.ID));
+      const locations = points.filter((point) => point.items.includes(gatheringItem.ID));
 
       // TODO: Why do certain items not have points? :(
-      // if (!point) {
+      // if (locations.length === 0) {
       //   throw new Error(`Unable to find point with the given gathering item id. (${gatheringItem.ID})`);
       // }
 
-      const { items: pointItems, type, ...location } = point || {};
-
       return {
         id: gatheringItem.ID,
+        type: locations && locations.length && locations[0].type,
         event: item.event,
-        type,
         hidden: gatheringItem.IsHidden === 1,
         name: item.name,
-        location,
+        locations: locations.map(({ items, type, ...location }) => location),
       };
     });
   }

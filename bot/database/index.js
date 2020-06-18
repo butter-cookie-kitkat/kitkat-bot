@@ -5,7 +5,7 @@ import { Sequelize } from 'sequelize';
 import { CONFIG } from '../config';
 import { song } from './song';
 import { crafter } from './crafter';
-import { gathering } from './gathering';
+import { xivapi } from './xivapi';
 import { announcement } from './announcement';
 
 /**
@@ -13,14 +13,29 @@ import { announcement } from './announcement';
  * @property {Sequelize} db - the sequlize instance.
  * @property {import('sequelize').ModelCtor<import('sequelize').Model<any, any>>} song - the song model.
  * @property {import('sequelize').ModelCtor<import('sequelize').Model<any, any>>} crafter - the crafter model.
- * @property {import('sequelize').ModelCtor<import('sequelize').Model<any, any>>} gathering - the gathering model.
  * @property {import('sequelize').ModelCtor<import('sequelize').Model<any, any>>} announcement - the announcement model.
+ * @property {import('sequelize').ModelCtor<import('sequelize').Model<any, any>>} xivapi_things - the xivapi_things model.
+ * @property {import('sequelize').ModelCtor<import('sequelize').Model<any, any>>} xivapi_points - the xivapi_points model.
+ * @property {import('sequelize').ModelCtor<import('sequelize').Model<any, any>>} xivapi_thing_points - the xivapi_thing_points model.
  */
 
 /**
- * @type {Sequelize} the sequlize instance.
+ * @type {Promise<Sequelize>} the sequlize instance.
  */
 let db;
+
+/**
+ *
+ */
+function init() {
+  return new Sequelize(CONFIG.DATABASE_URL, {
+    logging: CONFIG.SEQUELIZE_LOGGING ? debug('kitkat-bot:database') : () => {},
+    typeValidation: true,
+    define: {
+      timestamps: false,
+    },
+  });
+}
 
 /**
  * Returns the sequelize instance.
@@ -29,34 +44,32 @@ let db;
  * @returns {Promise<DatabaseResponse>} the sequelize instance.
  */
 export async function database(excludeModels) {
-  if (!db || excludeModels) {
-    const sequelize = new Sequelize(CONFIG.DATABASE_URL, {
-      logging: CONFIG.SEQUELIZE_LOGGING ? debug('kitkat-bot:database') : () => {},
-      typeValidation: true,
-      define: {
-        timestamps: false,
-      },
-    });
-
-    if (!excludeModels) {
-      await song(sequelize);
-      await crafter(sequelize);
-      await gathering(sequelize);
-      await announcement(sequelize);
-    }
+  if (excludeModels) {
+    const sequelize = init();
 
     await sequelize.authenticate();
-    await sequelize.sync({ alter: true });
 
-    if (excludeModels) {
-      return { db: sequelize };
-    } else {
-      db = sequelize;
-    }
+    return { db: sequelize };
+  } else if (!db) {
+    db = Promise.resolve().then(async () => {
+      const sequelize = init();
+
+      song(sequelize);
+      crafter(sequelize);
+      xivapi(sequelize);
+      announcement(sequelize);
+
+      await sequelize.authenticate();
+      await sequelize.sync({ alter: true });
+
+      return sequelize;
+    })
   }
 
+  const sequelize = await db;
+
   return {
-    db,
-    ...db.models,
+    db: sequelize,
+    ...sequelize.models,
   };
 }

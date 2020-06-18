@@ -3,52 +3,115 @@ import Canvas from 'canvas';
 import Discord from 'discord.js';
 
 import { DiscordBot } from 'kitkat-bot-core';
-import { FFXIV } from '../services/ffxiv';
 import { crafters as Crafters } from '../services/crafters';
 import { format } from '../utils/formatters';
 import { JOBS, REVERSE_JOBS } from '../constants';
 import { worker as crafting_solver_worker } from '../workers/crafting-solver';
 import { database } from '../database';
 import { Op } from 'sequelize';
+import { xivapi } from '../services/xivapi';
+import { Arrays } from '../utils/arrays';
+import { FFXIV } from '../services/ffxiv';
 
 /**
  * Searches for a given items gathering info.
  *
  * @param {DiscordBot} bot - the discord bot.
  */
-export function gathering(bot) {
-  bot.command('gathering <...name>', async ({ message, args }) => {
-    const { gathering } = await database();
+export function xiv(bot) {
+  bot.command('xiv <...name>', async ({ message, args }) => {
+    const { xivapi_things, xivapi_points } = await database();
 
-    const info = await gathering.findOne({
+    const thing = await xivapi_things.findOne({
       where: {
         name: {
           [Op.like]: `%${args.name}%`,
         },
       },
+      include: [{
+        all: true,
+        model: xivapi_points,
+      }],
     });
 
-    const map = await Canvas.loadImage(info.map_image);
-    const canvas = Canvas.createCanvas(map.width, map.height);
-    const ctx = canvas.getContext('2d');
+    if (!thing) {
+      return message.channel.send(outdent`
+        No Item / NPC exists with that name. (${args.name})
+      `);
+    }
 
-    ctx.drawImage(map, 0, 0, canvas.width, canvas.height);
-    ctx.beginPath();
-    ctx.arc(info.x, info.y, 100, 0, Math.PI * 2, true);
-    ctx.closePath();
-    ctx.fillStyle = 'rgba(52, 152, 219, 0.5)';
-    ctx.fill();
+    if (thing.xivapi_points.length === 0) {
+      return message.channel.send(outdent`
+        Sorry, it looks like we don't have that ${thing.type} tracked yet!
+      `);
+    }
 
-    const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `${info.id}-map.png`);
+    const map_nodes = thing.xivapi_points.reduce((output, point) => {
+      output[point.map_id] = output[point.map_id] || [];
+      output[point.map_id].push(point);
+
+      return output;
+    }, {});
+
+    const map_data = await xivapi.maps.getAll(Object.keys(map_nodes));
+
+    const attachments = await Promise.all(map_data.map(async ({ id, map_image, zone, region }) => {
+      const ASPECT_RATIO = 0.5;
+
+      const nodes = map_nodes[id];
+
+      const image = await Canvas.loadImage(map_image);
+      const canvas = Canvas.createCanvas(image.width * ASPECT_RATIO, image.height * ASPECT_RATIO);
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+      /**
+       * @param ctx
+       * @param label
+       * @param value
+       * @param x
+       * @param y
+       * @param size
+       */
+      function LabelValue(ctx, label, value, x, y, size) {
+        ctx.fillStyle = 'black';
+        ctx.font = `bold ${size}px Arial`;
+        ctx.textAlign = 'right';
+        ctx.fillText(`${label}:`, x, y);
+        ctx.font = `${size}px Arial`;
+        ctx.textAlign = 'left';
+        ctx.fillText(`${value}`, x + size / 2, y);
+      }
+
+      const size = 50 * ASPECT_RATIO;
+      const x = 230 * ASPECT_RATIO;
+
+      for (const node of nodes) {
+        ctx.beginPath();
+        ctx.arc(node.x * ASPECT_RATIO, node.y * ASPECT_RATIO, 30 * ASPECT_RATIO, 0, Math.PI * 2, true);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(52, 152, 219, 0.5)';
+        ctx.fill();
+      }
+
+      LabelValue(ctx, 'Item', thing.name, x, 50 * ASPECT_RATIO + size, size);
+      LabelValue(ctx, 'Zone', zone, x, 60 * ASPECT_RATIO + (size * 2), size);
+      LabelValue(ctx, 'Region', region, x, 70 * ASPECT_RATIO + (size * 3), size);
+
+      return new Discord.MessageAttachment(canvas.toBuffer(), `${id}-map.png`);
+    }));
 
     await message.channel.send(outdent`
       Here's your gathering information!
+    `);
 
-      ${format('Item:').bold.value} ${info.name}
-      ${format('Zone:').bold.value} ${info.zone}
-      ${format('Region:').bold.value} ${info.region}
-      ${format('Place:').bold.value} ${info.place}
-    `, attachment);
+    await Arrays.chunk(attachments, 3).reduce(async (promise, attachments) => {
+      await promise;
+
+      await message.channel.send({
+        files: attachments,
+      });
+    }, Promise.resolve());
   }).help({
     name: 'gathering',
     description: 'Searches for the gathering information of a given item.',

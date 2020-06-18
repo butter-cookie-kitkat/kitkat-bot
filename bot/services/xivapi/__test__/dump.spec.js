@@ -62,7 +62,7 @@ describe('Service(XIVAPI.Dump)', () => {
 
       expect(point).deep.equal({
         id: 30413,
-        map_image: xivapi.core.url('/m/w1f1/w1f1.00.jpg'),
+        map_id: 20,
         type: 'Mining',
         zone: 'Thanalan',
         region: 'Western Thanalan',
@@ -94,33 +94,15 @@ describe('Service(XIVAPI.Dump)', () => {
 
   describe('func(gatheringInfo)', () => {
     it('should retrieve the gathering info', async () => {
-      const [info] = await xivapi.dump.gatheringInfo();
+      const info = await xivapi.dump.gatheringInfo();
 
-      expect(info).deep.equal({
-        id: 1,
-        event: false,
-        type: 'Mining',
-        hidden: false,
-        name: 'Fire Shard',
-        location: {
-          id: 30413,
-          zone: 'Thanalan',
-          region: 'Western Thanalan',
-          place: 'Hammerlea',
-          map_image: xivapi.core.url('/m/w1f1/w1f1.00.jpg'),
-          nodes: [{
-            map_id: 20,
-            node_id: 30413,
-            x: 1318,
-            y: 1213,
-          }, {
-            map_id: 20,
-            node_id: 30413,
-            x: 1325,
-            y: 1200,
-          }],
-        },
-      });
+      expect(info.length).greaterThan(0);
+
+      const log = info.find((item) => item.name === 'Elm Log');
+
+      expect(log.id).equals(110);
+      expect(log.type).equals('Logging');
+      expect(log.locations).length(3);
     }).timeout(30000);
   });
 });
