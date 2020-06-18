@@ -7,6 +7,7 @@ import { song } from './song';
 import { crafter } from './crafter';
 import { xivapi } from './xivapi';
 import { announcement } from './announcement';
+import * as Loggers from '../utils/loggers';
 
 /**
  * @typedef {Object} DatabaseResponse
@@ -29,7 +30,7 @@ let db;
  */
 function init() {
   return new Sequelize(CONFIG.DATABASE_URL, {
-    logging: CONFIG.SEQUELIZE_LOGGING ? debug('kitkat-bot:database') : () => {},
+    logging: CONFIG.SEQUELIZE_LOGGING ? Loggers.database : () => {},
     typeValidation: true,
     define: {
       timestamps: false,
@@ -51,17 +52,23 @@ export async function database(excludeModels) {
 
     return { db: sequelize };
   } else if (!db) {
+    Loggers.database('Connecting to database...');
+
     db = Promise.resolve().then(async () => {
       const sequelize = init();
 
+      Loggers.database('Initializing Models...');
       song(sequelize);
       crafter(sequelize);
       xivapi(sequelize);
       announcement(sequelize);
 
+      Loggers.database('Authenticating...');
       await sequelize.authenticate();
+      Loggers.database('Syncing...');
       await sequelize.sync({ alter: true });
 
+      Loggers.database('Database initialized successfully!');
       return sequelize;
     })
   }

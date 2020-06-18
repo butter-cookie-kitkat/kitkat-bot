@@ -9,22 +9,29 @@ import { xivapi } from '../services/xivapi';
  *
  */
 export async function gathering() {
-  const info = await xivapi.dump.gatheringInfo();
-
   const { xivapi_points, xivapi_things, xivapi_thing_points } = await database();
 
-  Loggers.workers('Destroying old rows!');
+  const info = await xivapi.dump.gatheringInfo();
+
+  Loggers.workers('Destroying Thing-Points Associations...');
 
   await xivapi_thing_points.destroy({
     truncate: true,
+    cascade: true,
   });
 
-  await xivapi_points.destroy({
-    truncate: true,
-  });
+  Loggers.workers('Destroying Things...');
 
   await xivapi_things.destroy({
     truncate: true,
+    cascade: true,
+  });
+
+  Loggers.workers('Destroying Points...');
+
+  await xivapi_points.destroy({
+    truncate: true,
+    cascade: true,
   });
 
   let { points, things, thing_points } = info.reduce((output, row) => {
