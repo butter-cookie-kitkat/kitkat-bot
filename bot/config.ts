@@ -30,5 +30,5 @@ export const CONFIG = {
   NOTIFICATIONS_CHANNEL_ID: env('NOTIFICATIONS_CHANNEL_ID', null),
   ANNOUNCEMENTS_CHANNEL_ID: env('ANNOUNCEMENTS_CHANNEL_ID', null),
 
-  VERSION: defaults(pkg.sha, 'local'),
+  VERSION: pkg.sha,
 }

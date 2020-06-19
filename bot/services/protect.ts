@@ -1,10 +1,12 @@
 import { Messages } from './messages';
 import { Message, GuildMember, Guild } from 'discord.js';
 
+class ProtectError extends Error {}
+
 export class Protect {
   public guild(message: Message): ProtectedGuild {
     if (!this.isGuild(message.guild) || !this.isGuildMember(message.member)) {
-      throw new Error(Messages.DMS_NOT_ALLOWED);
+      throw new ProtectError(Messages.DMS_NOT_ALLOWED);
     }
 
     return {
@@ -23,7 +25,7 @@ export class Protect {
     const guild = this.guild(message);
 
     if (!guild.guildMember.voice.channelID) {
-      throw new Error(Messages.NOT_IN_VOICE_CHANNEL);
+      throw new ProtectError(Messages.NOT_IN_VOICE_CHANNEL);
     }
 
     return {
@@ -34,11 +36,15 @@ export class Protect {
 
   public async handle<T>(message: Message, cb: ProtectionCallback<T>): Promise<(null|T)> {
     try {
-      return cb(message);
+      return cb.bind(this)(message);
     } catch (error) {
-      await message.channel.send(error.message);
+      if (error instanceof ProtectError) {
+        await message.channel.send(error.message);
 
-      return null;
+        return null;
+      }
+
+      throw error;
     }
   }
 

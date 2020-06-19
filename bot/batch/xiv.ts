@@ -74,12 +74,7 @@ export const gathering: BatchJob = async () => {
     const range = `${i * CHUNK_SIZE}-${i * CHUNK_SIZE + rows.length}`;
     Loggers.workers(`Saving Things... (${range})`);
 
-    try {
-      await XIV_API.Things.bulkCreate(rows);
-    } catch (error) {
-      console.log(rows.map((row) => row.id));
-      throw error;
-    }
+    await XIV_API.Things.bulkCreate(rows);
 
     Loggers.workers(`Successfully saved Things! (${range})`);
   }, Promise.resolve());
@@ -90,12 +85,7 @@ export const gathering: BatchJob = async () => {
     const range = `${i * CHUNK_SIZE}-${i * CHUNK_SIZE + rows.length}`;
     Loggers.workers(`Saving Points... (${range})`);
 
-    try {
-      await XIV_API.Points.bulkCreate(rows);
-    } catch (error) {
-      console.log(rows.map((row) => row.id));
-      throw error;
-    }
+    await XIV_API.Points.bulkCreate(rows);
 
     Loggers.workers(`Successfully saved Points! (${range})`);
   }, Promise.resolve());
@@ -106,12 +96,7 @@ export const gathering: BatchJob = async () => {
     const range = `${i * CHUNK_SIZE}-${i * CHUNK_SIZE + rows.length}`;
     Loggers.workers(`Saving Thing-Points Associations... (${range})`);
 
-    try {
-      await XIV_API.ThingPoints.bulkCreate(rows);
-    } catch (error) {
-      console.log(rows.filter((row) => !points.find((point) => point.id === row.point_id)));
-      throw error;
-    }
+    await XIV_API.ThingPoints.bulkCreate(rows);
 
     Loggers.workers(`Successfully saved Thing-Points Associations! (${range})`);
   }, Promise.resolve());

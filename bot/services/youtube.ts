@@ -1,22 +1,27 @@
-import { YouTube as YT, YtItem, YtResult } from 'youtube-node';
 import parse from 'url-parse';
 import { CONFIG } from '../config';
 import { Song, SongInternal } from './songs';
+import { Fetch, EnhancedRequestInit } from '../utils/fetch';
 
 export class YouTubeService {
-  #api?: YT;
+  private key: string;
 
-  get api(): YT {
-    if (!this.#api) {
-      if (CONFIG.YOUTUBE_API_KEY === null) {
-        throw new Error(`Cannot connect to YouTube api without an api key. Please provide one via the "YOUTUBE_API_KEY" environment variable.`);
-      }
+  constructor(key: string) {
+    this.key = key;
+  }
 
-      this.#api = new YT();
-      this.#api.setKey(CONFIG.YOUTUBE_API_KEY);
-    }
-
-    return this.#api;
+  private fetch(url: string, options: EnhancedRequestInit = {}) {
+    return Fetch(`https://www.googleapis.com/youtube/v3${url}`, {
+      ...options,
+      query: {
+        ...options.query,
+        key: this.key,
+      },
+      headers: {
+        ...options.headers,
+        Accept: 'application/json',
+      },
+    })
   }
 
   /**
@@ -42,15 +47,14 @@ export class YouTubeService {
    * @returns the video information.
    */
   async getVideoByID(id: string): Promise<(null|SongInternal)> {
-    const video: YtItem = await new Promise((resolve, reject) => {
-      this.api.getById(id, (error, result) => {
-        if (error) reject(error);
-        else if (result === undefined || result.items === undefined) reject(new Error(`No video exists with the given ID. (${id})`));
-        else resolve(result.items[0]);
-      });
+    const video = await this.fetch('/videos', {
+      query: {
+        id,
+        part: ['snippet', 'contentDetails'],
+      },
     });
 
-    return this.formatVideo(video);
+    return video.items.length === 0 ? null : this.formatVideo(video.items[0]);
   }
 
   /**
@@ -77,41 +81,41 @@ export class YouTubeService {
    * @returns the songs in the playlist.
    */
   async getPlaylistByID(id: string): Promise<(null|PlaylistResponse)> {
-    const playlist: YtItem = await new Promise((resolve, reject) => {
-      this.api.getPlaylistById(id, (error?: Error, result?: YtResult) => {
-        if (error) reject(error);
-        else if (result === undefined || result.items === undefined) reject(new Error(`No playlist exists with the given ID. (${id})`));
-        else resolve(result.items[0]);
-      });
+    const playlist = await this.fetch('/playlists', {
+      query: {
+        id,
+        part: ['snippet'],
+      },
     });
 
-    const videos: YtItem[] = await new Promise((resolve, reject) => {
-      this.api.getPlaylistItemsById(id, 100, (error?: Error, result?: YtResult) => {
-        if (error) reject(error);
-        else if (result === undefined || result.items === undefined) reject(new Error(`No playlist exists with the given ID. (${id})`));
-        else resolve(result.items);
-      });
+    if (playlist.items.length === 0) return null;
+
+    const videos: any = await this.fetch('/playlistItems', {
+      query: {
+        playlistId: id,
+        part: ['snippet', 'contentDetails', 'status'],
+      },
     });
 
-    return this.formatPlaylist(playlist, videos);
+    if (videos.items < 1) return null;
+
+    return this.formatPlaylist(playlist.items[0], videos.items);
   }
 
   getUrlInfo(url: string): (null|UrlInfo) {
     const { query } = parse(url, true);
 
+    const info: UrlInfo = {};
+
     if (query.v) {
-      return {
-        type: 'video',
-        id: query.v,
-      };
-    } else if (query.list) {
-      return {
-        type: 'playlist',
-        id: query.list,
-      };
+      info.video_id = query.v;
     }
 
-    return null;
+    if (query.list) {
+      info.playlist_id = query.list;
+    }
+
+    return info.video_id || info.playlist_id ? info : null;
   }
 
   private duration(value: string) {
@@ -124,11 +128,7 @@ export class YouTubeService {
     return +seconds * 1000;
   }
 
-  private async formatPlaylist(playlist: YtItem, videos: YtItem[]): Promise<(null|PlaylistResponse)> {
-    if (!playlist.snippet || !playlist.snippet.title) {
-      return null;
-    }
-
+  private async formatPlaylist(playlist: any, videos: any[]): Promise<PlaylistResponse> {
     return {
       name: playlist.snippet.title,
       songs: await Promise.all(
@@ -140,11 +140,7 @@ export class YouTubeService {
     };
   }
 
-  private formatVideo(video: YtItem): (null|SongInternal) {
-    if (!video.id || !video.snippet || !video.snippet.title || !video.contentDetails || !video.contentDetails.duration) {
-      return null;
-    }
-
+  private formatVideo(video: any): SongInternal {
     return {
       title: video.snippet.title,
       url: `https://www.youtube.com/watch?v=${video.id}`,
@@ -153,18 +149,22 @@ export class YouTubeService {
   }
 }
 
-export const service = new YouTubeService();
+if (CONFIG.YOUTUBE_API_KEY === null) {
+  throw new Error(`Cannot connect to YouTube api without an api key. Please provide one via the "YOUTUBE_API_KEY" environment variable.`);
+}
+
+export const service = new YouTubeService(CONFIG.YOUTUBE_API_KEY);
 
 export interface UrlInfo {
   /**
-   * Whether the url is for a video or a playlist.
+   * The id of the video.
    */
-  type: ('video'|'playlist');
+  video_id?: string;
 
   /**
-   * The id of the video / playlist.
+   * The id of the playlist.
    */
-  id: string;
+  playlist_id?: string;
 }
 
 export interface PlaylistResponse {

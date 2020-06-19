@@ -45,6 +45,10 @@ export const Messages = {
   CURRENT_SONG_NOT_FOUND: outdent`
     Looks like there aren't any songs in the queue?!? How in the world could this be!
   `,
+
+  INVALID_YOUTUBE_URL: outdent`
+    Hey Senpai what are you doing?!? This isn't a YouTube URL!
+  `,
 }
 
 export const DEBUG_MESSAGES = {

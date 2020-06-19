@@ -19,24 +19,23 @@ export const play: CommandRegistrator = (bot) => {
 
     if (info === null) return;
 
-    await bot.voice.join(info.voiceChannelID);
+    if (!bot.voice.isConnected) {
+      await bot.voice.join(info.voiceChannelID);
+    }
 
-    if (args.playlist) {
-      const playlist = await YouTubeService.getPlaylist(args.url);
+    const urlInfo = YouTubeService.getUrlInfo(args.url);
 
-      if (!playlist) {
-        return await message.channel.send(Messages.PLAYLIST_NOT_FOUND);
-      }
+    if (!urlInfo) {
+      return await message.reply(Messages.INVALID_YOUTUBE_URL);
+    }
 
-      await SongsService.add(message.channel.id, ...playlist.songs);
-
-      if (args.now) {
-        return await message.reply(Messages.STOP_TROLLING);
-      }
-
-      await message.channel.send(`The \`${playlist.name}\` Playlist has been added to the queue! (${playlist.songs.length} songs)`);
-    } else {
-      const song = await YouTubeService.getVideo(args.url);
+    /**
+     * Play this as a Playlist if the following is true:
+     *  - The URL isn't a video url.
+     *  - The Playlist Argument was passed and url is a Playlist url.
+     */
+    if (urlInfo.video_id && (!args.playlist || !urlInfo.playlist_id)) {
+      const song = await YouTubeService.getVideoByID(urlInfo.video_id);
 
       if (!song) {
         return await message.channel.send(Messages.VIDEO_NOT_FOUND);
@@ -53,6 +52,20 @@ export const play: CommandRegistrator = (bot) => {
           \`${song.title}\` has been added to the queue!
         `);
       }
+    } else if (urlInfo.playlist_id) {
+      const playlist = await YouTubeService.getPlaylistByID(urlInfo.playlist_id);
+
+      if (!playlist) {
+        return await message.channel.send(Messages.PLAYLIST_NOT_FOUND);
+      }
+
+      await SongsService.add(message.channel.id, ...playlist.songs);
+
+      if (args.now) {
+        return await message.reply(Messages.STOP_TROLLING);
+      }
+
+      await message.channel.send(`The \`${playlist.name}\` Playlist has been added to the queue! (${playlist.songs.length} songs)`);
     }
 
     if (!bot.voice.isPlaying || args.now) {
