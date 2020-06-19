@@ -12,10 +12,7 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/src/bot.js",
-            "runtimeArgs": [
-              "-r",
-              "esm"
-            ],
+            "runtimeArgs": [],
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ]

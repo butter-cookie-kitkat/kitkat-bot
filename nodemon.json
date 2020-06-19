@@ -3,6 +3,7 @@
     "bot",
     ".env"
   ],
+  "ext": "ts",
   "ignore": [
     "**/test/*.spec.js"
   ]
