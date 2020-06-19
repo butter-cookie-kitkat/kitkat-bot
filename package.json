@@ -23,7 +23,7 @@
     "lint:fix": "eslint --ignore-path .gitignore --ignore-path .eslintignore --fix"
   },
   "engines": {
-    "node": "12.x"
+    "node": "12.0.x"
   },
   "dependencies": {
     "@types/chai": "^4.2.11",
