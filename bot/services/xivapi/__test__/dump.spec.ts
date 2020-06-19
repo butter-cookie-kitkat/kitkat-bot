@@ -100,9 +100,11 @@ describe('Service(XIVAPI.Dump)', () => {
 
       const log = info.find((item) => item.name === 'Elm Log');
 
-      expect(log?.id).equals(110);
-      expect(log?.type).equals('Logging');
-      expect(log?.locations).length(3);
+      if (!log) expect.fail('Expected log to be defined.');
+
+      expect(log.id).equals(110);
+      expect(log.type).equals('Logging');
+      expect(log.locations).length(3);
     }).timeout(30000);
   });
 });

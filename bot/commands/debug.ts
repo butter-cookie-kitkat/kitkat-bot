@@ -26,7 +26,7 @@ export const info: CommandRegistrator = (bot) => {
           ${format('Voice').header.value}
 
             Channel: ${bot.voice.channelName}
-            Members: ${bot.voice.members?.keyArray().length}
+            Members: ${bot.voice.members ? bot.voice.members.keyArray().length : 0}
         ` : outdent`
           ${format('Voice').header.value} - Not Connected...
         `}

@@ -1,6 +1,7 @@
 import fs from 'fs';
 import pkg from '../package.json';
 
-pkg.sha = process.env.SOURCE_VERSION || 'unknown';
-
-fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2));
+fs.writeFileSync('./package.json', JSON.stringify({
+  ...pkg,
+  sha: process.env.SOURCE_VERSION || 'unknown',
+}, null, 2));

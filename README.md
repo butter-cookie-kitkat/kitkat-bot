@@ -4,7 +4,7 @@
 
 #### Prerequisites
 
-- [NodeJS v14+](https://nodejs.org)
+- [NodeJS v12+](https://nodejs.org)
 
 #### Testing Locally
 
