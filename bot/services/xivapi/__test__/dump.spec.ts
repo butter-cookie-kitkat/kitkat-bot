@@ -53,7 +53,7 @@ describe('Service(XIVAPI.Dump)', () => {
         x: 625,
         y: 925,
       });
-    }).timeout(10000);
+    });
   });
 
   describe('func(gatheringPoints)', () => {
@@ -89,7 +89,7 @@ describe('Service(XIVAPI.Dump)', () => {
           6,
         ],
       });
-    }).timeout(10000);
+    });
   });
 
   describe('func(gatheringInfo)', () => {

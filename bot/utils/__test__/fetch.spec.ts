@@ -19,6 +19,6 @@ describe('Utils(Fetch)', () => {
         expect(error).exist;
         sinon.assert.callCount(fetch, 2);
       }
-    }).timeout(10000);
+    });
   });
 });
