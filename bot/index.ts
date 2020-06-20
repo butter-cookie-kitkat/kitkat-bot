@@ -53,7 +53,10 @@ bot.voice.on('start', async ({ uri }) => {
 bot.voice.on('finish', async ({ uri, interrupted }) => {
   Loggers.music(`Finished playing, '${uri}'.`);
 
-  if (interrupted) return;
+  if (interrupted) {
+    Loggers.music(`Interrupt detected, skipping removal.`);
+    return;
+  }
 
   await SongsService.remove(uri);
 

@@ -20,6 +20,10 @@ class Debounce {
     clearTimeout(this.#debounces[name]);
     delete this.#debounces[name];
   }
+
+  has(name: string): boolean {
+    return Boolean(this.#debounces[name]);
+  }
 }
 
 export const debounce = new Debounce();
