@@ -14,7 +14,7 @@ export const roll: CommandRegistrator = (bot) => {
   ], async ({ message, args }) => {
     const number = random.integer(1, args.max);
 
-    await message.reply(embeds.success({
+    await message.channel.send(embeds.success({
       title: `You've rolled the dice...`,
       description: concat.join(
         `And landed a ${number}.`,
