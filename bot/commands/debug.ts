@@ -6,7 +6,7 @@ import { Messages } from '../services/messages';
 import { CONFIG } from '../config';
 import { CommandRegistrator } from './types';
 import { MessageTable } from '../services/table';
-import * as Loggers from '../utils/loggers';
+import { KitkatBotCommandError } from '../types';
 
 /**
  * Retrieves info about the bot!
@@ -17,21 +17,21 @@ export const info: CommandRegistrator = (bot) => {
       Here's all my personal details, Senpai!
 
       ${format(outdent`
-        ${format('General').header.value}
+        ${format('General').header}
 
           ID: ${bot.id}
           Name: ${bot.name}
           Version: ${CONFIG.VERSION}
 
         ${bot.voice.isConnected ? outdent`
-          ${format('Voice').header.value}
+          ${format('Voice').header}
 
             Channel: ${bot.voice.channelName}
             Members: ${bot.voice.members ? bot.voice.members.keyArray().length : 0}
         ` : outdent`
-          ${format('Voice').header.value} - Not Connected...
+          ${format('Voice').header} - Not Connected...
         `}
-      `).code({ multi: true }).value}
+      `).code({ multi: true })}
     `);
   }).help({
     name: 'info',
@@ -46,7 +46,7 @@ export const info: CommandRegistrator = (bot) => {
 export const sql: CommandRegistrator = (bot) => {
   bot.command('sql <...sql>', async ({ message, args }) => {
     if (!['203949397271117824'].includes(message.author.id)) {
-      return await message.reply(Messages.FORBIDDEN);
+      throw new KitkatBotCommandError(Messages.FORBIDDEN);
     }
 
     const { db } = await database(true);
@@ -80,16 +80,26 @@ export const sql: CommandRegistrator = (bot) => {
       await message.reply(outdent`
         Results found for... (${args.sql})
 
-        ${format(table.toString()).code({ multi: true, type: 'prolog' }).value}
+        ${format(table.toString()).code({ multi: true, type: 'prolog' })}
       `);
     } catch (error) {
-      Loggers.main(error);
+      if (error.name === 'SequelizeDatabaseError') {
+        throw new KitkatBotCommandError(outdent`
+          Whoops! Looks like that sql was malformed, better check it again!
+        `, {
+          fields: [{
+            name: 'Query',
+            value: format(args.sql).code({ multi: true, type: 'sql' }).toString(),
+            inline: false,
+          }],
+        });
+      } else if (error.code === 50035) {
+        throw new KitkatBotCommandError(outdent`
+          Whoa Senpai, no need to be so pushy. Maybe you should limit your row count!
+        `);
+      }
 
-      return await message.reply(outdent`
-        Whoops! Looks like that sql was malformed, better check it again!
-
-        ${format(args.sql).code({ multi: true, type: 'sql' }).value}
-      `);
+      throw error;
     }
   }).help({
     name: 'sql',

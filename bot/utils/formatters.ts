@@ -36,6 +36,43 @@ class Formatter {
   }
 
   /**
+   * Truncates the string.
+   *
+   * @param options - the truncate options.
+   * @returns the instance
+   */
+  truncate(options: TruncateOptions): Formatter {
+    const indicator = options.indicator || '...';
+
+    if (this.#value.length > options.length) {
+      if (options.line) {
+        const values = this.#value.split('\n');
+        const output = [];
+
+        let remaining = options.length;
+        let value = values.shift();
+        while (value) {
+          if (remaining > value.length + indicator.length) {
+            output.push(value);
+            remaining -= value.length;
+            value = values.shift();
+          } else {
+            value = undefined;
+          }
+        }
+
+        output.push(indicator);
+
+        this.#value = output.join('\n');
+      } else {
+        this.#value = this.#value.slice(0, options.length - indicator.length) + indicator;
+      }
+    }
+
+    return this;
+  }
+
+  /**
    * Formats the value as a header.
    *
    * @returns the instance.
@@ -71,7 +108,7 @@ class Formatter {
   /**
    * @returns the built value!
    */
-  get value(): string {
+  toString(): string {
     return this.#value;
   }
 }
@@ -88,4 +125,23 @@ export interface CodeOptions {
    * The code syntax type.
    */
   type?: string;
+}
+
+export interface TruncateOptions {
+  /**
+   * The max length of the string.
+   */
+  length: number;
+
+  /**
+   * What indicator should we use to denote that this has been truncated?
+   *
+   * @defaultValue '...'
+   */
+  indicator?: string;
+
+  /**
+   * Whether we should trucate on new line characters.
+   */
+  line?: boolean;
 }

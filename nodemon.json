@@ -5,6 +5,7 @@
   ],
   "ext": "ts",
   "ignore": [
-    "**/test/*.spec.js"
+    "**/__test__/*.spec.js",
+    "**/__integration__/*.spec.js"
   ]
 }

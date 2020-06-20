@@ -1,12 +1,11 @@
 import { Messages } from './messages';
 import { Message, GuildMember, Guild } from 'discord.js';
-
-class ProtectError extends Error {}
+import { KitkatBotCommandError } from '../types';
 
 export class Protect {
   public guild(message: Message): ProtectedGuild {
     if (!this.isGuild(message.guild) || !this.isGuildMember(message.member)) {
-      throw new ProtectError(Messages.DMS_NOT_ALLOWED);
+      throw new KitkatBotCommandError(Messages.DMS_NOT_ALLOWED);
     }
 
     return {
@@ -25,26 +24,12 @@ export class Protect {
     const guild = this.guild(message);
 
     if (!guild.guildMember.voice.channelID) {
-      throw new ProtectError(Messages.NOT_IN_VOICE_CHANNEL);
+      throw new KitkatBotCommandError(Messages.NOT_IN_VOICE_CHANNEL);
     }
 
     return {
       ...guild,
       voiceChannelID: guild.guildMember.voice.channelID,
-    }
-  }
-
-  public async handle<T>(message: Message, cb: ProtectionCallback<T>): Promise<(null|T)> {
-    try {
-      return cb.bind(this)(message);
-    } catch (error) {
-      if (error instanceof ProtectError) {
-        await message.channel.send(error.message);
-
-        return null;
-      }
-
-      throw error;
     }
   }
 

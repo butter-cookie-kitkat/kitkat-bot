@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { DiscordBot, CommonCommands } from '@butter-cookie-kitkat/discord-core';
 import { outdent } from 'outdent';
 
-import { AUTO_LEAVE_DEBOUNCE } from './constants';
+import { AUTO_LEAVE_DEBOUNCE, EMBED_COLORS } from './constants';
 
 import { Messages, DEBUG_MESSAGES } from './services/messages';
 
@@ -16,6 +16,9 @@ import { format } from './utils/formatters';
 import { CONFIG } from './config';
 import { batch_jobs } from './batch';
 import { service as Announcements } from './services/announcements';
+import { MessageEmbed } from 'discord.js';
+import { KitkatBotCommandError } from './types';
+import { Embeds } from './utils/embeds';
 
 const bot = new DiscordBot({
   token: CONFIG.DISCORD_TOKEN,
@@ -38,7 +41,7 @@ bot.voice.on('start', async ({ uri }) => {
 });
 
 bot.voice.on('finish', async ({ uri, interrupted }) => {
-  Loggers.music(`Finished playing, "${uri}".`);
+  Loggers.music(`Finished playing, '${uri}'.`);
 
   if (interrupted) return;
 
@@ -69,23 +72,24 @@ bot.voice.on('member:leave', () => {
 bot.voice.on('leave', SongsService.clear);
 
 bot.on('error', async ({ message, error }) => {
-  Loggers.main(error);
+  if (error instanceof KitkatBotCommandError) {
+    await message.channel.send({
+      embed: new MessageEmbed({
+        title: 'Error!',
+        description: error.message,
+        color: EMBED_COLORS.ERROR,
+        fields: error.embedOptions.fields,
+      }),
+    });
+  } else {
+    Loggers.main(error);
 
-  if (CONFIG.NOTIFICATIONS_CHANNEL_ID) {
-    await bot.text.send(CONFIG.NOTIFICATIONS_CHANNEL_ID, outdent`
-      We encountered an error while processing the following commmand.
-
-      ${format('Author').bold.value}: ${message.author.username}#${message.author.discriminator}
-      ${format('Command').bold.value}: ${message.content}
-      ${format('Message').bold.value}: ${error.message}
-
-      ${format('Stack Trace').header.bold.value}
-
-      ${format(error.stack).code({ multi: true }).value}
-    `);
+    if (CONFIG.NOTIFICATIONS_CHANNEL_ID) {
+      await bot.text.send(CONFIG.NOTIFICATIONS_CHANNEL_ID, {
+        embed: Embeds.error(error, message),
+      });
+    }
   }
-
-  await message.channel.send(Messages.UNHANDLED_ERROR);
 });
 
 bot.login().then(async () => {
@@ -132,16 +136,16 @@ bot.login().then(async () => {
     }));
   }
 
-  Loggers.main(`Executing batch jobs...`);
+  // Loggers.main(`Executing batch jobs...`);
 
-  await Promise.all(Object.entries(batch_jobs).map(async ([name, job]) => {
-    try {
-      Loggers.main(`Executing batch job... (${name})`);
-      await job();
-      Loggers.main(`Successfully executed batch job! (${name})`);
-    } catch (error) {
-      Loggers.main(`Failed to execute batch job! (${name})`);
-      Loggers.main(error);
-    }
-  }));
+  // await Promise.all(Object.entries(batch_jobs).map(async ([name, job]) => {
+  //   try {
+  //     Loggers.main(`Executing batch job... (${name})`);
+  //     await job();
+  //     Loggers.main(`Successfully executed batch job! (${name})`);
+  //   } catch (error) {
+  //     Loggers.main(`Failed to execute batch job! (${name})`);
+  //     Loggers.main(error);
+  //   }
+  // }));
 });

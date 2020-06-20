@@ -9,15 +9,14 @@ import { concat } from '../utils/concat';
 import { duration } from '../utils/duration';
 import { service as ProtectService } from '../services/protect';
 import { CommandRegistrator } from './types';
+import { KitkatBotCommandError } from '../types';
 
 /**
  * Adds a song to the queue.
  */
 export const play: CommandRegistrator = (bot) => {
   bot.command('play <url>', async ({ message, args }) => {
-    const info = await ProtectService.handle(message, ProtectService.voice);
-
-    if (info === null) return;
+    const info = ProtectService.voice(message);
 
     if (!bot.voice.isConnected) {
       await bot.voice.join(info.voiceChannelID);
@@ -26,7 +25,7 @@ export const play: CommandRegistrator = (bot) => {
     const urlInfo = YouTubeService.getUrlInfo(args.url);
 
     if (!urlInfo) {
-      return await message.reply(Messages.INVALID_YOUTUBE_URL);
+      throw new KitkatBotCommandError(Messages.INVALID_YOUTUBE_URL);
     }
 
     /**
@@ -62,7 +61,7 @@ export const play: CommandRegistrator = (bot) => {
       await SongsService.add(message.channel.id, ...playlist.songs);
 
       if (args.now) {
-        return await message.reply(Messages.STOP_TROLLING);
+        throw new KitkatBotCommandError(Messages.STOP_TROLLING);
       }
 
       await message.channel.send(`The \`${playlist.name}\` Playlist has been added to the queue! (${playlist.songs.length} songs)`);
@@ -128,9 +127,9 @@ export const queue: CommandRegistrator = (bot) => {
  * Skips the current song.
  */
 export const skip: CommandRegistrator = (bot) => {
-  bot.command('skip', async ({ message }) => {
+  bot.command('skip', async () => {
     if (!bot.voice.isPlaying) {
-      return await message.reply(Messages.NOT_PLAYING_AUDIO);
+      throw new KitkatBotCommandError(Messages.NOT_PLAYING_AUDIO);
     }
 
     bot.voice.stop();
@@ -163,14 +162,12 @@ export const effects: CommandRegistrator = (bot) => {
  */
 export const effect: CommandRegistrator = (bot) => {
   bot.command('effect <name>', async ({ message, args }) => {
-    const info = await ProtectService.handle(message, ProtectService.voice);
-
-    if (info === null) return;
+    const info = ProtectService.voice(message);
 
     const effect = EffectsService.effect(args.name);
 
     if (!effect) {
-      return await message.reply(Messages.BAD_EFFECT_NAME);
+      throw new KitkatBotCommandError(Messages.BAD_EFFECT_NAME);
     }
 
     if (!bot.voice.isConnected) {
@@ -193,9 +190,7 @@ export const effect: CommandRegistrator = (bot) => {
  */
 export const join: CommandRegistrator = (bot) => {
   bot.command('join', async ({ message }) => {
-    const info = await ProtectService.handle(message, ProtectService.voice);
-
-    if (info === null) return;
+    const info = ProtectService.voice(message);
 
     await bot.voice.join(info.voiceChannelID);
   }).help({
@@ -209,9 +204,9 @@ export const join: CommandRegistrator = (bot) => {
  * Leaves the users voice channel.
  */
 export const leave: CommandRegistrator = (bot) => {
-  bot.command('leave', async ({ message }) => {
+  bot.command('leave', async () => {
     if (!bot.voice.isConnected) {
-      return await message.reply(Messages.BOT_NOT_IN_VOICE_CHANNEL);
+      throw new KitkatBotCommandError(Messages.BOT_NOT_IN_VOICE_CHANNEL);
     }
 
     await bot.voice.leave();
@@ -226,9 +221,9 @@ export const leave: CommandRegistrator = (bot) => {
  * Stops playing audio.
  */
 export const stop: CommandRegistrator = (bot) => {
-  bot.command('stop', async ({ message }) => {
+  bot.command('stop', async () => {
     if (!bot.voice.isPlaying) {
-      return await message.reply(Messages.NOT_PLAYING_AUDIO);
+      throw new KitkatBotCommandError(Messages.NOT_PLAYING_AUDIO);
     }
 
     await SongsService.clear();
@@ -245,9 +240,9 @@ export const stop: CommandRegistrator = (bot) => {
  * Pauses the music.
  */
 export const pause: CommandRegistrator = (bot) => {
-  bot.command('pause', async ({ message }) => {
+  bot.command('pause', async () => {
     if (!bot.voice.isPlaying) {
-      return await message.reply(Messages.NOT_PLAYING_AUDIO);
+      throw new KitkatBotCommandError(Messages.NOT_PLAYING_AUDIO);
     }
 
     await bot.voice.pause();
@@ -263,9 +258,7 @@ export const pause: CommandRegistrator = (bot) => {
  */
 export const resume: CommandRegistrator = (bot) => {
   bot.command('resume', async ({ message }) => {
-    const info = await ProtectService.handle(message, ProtectService.voice);
-
-    if (info === null) return;
+    const info = ProtectService.voice(message);
 
     if (!bot.voice.isConnected) {
       await bot.voice.join(info.voiceChannelID);
@@ -278,7 +271,7 @@ export const resume: CommandRegistrator = (bot) => {
     const currentSong = await SongsService.current();
 
     if (!currentSong) {
-      return await message.reply(Messages.NOT_PLAYING_AUDIO);
+      throw new KitkatBotCommandError(Messages.NOT_PLAYING_AUDIO);
     }
 
     await bot.voice.play(currentSong.url);
