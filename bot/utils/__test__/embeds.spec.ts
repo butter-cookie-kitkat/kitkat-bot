@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { Embeds } from '../embeds';
+import { embeds } from '../embeds';
 import { EMBED_COLORS } from '../../constants';
 import { MessageEmbed, Message, EmbedField } from 'discord.js';
 import { format } from '../formatters';
@@ -9,23 +9,23 @@ import { chance } from '../../__test__/chance';
 describe('Utils(Embeds)', () => {
   describe('func(success)', () => {
     it('should generate an embed object', () => {
-      expect(Embeds.success()).instanceOf(MessageEmbed);
+      expect(embeds.success()).instanceOf(MessageEmbed);
     });
 
     it('should set the color the teal', () => {
-      expect(Embeds.success().color).equals(EMBED_COLORS.SUCCESS);
+      expect(embeds.success().color).equals(EMBED_COLORS.SUCCESS);
     });
 
     it('should support providing a title', () => {
       const expectedTitle = chance.string();
 
-      expect(Embeds.success({ title: expectedTitle }).title).equals(expectedTitle);
+      expect(embeds.success({ title: expectedTitle }).title).equals(expectedTitle);
     });
 
     it('should support providing a description', () => {
       const expectedDescription = chance.string();
 
-      expect(Embeds.success({ description: expectedDescription }).description).equals(expectedDescription);
+      expect(embeds.success({ description: expectedDescription }).description).equals(expectedDescription);
     });
 
     it('should support providing fields', () => {
@@ -35,7 +35,7 @@ describe('Utils(Embeds)', () => {
         inline: false,
       };
 
-      expect(Embeds.success({ fields: [expectedField] }).fields).deep.equals([expectedField]);
+      expect(embeds.success({ fields: [expectedField] }).fields).deep.equals([expectedField]);
     });
   });
 
@@ -49,7 +49,7 @@ describe('Utils(Embeds)', () => {
       content: '.sql select things',
     } as Message;
 
-    const embed = Embeds.error(error, message);
+    const embed = embeds.error(error, message);
 
     it('should generate an embed object', () => {
       expect(embed).instanceOf(MessageEmbed);

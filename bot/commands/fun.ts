@@ -1,6 +1,6 @@
 import { concat } from '../utils/concat';
 import { CommandRegistrator } from './types';
-import { Embeds } from '../utils/embeds';
+import { embeds } from '../utils/embeds';
 import { format } from '../utils/formatters';
 import { random } from '../utils/random';
 
@@ -14,7 +14,7 @@ export const roll: CommandRegistrator = (bot) => {
   ], async ({ message, args }) => {
     const number = random.integer(1, args.max);
 
-    await message.reply(Embeds.success({
+    await message.reply(embeds.success({
       title: `You've rolled the dice...`,
       description: concat.join(
         `And landed a ${number}.`,

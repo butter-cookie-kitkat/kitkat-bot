@@ -7,7 +7,7 @@ import { CONFIG } from '../config';
 import { CommandRegistrator } from './types';
 import { MessageTable } from '../services/table';
 import { KitkatBotCommandError } from '../types';
-import { Embeds } from '../utils/embeds';
+import { embeds } from '../utils/embeds';
 import { EmbedField } from 'discord.js';
 
 /**
@@ -45,7 +45,7 @@ export const info: CommandRegistrator = (bot) => {
       });
     }
 
-    await message.reply(Embeds.success({
+    await message.reply(embeds.success({
       title: `Bot Status (v${CONFIG.VERSION})`,
       description: `Here's all my personal details, Senpai!`,
       fields: fields,
@@ -73,37 +73,40 @@ export const sql: CommandRegistrator = (bot) => {
 
       if (data.length === 0) {
         if (args.sql.match(/^delete/i)) {
-          return await message.reply(outdent`
-            Rows deleted successfully!
-          `);
+          return message.channel.send(embeds.success({
+            title: ['SQL', 'Success!'],
+            description: 'Rows deleted successfully!',
+          }));
         } else if (args.sql.match(/^update/i)) {
-          return await message.reply(outdent`
-            Rows updated successfully!
-          `);
+          return message.channel.send(embeds.success({
+            title: ['SQL', 'Success!'],
+            description: 'Rows updated successfully!',
+          }));
         } else if (args.sql.match(/^drop/i)) {
-          return await message.reply(outdent`
-            Table dropped successfully!
-          `);
+          return message.channel.send(embeds.success({
+            title: ['SQL', 'Success!'],
+            description: 'Table dropped successfully!',
+          }));
         }
 
-        return await message.reply(outdent`
-          No results found for... (${args.sql})
-        `);
+        return message.channel.send(embeds.success({
+          title: ['SQL', 'Success!'],
+          description: `No results found for... (${args.sql})`,
+        }));
       }
 
       const table = new MessageTable(Object.keys(data[0]));
       table.rows(data.map((row: any) => Object.values(row)));
 
-      await message.reply(outdent`
+      return message.reply(outdent`
         Results found for... (${args.sql})
 
         ${format(table.toString()).code({ multi: true, type: 'prolog' })}
       `);
     } catch (error) {
       if (error.name === 'SequelizeDatabaseError') {
-        throw new KitkatBotCommandError(outdent`
-          Whoops! Looks like that sql was malformed, better check it again!
-        `, {
+        throw new KitkatBotCommandError({
+          description: 'Whoops! Looks like that sql was malformed, better check it again!',
           fields: [{
             name: 'Query',
             value: format(args.sql).code({ multi: true, type: 'sql' }).toString(),

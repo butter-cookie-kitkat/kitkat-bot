@@ -10,6 +10,8 @@ import { duration } from '../utils/duration';
 import { service as ProtectService } from '../services/protect';
 import { CommandRegistrator } from './types';
 import { KitkatBotCommandError } from '../types';
+import { embeds } from '../utils/embeds';
+import { format } from '../utils/formatters';
 
 /**
  * Adds a song to the queue.
@@ -37,7 +39,7 @@ export const play: CommandRegistrator = (bot) => {
       const song = await YouTubeService.getVideoByID(urlInfo.video_id);
 
       if (!song) {
-        return await message.channel.send(Messages.VIDEO_NOT_FOUND);
+        throw new KitkatBotCommandError(Messages.VIDEO_NOT_FOUND);
       }
 
       if (args.now) {
@@ -47,15 +49,16 @@ export const play: CommandRegistrator = (bot) => {
       }
 
       if (bot.voice.isPlaying && !args.now) {
-        await message.channel.send(outdent`
-          \`${song.title}\` has been added to the queue!
-        `);
+        await message.channel.send(embeds.success({
+          title: ['Music', 'Song Added'],
+          description: `\`${song.title}\` has been added to the queue!`,
+        }));
       }
     } else if (urlInfo.playlist_id) {
       const playlist = await YouTubeService.getPlaylistByID(urlInfo.playlist_id);
 
       if (!playlist) {
-        return await message.channel.send(Messages.PLAYLIST_NOT_FOUND);
+        throw new KitkatBotCommandError(Messages.PLAYLIST_NOT_FOUND);
       }
 
       await SongsService.add(message.channel.id, ...playlist.songs);
@@ -64,14 +67,17 @@ export const play: CommandRegistrator = (bot) => {
         throw new KitkatBotCommandError(Messages.STOP_TROLLING);
       }
 
-      await message.channel.send(`The \`${playlist.name}\` Playlist has been added to the queue! (${playlist.songs.length} songs)`);
+      await message.channel.send(embeds.success({
+        title: ['Music', 'Playlist Added'],
+        description: `The \`${playlist.name}\` Playlist has been added to the queue! (${playlist.songs.length} songs)`,
+      }));
     }
 
     if (!bot.voice.isPlaying || args.now) {
       const song = await SongsService.current();
 
       if (!song) {
-        return await message.channel.send(Messages.CURRENT_SONG_NOT_FOUND);
+        throw new KitkatBotCommandError(Messages.CURRENT_SONG_NOT_FOUND);
       }
 
       await bot.voice.play(song.url);
@@ -102,20 +108,24 @@ export const play: CommandRegistrator = (bot) => {
  */
 export const queue: CommandRegistrator = (bot) => {
   bot.command('queue', async ({ message }) => {
+    ProtectService.guild(message);
+
     const {
       songs,
-      hasMore,
+      count,
     } = await SongsService.list({ limit: 10 });
-    if (songs.length > 0) {
-      await message.channel.send(outdent`
-        Here's a list of the current songs in the queue.
 
-        ${songs.map((song, index) => concat.join(`${index + 1}) \`${song.title}\``, index === 0 && `<-- Current Track - ${duration.humanize(song.duration - (bot.voice.elapsed || 0))}`)).join('\n')}
-        ${hasMore ? '...' : ''}
-      `);
-    } else {
-      await message.channel.send('There are currently no songs in the queue.');
+    if (songs.length === 0) {
+      return message.channel.send(embeds.success({
+        title: ['Music', 'Queue (Empty)'],
+        description: format('There are currently no songs in the queue.').italics.toString(),
+      }));
     }
+
+    return message.channel.send(embeds.success({
+      title: ['Music', `Queue (${songs.length}/${count})`],
+      description: songs.map((song, index) => concat.join(`${index + 1}) \`${song.title}\``, index === 0 && `<-- Current Track - ${duration.humanize(song.duration - (bot.voice.elapsed || 0))}`)).join('\n'),
+    }));
   }).help({
     name: 'queue',
     group: 'Music',
@@ -145,11 +155,20 @@ export const skip: CommandRegistrator = (bot) => {
  */
 export const effects: CommandRegistrator = (bot) => {
   bot.command('effects', async ({ message }) => {
-    await message.channel.send(outdent`
-      Here's a list of all the available sound effects.
+    const names = Object.keys(EffectsService.public);
 
-      ${Object.keys(EffectsService.public).map((name) => `- ${name}`).join('\r\n')}
-    `);
+    return message.channel.send(embeds.success({
+      title: ['Effects', `List (${names.length})`],
+      fields: [{
+        name: 'Name',
+        value: names.join('\r\n'),
+        inline: true,
+      }, {
+        name: 'Command',
+        value: names.map((name) => `.effect ${name}`).join('\r\n'),
+        inline: true,
+      }],
+    }));
   }).help({
     name: 'effects',
     description: 'Lists all the available effects.',

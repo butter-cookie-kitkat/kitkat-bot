@@ -8,6 +8,7 @@ import { xivapi } from '../services/xivapi';
 import { arrays } from '../utils/arrays';
 import { CommandRegistrator } from './types';
 import { IPoints } from '../database/xivapi/points';
+import { KitkatBotCommandError } from '../types';
 
 export type MapNodes = { [key: string]: IPoints[] };
 
@@ -31,15 +32,11 @@ export const xiv: CommandRegistrator = (bot) => {
     });
 
     if (!thing) {
-      return message.channel.send(outdent`
-        No Item / NPC exists with that name. (${args.name})
-      `);
+      throw new KitkatBotCommandError(`No Item / NPC exists with that name. (${args.name})`);
     }
 
     if (thing.points.length === 0) {
-      return message.channel.send(outdent`
-        Sorry, it looks like we don't have that ${thing.type} tracked yet!
-      `);
+      throw new KitkatBotCommandError(`Sorry, it looks like we don't have that ${thing.type} tracked yet!`);
     }
 
     const map_nodes: MapNodes = thing.points.reduce((output: MapNodes, point: IPoints) => {

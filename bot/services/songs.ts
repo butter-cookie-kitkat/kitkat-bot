@@ -21,6 +21,7 @@ export class SongsService {
 
     return {
       songs,
+      count: totalSongs,
       hasMore: songs.length < totalSongs,
     };
   }
@@ -196,6 +197,11 @@ export interface ListResponse {
    * The songs matching the criteria.
    */
   songs: Song[];
+
+  /**
+   * The total number of songs.
+   */
+  count: number;
 
   /**
    * Whether there are more songs in the queue not listed here.

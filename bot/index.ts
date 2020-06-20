@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { DiscordBot, CommonCommands } from '@butter-cookie-kitkat/discord-core';
 import { outdent } from 'outdent';
 
-import { AUTO_LEAVE_DEBOUNCE, EMBED_COLORS } from './constants';
+import { AUTO_LEAVE_DEBOUNCE } from './constants';
 
 import { DEBUG_MESSAGES } from './services/messages';
 
@@ -17,7 +17,8 @@ import { batch_jobs } from './batch';
 import { service as Announcements } from './services/announcements';
 import { MessageEmbed } from 'discord.js';
 import { KitkatBotCommandError } from './types';
-import { Embeds } from './utils/embeds';
+import { embeds } from './utils/embeds';
+import { duration } from './utils/duration';
 
 const bot = new DiscordBot({
   token: CONFIG.DISCORD_TOKEN,
@@ -34,9 +35,19 @@ bot.voice.on('start', async ({ uri }) => {
   if (!song) return;
 
   debounce.clear(AUTO_LEAVE_DEBOUNCE);
-  await bot.text.send(song.channelID, outdent`
-    \`${song.title}\` is now playing!
-  `);
+
+  await bot.text.send(song.channelID, embeds.success({
+    title: ['Music', 'Now Playing'],
+    fields: [{
+      name: 'Title',
+      value: `[${song.title}](${song.url})`,
+      inline: true,
+    }, {
+      name: 'Duration',
+      value: duration.humanize(song.duration),
+      inline: true,
+    }],
+  }));
 });
 
 bot.voice.on('finish', async ({ uri, interrupted }) => {
@@ -72,21 +83,15 @@ bot.voice.on('leave', SongsService.clear);
 
 bot.on('error', async ({ message, error }) => {
   if (error instanceof KitkatBotCommandError) {
-    await message.channel.send({
-      embed: new MessageEmbed({
-        title: 'Error!',
-        description: error.message,
-        color: EMBED_COLORS.ERROR,
-        fields: error.embedOptions.fields,
-      }),
-    });
+    await message.channel.send(embeds.failure({
+      description: error.message,
+      fields: error.embedOptions.fields,
+    }));
   } else {
     Loggers.main(error);
 
     if (CONFIG.NOTIFICATIONS_CHANNEL_ID) {
-      await bot.text.send(CONFIG.NOTIFICATIONS_CHANNEL_ID, {
-        embed: Embeds.error(error, message),
-      });
+      await bot.text.send(CONFIG.NOTIFICATIONS_CHANNEL_ID, embeds.error(error, message));
     }
   }
 });
@@ -154,8 +159,12 @@ bot.login().then(async () => {
   'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM',
 ] as NodeJS.Signals[]).forEach((sig) => {
   process.on(sig, () => {
-    bot.voice.leave().then(() => {
+    if (bot.voice.isConnected) {
+      bot.voice.leave().then(() => {
+        process.exit(0);
+      });
+    } else {
       process.exit(0);
-    });
+    }
   });
 });
