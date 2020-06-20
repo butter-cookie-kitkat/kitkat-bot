@@ -1,5 +1,5 @@
 import { table as api } from 'table';
-import { arrays } from '../utils/arrays';
+import { arrays } from './arrays';
 
 /**
  * Generates a Table Builder.
@@ -7,15 +7,15 @@ import { arrays } from '../utils/arrays';
  * @param headers - the headers to add to the table.
  * @returns the table builder.
  */
-export function table(headers: string[]): MessageTable {
+export function table(headers?: string[]): MessageTable {
   return new MessageTable(headers);
 }
 
 class MessageTable {
-  private headers: string[];
+  private headers?: string[];
   private data: string[][];
 
-  constructor(headers: string[]) {
+  constructor(headers?: string[]) {
     this.headers = headers;
     this.data = [];
   }
@@ -27,7 +27,11 @@ class MessageTable {
   }
 
   toString(options: ToStringOptions = {}): string {
-    let data = [this.headers, ...this.data];
+    let data = [...this.data];
+
+    if (this.headers) {
+      data.unshift(this.headers);
+    }
 
     if (options.truncate) {
       data = this.truncate(data, options.truncate);
