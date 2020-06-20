@@ -5,10 +5,11 @@ import { format } from '../utils/formatters';
 import { Messages } from '../services/messages';
 import { CONFIG } from '../config';
 import { CommandRegistrator } from './types';
-import { MessageTable } from '../services/table';
+import { table } from '../services/table';
 import { KitkatBotCommandError } from '../types';
 import { embeds } from '../utils/embeds';
 import { EmbedField } from 'discord.js';
+import { arrays } from '../utils/arrays';
 
 /**
  * Retrieves info about the bot!
@@ -45,7 +46,7 @@ export const info: CommandRegistrator = (bot) => {
       });
     }
 
-    await message.reply(embeds.success({
+    await message.channel.send(embeds.success({
       title: `Bot Status (v${CONFIG.VERSION})`,
       description: `Here's all my personal details, Senpai!`,
       fields: fields,
@@ -69,7 +70,7 @@ export const sql: CommandRegistrator = (bot) => {
     const { db } = await database(true);
 
     try {
-      const [data] = await db.query(args.sql);
+      const [data]: any[][] = await db.query(args.sql);
 
       if (data.length === 0) {
         if (args.sql.match(/^delete/i)) {
@@ -95,14 +96,30 @@ export const sql: CommandRegistrator = (bot) => {
         }));
       }
 
-      const table = new MessageTable(Object.keys(data[0]));
-      table.rows(data.map((row: any) => Object.values(row)));
+      const headers = Object.keys(data[0]);
+      const rows: any[][] = data.map((row: any) => Object.values(row));
 
-      return message.reply(outdent`
-        Results found for... (${args.sql})
+      const output = format(table(headers).rows(rows).toString({ truncate: 2000 })).code({ multi: true, type: 'sql' }).toString();
+      const VISIBLE_ROW_COUNT = output.split('\n').length;
 
-        ${format(table.toString()).code({ multi: true, type: 'prolog' })}
-      `);
+      await message.channel.send(embeds.success({
+        title: ['SQL', 'Success!'],
+        fields: [{
+          name: 'SQL',
+          value: format(args.sql).code().toString(),
+          inline: false,
+        }, {
+          name: 'Row Count',
+          value: rows.length.toString(),
+          inline: true,
+        }, {
+          name: 'Visible Row Count',
+          value: VISIBLE_ROW_COUNT.toString(),
+          inline: true,
+        }],
+      }));
+
+      return message.channel.send(output);
     } catch (error) {
       if (error.name === 'SequelizeDatabaseError') {
         throw new KitkatBotCommandError({
@@ -113,10 +130,6 @@ export const sql: CommandRegistrator = (bot) => {
             inline: false,
           }],
         });
-      } else if (error.code === 50035) {
-        throw new KitkatBotCommandError(outdent`
-          Whoa Senpai, no need to be so pushy. Maybe you should limit your row count!
-        `);
       }
 
       throw error;
