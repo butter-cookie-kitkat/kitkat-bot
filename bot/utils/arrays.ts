@@ -15,6 +15,16 @@ class Arrays {
   }
 
   /**
+   * Splits the list in half.
+   *
+   * @param list - the list to split.
+   * @returns the split array.
+   */
+  split<T>(list: T[]): T[][] {
+    return this.chunk(list, Math.ceil(list.length / 2));
+  }
+
+  /**
    * Flattens the list of lists into a single list.
    *
    * @param list - the list to flatten

@@ -1,4 +1,5 @@
 import { table as api } from 'table';
+import { arrays } from '../utils/arrays';
 
 /**
  * Generates a Table Builder.
@@ -26,24 +27,59 @@ class MessageTable {
   }
 
   toString(options: ToStringOptions = {}): string {
-    const data = [this.headers, ...this.data];
-    let output = api(data, {
+    let data = [this.headers, ...this.data];
+
+    if (options.truncate) {
+      data = this.truncate(data, options.truncate);
+    }
+
+    return api(data, {
+      drawHorizontalLine: (index) => [0, 1, data.length].includes(index),
+    });
+  }
+
+  // Goals
+  // - Returns an output that is less than the truncate value.
+  // - Returns the maximum possible number of rows.
+  // - Should prioritize the firstHalf over the second half.
+  private truncate(data: string[][], truncate: number): string[][] {
+    const output = api(data, {
       drawHorizontalLine: (index) => [0, 1, data.length].includes(index),
     });
 
-    if (options.truncate) {
-      // TODO: Use a more performant algorithm to limit this.
-      // e.g. testing it in halves.
-      while (output.length > 2000 && data.length > 0) {
-        data.pop();
+    // Bail early if the incoming data is less then the truncate amount.
+    if (output.length < truncate) return data;
 
-        output = api(data, {
-          drawHorizontalLine: (index) => [0, 1, data.length].includes(index),
-        });
+    let [first, second] = arrays.split(data);
+
+    while (first.length > 0) {
+      const output = api(first, {
+        drawHorizontalLine: (index) => [0, 1, first.length].includes(index),
+      });
+
+      if (output.length > truncate) {
+        // We know the answer is in the first half so discard the second half.
+
+        const lines = output.split('\n');
+        lines.splice(lines.length - 2, 1);
+
+        if (lines.join('\n').length < truncate) {
+          return first.slice(0, first.length - 2);
+        }
+
+        [first, second] = arrays.split(first);
+      } else if (output.length < truncate && second) {
+        // We know the answer includes the second half.
+        const [one, two] = arrays.split(second);
+
+        first.push(...one);
+        second = two;
+      } else {
+        return first;
       }
     }
 
-    return output;
+    return [];
   }
 }
 
