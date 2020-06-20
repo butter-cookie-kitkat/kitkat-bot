@@ -1,7 +1,7 @@
 import path from 'path';
 import { expect } from 'chai';
 
-import { chance } from '../../utils/chance';
+import { chance } from '../../__test__/chance';
 
 import { service as EffectsService } from '../effects';
 

@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { chance } from '../chance';
+import { chance } from '../../__test__/chance';
 
 import { format } from '../formatters';
 import { outdent } from 'outdent';

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { chance } from '../chance';
+import { chance } from '../../__test__/chance';
 import { retry } from '../promise';
 
 describe('Utils(Promise)', () => {

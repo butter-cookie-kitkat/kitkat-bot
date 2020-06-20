@@ -4,7 +4,7 @@ import pkg from '../package.json';
 export function defaults<T>(...values: T[]): T;
 export function defaults(...values: any[]): any;
 export function defaults(...values: any[]): any {
-  return values.find(Boolean) || null;
+  return values.find((value) => value !== undefined);
 }
 
 export function env<T>(name: string): string;
