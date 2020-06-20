@@ -37,7 +37,7 @@ bot.voice.on('start', async ({ uri }) => {
   debounce.clear(AUTO_LEAVE_DEBOUNCE);
 
   await bot.text.send(song.channelID, embeds.success({
-    title: ['Music', 'Now Playing'],
+    title: ['Music', 'Now Playing!'],
     fields: [{
       name: 'Title',
       value: `[${song.title}](${song.url})`,

@@ -123,7 +123,13 @@ export const queue: CommandRegistrator = (bot) => {
     }
 
     return message.channel.send(embeds.success({
-      title: ['Music', `Queue (${songs.length}/${count})`],
+      title: [
+        'Music',
+        concat.join(
+          'Queue',
+          songs.length !== count && `(${songs.length}/${count})`,
+        ),
+      ],
       description: songs.map((song, index) => concat.join(`${index + 1}) \`${song.title}\``, index === 0 && `<-- Current Track - ${duration.humanize(song.duration - (bot.voice.elapsed || 0))}`)).join('\n'),
     }));
   }).help({
