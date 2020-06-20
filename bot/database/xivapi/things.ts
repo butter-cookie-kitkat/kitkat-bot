@@ -3,11 +3,11 @@ import { Table, Column, Model, DataType, BelongsToMany } from 'sequelize-typescr
 import { Points } from './points';
 import { ThingPoints } from './thing_points';
 
-const TYPES = ['NPC', 'Item'];
+export type THING_TYPE = ('BNPC'|'Node');
 
 export interface IThings {
-  id: string;
-  type: string;
+  id: number;
+  type: THING_TYPE;
   name: string;
   hidden: boolean;
 }
@@ -15,19 +15,16 @@ export interface IThings {
 @Table
 export class Things extends Model<Things> implements IThings {
   @Column({
-    type: DataType.STRING,
+    type: DataType.BIGINT,
     primaryKey: true,
   })
-  id!: string;
+  id!: number;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    validate: {
-      isIn: [Object.keys(TYPES)],
-    },
   })
-  type!: string;
+  type!: THING_TYPE;
 
   @Column({
     type: DataType.STRING,

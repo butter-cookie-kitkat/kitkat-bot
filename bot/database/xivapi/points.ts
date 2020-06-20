@@ -6,6 +6,8 @@ import { ThingPoints } from './thing_points';
 export interface IPoints {
   id: string;
   map_id: number;
+  type: ('Harvesting'|'Quarrying'|'Logging'|'Mining'),
+  icon: string,
   x: number;
   y: number;
 }
@@ -23,6 +25,18 @@ export class Points extends Model<Points> implements IPoints {
     allowNull: false,
   })
   map_id!: number;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  type!: ('Harvesting'|'Quarrying'|'Logging'|'Mining');
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  icon!: string;
 
   @Column({
     type: DataType.FLOAT,

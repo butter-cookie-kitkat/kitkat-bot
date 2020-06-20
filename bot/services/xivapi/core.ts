@@ -14,8 +14,8 @@ export class Core {
    * @param url - the url to format.
    * @returns either the staging or live url depending on the url and environment.
    */
-  url(url: string): string {
-    if (url.startsWith('/m/') || CONFIG.IS_LIVE) return `https://xivapi.com${url}`;
+  url(url: string, is_live: boolean = CONFIG.IS_LIVE): string {
+    if (url.match(/^\/(?:m|i)\//i) || is_live) return `https://xivapi.com${url}`;
     else return `https://staging.xivapi.com${url}`;
   }
 
@@ -43,7 +43,7 @@ export class Core {
    * @param page - the page number to access
    * @returns the requested information for a given page number.
    */
-  getPage(url: string, page = 1): Promise<any> {
+  getPage(url: string, page = 1): Promise<Page> {
     return this.fetch(url, {
       query: {
         page,
@@ -75,4 +75,18 @@ export class Core {
       ]), []),
     ];
   }
+}
+
+export interface Page {
+  Pagination: {
+    Page: number;
+    PageNext: number;
+    PagePrev: number;
+    PageTotal: number;
+    Results: number;
+    ResultsPerPage: number;
+    ResultsTotal: number;
+  };
+
+  Results: any[];
 }

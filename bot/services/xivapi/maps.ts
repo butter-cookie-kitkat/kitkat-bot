@@ -1,4 +1,4 @@
-import { Core } from './core';
+import { XIVAPIBase } from './base';
 
 const COLUMNS = [
   'ID',
@@ -7,13 +7,7 @@ const COLUMNS = [
   'PlaceName.Name',
 ];
 
-export class Maps {
-  private core: Core;
-
-  constructor(core: Core) {
-    this.core = core;
-  }
-
+export class Maps extends XIVAPIBase {
   /**
    * Formats the map into a common format.
    *
@@ -23,7 +17,7 @@ export class Maps {
   private format(map: any): Map {
     return {
       id: map.ID,
-      map_image: this.core.url(map.MapFilename),
+      map_image: this.base.core.url(map.MapFilename),
       zone: map.PlaceNameRegion.Name,
       region: map.PlaceName.Name,
     };
@@ -36,7 +30,7 @@ export class Maps {
    * @returns the map info.
    */
   async get(id: number): Promise<Map> {
-    return this.format(await this.core.fetch(`/Map/${id}`, {
+    return this.format(await this.base.core.fetch(`/Map/${id}`, {
       query: {
         columns: COLUMNS,
       },
@@ -50,7 +44,7 @@ export class Maps {
    * @returns the map info.
    */
   async getAll(ids: string[]): Promise<Map[]> {
-    const maps = await this.core.fetch(`/Map`, {
+    const maps = await this.base.core.fetch(`/Map`, {
       query: {
         columns: COLUMNS,
         ids,

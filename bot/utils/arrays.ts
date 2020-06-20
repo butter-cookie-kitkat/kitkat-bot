@@ -23,7 +23,7 @@ class Arrays {
   flatten<T>(list: (T|T[])[]): T[] {
     return list.reduce((output: T[], item: (T|T[])) => {
       if (Array.isArray(item)) {
-        output = output.concat(this.flatten(item));
+        output.push(...this.flatten(item));
       } else {
         output.push(item);
       }
@@ -39,11 +39,11 @@ class Arrays {
    * @param identifier - the function that returns the identifier.
    * @returns the unique array.
    */
-  unique<T>(list: T[], identifier: IdentifierFunction<T>): T[] {
+  unique<T>(list: T[], identifier?: IdentifierFunction<T>): T[] {
     const ids: any[] = [];
 
     return list.filter((item) => {
-      const id = identifier(item);
+      const id = identifier ? identifier(item) : item;
 
       if (ids.includes(id)) {
         return false;

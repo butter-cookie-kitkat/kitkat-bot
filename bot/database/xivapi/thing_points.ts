@@ -1,17 +1,17 @@
 import { Table, Column, Model, DataType } from 'sequelize-typescript';
 
 export interface IThingPoints {
-  thing_id: string;
+  thing_id: number;
   point_id: string;
 }
 
 @Table
 export class ThingPoints extends Model<ThingPoints> implements IThingPoints {
   @Column({
-    type: DataType.STRING,
+    type: DataType.NUMBER,
     allowNull: false,
   })
-  thing_id!: string;
+  thing_id!: number;
 
   @Column({
     type: DataType.BIGINT,

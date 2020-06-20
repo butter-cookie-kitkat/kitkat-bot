@@ -10,7 +10,7 @@ export class MessageTable {
   }
 
   rows(rows: string[][]): void {
-    this.data = this.data.concat(rows);
+    this.data.push(...rows);
   }
 
   toString(): string {

@@ -79,7 +79,7 @@ bot.on('error', async ({ message, error }) => {
       ${format('Command').bold.value}: ${message.content}
       ${format('Message').bold.value}: ${error.message}
 
-      ${format('~-~-~-~ Stack Trace ~-~-~-~').bold.value}
+      ${format('Stack Trace').header.bold.value}
 
       ${format(error.stack).code({ multi: true }).value}
     `);

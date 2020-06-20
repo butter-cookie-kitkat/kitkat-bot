@@ -16,7 +16,7 @@ export interface FlattenedOutput {
 export const gathering: BatchJob = async () => {
   const { XIV_API } = await database();
 
-  const info = await xivapi.dump.gatheringInfo();
+  const maps = await xivapi.extractor.GatheringMaps();
 
   Loggers.workers('Destroying Thing-Points Associations...');
 
@@ -35,37 +35,36 @@ export const gathering: BatchJob = async () => {
     cascade: true,
   });
 
-  const flattened = info.reduce((output, row) => {
-    const points: IPoints[] = row.locations.length ? row.locations.reduce((output, location) => {
-      return output.concat(location.nodes.map((node) => ({
-        id: `${node.node_id}-${node.x}-${node.y}`,
-        map_id: node.map_id,
-        x: node.x,
-        y: node.y,
+  const flattened = maps.reduce((output, map) =>
+    map.GatheringNodes.reduce((output, node) => {
+      output.points.push({
+        id: node.ID,
+        map_id: node.MapID,
+        type: node.NodeType,
+        icon: node.NodeIcon,
+        x: node.PixelX,
+        y: node.PixelY,
+      });
+
+      output.things.push(...node.Items.map((item) => ({
+        id: item.Item.ID,
+        type: node.Type,
+        name: item.Item.Name,
+        hidden: item.IsHidden === 1,
       })));
-    }, [] as IPoints[]) : [];
 
-    const thing: IThings = {
-      id: `Item-${row.id}`,
-      type: 'Item',
-      name: row.name,
-      hidden: row.hidden,
-    };
+      output.thing_points.push(...node.Items.map((item) => ({
+        point_id: node.ID,
+        thing_id: item.Item.ID,
+      })));
 
-    const thing_points: IThingPoints[] = points.map((point) => ({
-      thing_id: thing.id,
-      point_id: point.id,
-    }));
-
-    output.points = output.points.concat(points);
-    output.thing_points = output.thing_points.concat(thing_points);
-    output.things.push(thing);
-
-    return output;
-  }, { things: [], points: [], thing_points: [] } as FlattenedOutput);
+      return output;
+    }, output),
+  { things: [], points: [], thing_points: [] } as FlattenedOutput);
 
   flattened.points = arrays.unique(flattened.points, (item) => item.id);
   flattened.thing_points = arrays.unique(flattened.thing_points, (item) => `${item.thing_id}.${item.point_id}`);
+  flattened.things = arrays.unique(flattened.things, (item) => item.id);
 
   const CHUNK_SIZE = 100;
   await arrays.chunk(flattened.things, CHUNK_SIZE).reduce(async (promise, rows, i) => {

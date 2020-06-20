@@ -20,7 +20,7 @@ export function env<T>(name: string, defaultValue?: T): (T|string) {
 }
 
 export const CONFIG = {
-  SEQUELIZE_LOGGING: Boolean(env('DATABASE_URL', false)) && !Boolean(env('CI', false)),
+  SEQUELIZE_LOGGING: Boolean(env('SEQUELIZE_LOGGING', false)) && !Boolean(env('CI', false)),
   DATABASE_URL: env('DATABASE_URL', 'sqlite://db.sqlite'),
   DISCORD_TOKEN: env('DISCORD_TOKEN'),
   YOUTUBE_API_KEY: env('YOUTUBE_API_KEY', null),

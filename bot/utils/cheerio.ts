@@ -8,7 +8,7 @@ export function getText(element: CheerioElement): string {
   return element.children
     .reduce((output: string[], child: any) => {
       if (child.children && child.children.length) {
-        output = output.concat(getText(child));
+        output.push(getText(child));
       } else if (child.attribs && child.attribs.title) {
         output.push(child.attribs.title);
       } else if (child.data) {
