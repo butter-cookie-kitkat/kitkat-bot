@@ -12,6 +12,18 @@ describe('Utils(Formatters)', () => {
 
       expect(format(expectedValue).toString()).equals(expectedValue);
     });
+
+    it('should support numbers', () => {
+      const expectedValue = chance.integer();
+
+      expect(format(expectedValue).toString()).equals(expectedValue.toString());
+    });
+
+    it('should support booleans', () => {
+      const expectedValue = chance.bool();
+
+      expect(format(expectedValue).toString()).equals(expectedValue.toString());
+    });
   });
 
   describe('func(code)', () => {

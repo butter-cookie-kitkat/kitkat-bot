@@ -113,7 +113,7 @@ export const queue: CommandRegistrator = (bot) => {
     const {
       songs,
       count,
-    } = await SongsService.list({ limit: 10 });
+    } = await SongsService.list({ limit: 11 });
 
     if (songs.length === 0) {
       return message.channel.send(embeds.success({
@@ -122,15 +122,29 @@ export const queue: CommandRegistrator = (bot) => {
       }));
     }
 
+    const [current, ...queue] = songs;
+
     return message.channel.send(embeds.success({
       title: [
         'Music',
         concat.join(
           'Queue',
-          songs.length !== count && `(${songs.length}/${count})`,
+          songs.length !== count && `(${songs.length - 1}/${count - 1})`,
         ),
       ],
-      description: songs.map((song, index) => concat.join(`${index + 1}) \`${song.title}\``, index === 0 && `<-- Current Track - ${duration.humanize(song.duration - (bot.voice.elapsed || 0))}`)).join('\n'),
+      fields: [{
+        name: 'Current Song',
+        value: `[${current.title}](${current.url})`,
+        inline: true,
+      }, {
+        name: 'Time Remaining',
+        value: duration.humanize(current.duration - (bot.voice.elapsed || 0)),
+        inline: true,
+      }, {
+        name: 'Queue',
+        value: queue.length ? queue.map((song, index) => `${format(index + 1).bold}) [${song.title}](${song.url})`).join('\n') : '_Empty_',
+        inline: false,
+      }],
     }));
   }).help({
     name: 'queue',

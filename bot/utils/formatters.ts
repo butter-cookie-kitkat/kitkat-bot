@@ -4,8 +4,8 @@
  * @param value - the value to format.
  * @returns the formatter instance.
  */
-export function format(value: string): Formatter {
-  return new Formatter(value);
+export function format(value: (number|string|boolean)): Formatter {
+  return new Formatter(value.toString());
 }
 
 class Formatter {
