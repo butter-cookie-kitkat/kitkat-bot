@@ -1,7 +1,7 @@
 {
   "name": "kitkat-bot",
   "version": "0.0.0-local.0",
-  "sha": "local",
+  "sha": "0.0.0-local.0",
   "private": true,
   "license": "MIT",
   "main": "bot/index.ts",

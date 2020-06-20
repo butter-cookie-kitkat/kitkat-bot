@@ -4,7 +4,7 @@ import { outdent } from 'outdent';
 
 import { AUTO_LEAVE_DEBOUNCE, EMBED_COLORS } from './constants';
 
-import { Messages, DEBUG_MESSAGES } from './services/messages';
+import { DEBUG_MESSAGES } from './services/messages';
 
 import { commands } from './commands';
 import { service as SongsService } from './services/songs';
@@ -12,7 +12,6 @@ import { announcements } from './announcements';
 
 import * as Loggers from './utils/loggers';
 import { debounce } from './utils/debounce';
-import { format } from './utils/formatters';
 import { CONFIG } from './config';
 import { batch_jobs } from './batch';
 import { service as Announcements } from './services/announcements';
@@ -136,16 +135,27 @@ bot.login().then(async () => {
     }));
   }
 
-  // Loggers.main(`Executing batch jobs...`);
+  Loggers.main(`Executing batch jobs...`);
 
-  // await Promise.all(Object.entries(batch_jobs).map(async ([name, job]) => {
-  //   try {
-  //     Loggers.main(`Executing batch job... (${name})`);
-  //     await job();
-  //     Loggers.main(`Successfully executed batch job! (${name})`);
-  //   } catch (error) {
-  //     Loggers.main(`Failed to execute batch job! (${name})`);
-  //     Loggers.main(error);
-  //   }
-  // }));
+  await Promise.all(Object.entries(batch_jobs).map(async ([name, job]) => {
+    try {
+      Loggers.main(`Executing batch job... (${name})`);
+      await job();
+      Loggers.main(`Successfully executed batch job! (${name})`);
+    } catch (error) {
+      Loggers.main(`Failed to execute batch job! (${name})`);
+      Loggers.main(error);
+    }
+  }));
+});
+
+([
+  'SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT',
+  'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM',
+] as NodeJS.Signals[]).forEach((sig) => {
+  process.on(sig, () => {
+    bot.voice.leave().then(() => {
+      process.exit(0);
+    });
+  });
 });

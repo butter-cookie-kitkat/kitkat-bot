@@ -7,32 +7,49 @@ import { CONFIG } from '../config';
 import { CommandRegistrator } from './types';
 import { MessageTable } from '../services/table';
 import { KitkatBotCommandError } from '../types';
+import { Embeds } from '../utils/embeds';
+import { EmbedField } from 'discord.js';
 
 /**
  * Retrieves info about the bot!
  */
 export const info: CommandRegistrator = (bot) => {
   bot.command('info', async ({ message }) => {
-    await message.reply(outdent`
-      Here's all my personal details, Senpai!
+    const fields: EmbedField[] = [{
+      name: 'ID',
+      value: bot.id ? bot.id : 'Unknown',
+      inline: true,
+    }, {
+      name: 'Name',
+      value: bot.name ? bot.name : 'Unknown',
+      inline: true,
+    }];
 
-      ${format(outdent`
-        ${format('General').header}
+    if (bot.voice.channelName && bot.voice.members) {
+      fields.push({
+        name: 'Voice Channel',
+        value: bot.voice.channelName,
+        inline: false,
+      });
 
-          ID: ${bot.id}
-          Name: ${bot.name}
-          Version: ${CONFIG.VERSION}
+      fields.push({
+        name: 'Members in Voice Channel',
+        value: `${bot.voice.members.keyArray().length} (including self)`,
+        inline: false,
+      });
+    } else {
+      fields.push({
+        name: 'Voice Channel',
+        value: '_Not Connected_',
+        inline: false,
+      });
+    }
 
-        ${bot.voice.isConnected ? outdent`
-          ${format('Voice').header}
-
-            Channel: ${bot.voice.channelName}
-            Members: ${bot.voice.members ? bot.voice.members.keyArray().length : 0}
-        ` : outdent`
-          ${format('Voice').header} - Not Connected...
-        `}
-      `).code({ multi: true })}
-    `);
+    await message.reply(Embeds.success({
+      title: `Bot Status (v${CONFIG.VERSION})`,
+      description: `Here's all my personal details, Senpai!`,
+      fields: fields,
+    }));
   }).help({
     name: 'info',
     description: 'Retrieves a bunch of info about the bot.',

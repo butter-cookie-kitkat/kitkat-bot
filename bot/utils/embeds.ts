@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from 'discord.js';
+import { Message, MessageEmbed, EmbedField } from 'discord.js';
 import { format } from './formatters';
 import { EMBED_COLORS } from '../constants';
 
@@ -41,4 +41,5 @@ export class Embeds {
 export interface SuccessEmbedOptions {
   title?: string;
   description?: string;
+  fields?: EmbedField[];
 }
