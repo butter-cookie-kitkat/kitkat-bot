@@ -84,7 +84,7 @@ export const xiv: CommandRegistrator = (bot) => {
         }
 
         const image = await ICON_CACHE_MAP[node.icon];
-        ctx.drawImage(image, node.x * ASPECT_RATIO, node.y * ASPECT_RATIO, image.width, image.height);
+        ctx.drawImage(image, node.x * ASPECT_RATIO, node.y * ASPECT_RATIO, image.width * 1.5, image.height * 1.5);
       }));
 
       LabelValue(ctx, 'Item', thing.name, x, 50 * ASPECT_RATIO + size, size);
