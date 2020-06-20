@@ -6,7 +6,7 @@ import { table } from '../services/table';
 import { embeds } from '../utils/embeds';
 
 function CreateTable({ columns, results }: Response) {
-  return table(columns).rows(results.slice(0, 5).map((result) => Object.values(result))).toString({
+  return table(columns).rows(results.map((result) => Object.values(result))).toString({
     truncate: 1900,
   });
 }
