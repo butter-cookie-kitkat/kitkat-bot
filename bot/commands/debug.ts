@@ -6,6 +6,7 @@ import { Messages } from '../services/messages';
 import { CONFIG } from '../config';
 import { CommandRegistrator } from './types';
 import { MessageTable } from '../services/table';
+import * as Loggers from '../utils/loggers';
 
 /**
  * Retrieves info about the bot!
@@ -82,6 +83,8 @@ export const sql: CommandRegistrator = (bot) => {
         ${format(table.toString()).code({ multi: true, type: 'prolog' }).value}
       `);
     } catch (error) {
+      Loggers.main(error);
+
       return await message.reply(outdent`
         Whoops! Looks like that sql was malformed, better check it again!
 
