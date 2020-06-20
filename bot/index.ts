@@ -127,7 +127,7 @@ bot.login().then(async () => {
 
       const channel = await bot.text.channel(ANNOUNCEMENTS_CHANNEL_ID);
 
-      const message = announcement && announcement.message_id ? await channel.messages.fetch(announcement.message_id) : null;
+      const message = announcement ? await channel.messages.fetch(announcement.message_id).catch(() => null) : null;
 
       if (message) {
         Loggers.main(`Existing Message Found, editing...`);
@@ -148,18 +148,18 @@ bot.login().then(async () => {
     }));
   }
 
-  Loggers.main(`Executing batch jobs...`);
+  // Loggers.main(`Executing batch jobs...`);
 
-  await Promise.all(Object.entries(batch_jobs).map(async ([name, job]) => {
-    try {
-      Loggers.main(`Executing batch job... (${name})`);
-      await job();
-      Loggers.main(`Successfully executed batch job! (${name})`);
-    } catch (error) {
-      Loggers.main(`Failed to execute batch job! (${name})`);
-      Loggers.main(error);
-    }
-  }));
+  // await Promise.all(Object.entries(batch_jobs).map(async ([name, job]) => {
+  //   try {
+  //     Loggers.main(`Executing batch job... (${name})`);
+  //     await job();
+  //     Loggers.main(`Successfully executed batch job! (${name})`);
+  //   } catch (error) {
+  //     Loggers.main(`Failed to execute batch job! (${name})`);
+  //     Loggers.main(error);
+  //   }
+  // }));
 });
 
 ([
