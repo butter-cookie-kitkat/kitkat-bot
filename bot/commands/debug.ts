@@ -42,46 +42,54 @@ export const info: CommandRegistrator = (bot) => {
 /**
  * Queries the database for information.
  */
-export const query: CommandRegistrator = (bot) => {
-  bot.command('query <...sql>', async ({ message, args }) => {
+export const sql: CommandRegistrator = (bot) => {
+  bot.command('sql <...sql>', async ({ message, args }) => {
     if (!['203949397271117824'].includes(message.author.id)) {
       return await message.reply(Messages.FORBIDDEN);
     }
 
-    const { db } = await database();
+    const { db } = await database(true);
 
-    const [data] = await db.query(args.sql);
+    try {
+      const [data] = await db.query(args.sql);
 
-    if (data.length === 0) {
-      if (args.sql.match(/^delete/i)) {
+      if (data.length === 0) {
+        if (args.sql.match(/^delete/i)) {
+          return await message.reply(outdent`
+            Rows deleted successfully!
+          `);
+        } else if (args.sql.match(/^update/i)) {
+          return await message.reply(outdent`
+            Rows updated successfully!
+          `);
+        } else if (args.sql.match(/^drop/i)) {
+          return await message.reply(outdent`
+            Table dropped successfully!
+          `);
+        }
+
         return await message.reply(outdent`
-          Rows deleted successfully!
-        `);
-      } else if (args.sql.match(/^update/i)) {
-        return await message.reply(outdent`
-          Rows updated successfully!
-        `);
-      } else if (args.sql.match(/^drop/i)) {
-        return await message.reply(outdent`
-          Table dropped successfully!
+          No results found for... (${args.sql})
         `);
       }
 
+      const table = new MessageTable(Object.keys(data[0]));
+      table.rows(data.map((row: any) => Object.values(row)));
+
+      await message.reply(outdent`
+        Results found for... (${args.sql})
+
+        ${format(table.toString()).code({ multi: true, type: 'prolog' }).value}
+      `);
+    } catch (error) {
       return await message.reply(outdent`
-        No results found for... (${args.sql})
+        Whoops! Looks like that sql was malformed, better check it again!
+
+        ${format(args.sql).code({ multi: true, type: 'sql' }).value}
       `);
     }
-
-    const table = new MessageTable(Object.keys(data[0]));
-    table.rows(data.map((row: any) => Object.values(row)));
-
-    await message.reply(outdent`
-      Results found for... (${args.sql})
-
-      ${format(table.toString()).code({ multi: true, type: 'prolog' }).value}
-    `);
   }).help({
-    name: 'query',
+    name: 'sql',
     description: 'Queries the database for information.',
     group: 'Debug',
     args: {
