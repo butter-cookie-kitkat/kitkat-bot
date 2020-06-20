@@ -1,15 +1,12 @@
-import { outdent } from 'outdent';
-
 import { database } from '../database';
 import { format } from '../utils/formatters';
 import { Messages } from '../services/messages';
 import { CONFIG } from '../config';
 import { CommandRegistrator } from './types';
-import { table } from '../services/table';
+import { table } from '../utils/table';
 import { KitkatBotCommandError } from '../types';
 import { embeds } from '../utils/embeds';
 import { EmbedField } from 'discord.js';
-import { arrays } from '../utils/arrays';
 
 /**
  * Retrieves info about the bot!
@@ -99,8 +96,8 @@ export const sql: CommandRegistrator = (bot) => {
       const headers = Object.keys(data[0]);
       const rows: any[][] = data.map((row: any) => Object.values(row));
 
-      const output = format(table(headers).rows(rows).toString({ truncate: 2000 })).code({ multi: true, type: 'sql' }).toString();
-      const VISIBLE_ROW_COUNT = output.split('\n').length;
+      const output = table(headers).rows(rows).toString({ truncate: 2000 });
+      const VISIBLE_ROW_COUNT = output.split('\n').length - 5;
 
       await message.channel.send(embeds.success({
         title: ['SQL', 'Success!'],
@@ -119,7 +116,7 @@ export const sql: CommandRegistrator = (bot) => {
         }],
       }));
 
-      return message.channel.send(output);
+      return message.channel.send(format(output).code({ multi: true, type: 'sql' }).toString());
     } catch (error) {
       if (error.name === 'SequelizeDatabaseError') {
         throw new KitkatBotCommandError({

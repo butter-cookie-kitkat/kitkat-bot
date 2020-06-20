@@ -2,7 +2,7 @@ import { outdent } from 'outdent';
 
 import { RS3, OSRS, Response } from '../services/runescape';
 import { CommandRegistrator } from './types';
-import { table } from '../services/table';
+import { table } from '../utils/table';
 import { embeds } from '../utils/embeds';
 import { KitkatBotCommandError } from '../types';
 
