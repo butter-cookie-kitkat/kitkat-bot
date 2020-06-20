@@ -118,6 +118,8 @@ bot.login().then(async () => {
   if (CONFIG.ANNOUNCEMENTS_CHANNEL_ID !== null) {
     const { ANNOUNCEMENTS_CHANNEL_ID } = CONFIG;
 
+    Loggers.main(`Executing Announcements!`);
+
     await Promise.all(announcements.map(async (job) => {
       const info = await job();
 
@@ -125,11 +127,15 @@ bot.login().then(async () => {
 
       const channel = await bot.text.channel(ANNOUNCEMENTS_CHANNEL_ID);
 
-      if (announcement && announcement.message_id) {
-        const message = await channel.messages.fetch(announcement.message_id);
+      const message = announcement && announcement.message_id ? await channel.messages.fetch(announcement.message_id) : null;
+
+      if (message) {
+        Loggers.main(`Existing Message Found, editing...`);
 
         await message.edit(info.message);
       } else {
+        Loggers.main(`Message not found, sending new message...`);
+
         const message = await channel.send(info.message);
 
         await Announcements.save({
@@ -137,6 +143,8 @@ bot.login().then(async () => {
           marker: info.marker,
         });
       }
+
+      Loggers.main(`Announcement complete!`);
     }));
   }
 
