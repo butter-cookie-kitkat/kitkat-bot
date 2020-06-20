@@ -74,13 +74,18 @@ export const xiv: CommandRegistrator = (bot) => {
       const size = 50 * ASPECT_RATIO;
       const x = 230 * ASPECT_RATIO;
 
-      for (const node of nodes) {
-        ctx.beginPath();
-        ctx.arc(node.x * ASPECT_RATIO, node.y * ASPECT_RATIO, 30 * ASPECT_RATIO, 0, Math.PI * 2, true);
-        ctx.closePath();
-        ctx.fillStyle = 'rgba(52, 152, 219, 0.5)';
-        ctx.fill();
-      }
+      const ICON_CACHE_MAP: {
+        [key: string]: Promise<Canvas.Image>;
+      } = {};
+
+      await Promise.all(nodes.map(async (node) => {
+        if (!ICON_CACHE_MAP[node.icon]) {
+          ICON_CACHE_MAP[node.icon] = Canvas.loadImage(xivapi.core.url(node.icon));
+        }
+
+        const image = await ICON_CACHE_MAP[node.icon];
+        ctx.drawImage(image, node.x * ASPECT_RATIO, node.y * ASPECT_RATIO, image.width, image.height);
+      }));
 
       LabelValue(ctx, 'Item', thing.name, x, 50 * ASPECT_RATIO + size, size);
       LabelValue(ctx, 'Zone', zone, x, 60 * ASPECT_RATIO + (size * 2), size);
