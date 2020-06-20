@@ -24,7 +24,7 @@ export const TYPE_HEADERS = {
 export class Changelog {
   #changelog?: GroupedCommits;
 
-  private async fetch(): Promise<GroupedCommits> {
+  public async fetch(limit: number): Promise<GroupedCommits> {
     if (!this.#changelog) {
       const commits = await Fetch('https://api.github.com/repos/butter-cookie-kitkat/kitkat-bot/commits');
 
@@ -40,7 +40,7 @@ export class Changelog {
           message: commit.subject,
           author: commit.author.name,
         }))
-        .slice(0, 5)
+        .slice(0, limit)
         .reduce((output: GroupedCommits, commit: Commit) => {
           output[commit.type].push(commit);
           return output;
@@ -48,14 +48,6 @@ export class Changelog {
     }
 
     return this.#changelog as GroupedCommits;
-  }
-
-  async changelog(): Promise<string> {
-    return outdent`
-      **Recent Changes**
-
-      ${this.groups(await this.fetch())}
-    `;
   }
 
   private groups(changes: GroupedCommits) {

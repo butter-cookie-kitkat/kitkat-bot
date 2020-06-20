@@ -1,3 +1,5 @@
+import { MessageEmbed } from 'discord.js';
+
 export interface Announcement {
   /**
    * the message identifier
@@ -7,7 +9,7 @@ export interface Announcement {
   /**
    * the message to announce
    */
-  message: string;
+  message: MessageEmbed;
 }
 
 export type AnnouncementJob = () => Promise<Announcement>;
