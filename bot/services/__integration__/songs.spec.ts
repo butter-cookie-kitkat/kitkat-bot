@@ -110,6 +110,7 @@ describe('Service(Songs)', () => {
     it('should return a list of songs', async () => {
       const response = await SongsService.list();
 
+      expect(response.count).equals(2);
       expect(response.songs).length(2);
       expect(response.hasMore).equals(false);
     });
@@ -119,6 +120,7 @@ describe('Service(Songs)', () => {
         limit: 1,
       });
 
+      expect(response.count).equals(2);
       expect(response.songs).length(1);
       expect(response.hasMore).equals(true);
     });
@@ -189,6 +191,7 @@ describe('Service(Songs)', () => {
       expect(await SongsService.remove(expectedSong.url)).equals(true);
 
       expect(await SongsService.list()).deep.equals({
+        count: 0,
         songs: [],
         hasMore: false,
       });
@@ -216,6 +219,7 @@ describe('Service(Songs)', () => {
       await SongsService.clear();
 
       expect(await SongsService.list()).deep.equals({
+        count: 0,
         songs: [],
         hasMore: false,
       });
