@@ -1,11 +1,11 @@
-import { Messages } from './messages';
+import { intl } from './intl';
 import { Message, GuildMember, Guild } from 'discord.js';
 import { KitkatBotCommandError } from '../types';
 
 export class Protect {
   public guild(message: Message): ProtectedGuild {
     if (!this.isGuild(message.guild) || !this.isGuildMember(message.member)) {
-      throw new KitkatBotCommandError(Messages.DMS_NOT_ALLOWED);
+      throw new KitkatBotCommandError(intl('DMS_NOT_ALLOWED'));
     }
 
     return {
@@ -24,7 +24,7 @@ export class Protect {
     const guild = this.guild(message);
 
     if (!guild.guildMember.voice.channelID) {
-      throw new KitkatBotCommandError(Messages.NOT_IN_VOICE_CHANNEL);
+      throw new KitkatBotCommandError(intl('NOT_IN_VOICE_CHANNEL'));
     }
 
     return {

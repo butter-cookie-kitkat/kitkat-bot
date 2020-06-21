@@ -1,7 +1,7 @@
 import { outdent } from 'outdent';
 
 import { service as EffectsService } from '../services/effects';
-import { Messages } from '../services/messages';
+import { Messages, intl } from '../services/intl';
 
 import { service as SongsService } from '../services/songs';
 import { service as YouTubeService } from '../services/youtube';
@@ -27,7 +27,7 @@ export const play: CommandRegistrator = (bot) => {
     const urlInfo = YouTubeService.getUrlInfo(args.url);
 
     if (!urlInfo) {
-      throw new KitkatBotCommandError(Messages.INVALID_YOUTUBE_URL);
+      throw new KitkatBotCommandError(intl('INVALID_YOUTUBE_URL'));
     }
 
     /**
@@ -39,7 +39,7 @@ export const play: CommandRegistrator = (bot) => {
       const song = await YouTubeService.getVideoByID(urlInfo.video_id);
 
       if (!song) {
-        throw new KitkatBotCommandError(Messages.VIDEO_NOT_FOUND);
+        throw new KitkatBotCommandError(intl('VIDEO_NOT_FOUND'));
       }
 
       if (args.now) {
@@ -58,13 +58,13 @@ export const play: CommandRegistrator = (bot) => {
       const playlist = await YouTubeService.getPlaylistByID(urlInfo.playlist_id);
 
       if (!playlist) {
-        throw new KitkatBotCommandError(Messages.PLAYLIST_NOT_FOUND);
+        throw new KitkatBotCommandError(intl('PLAYLIST_NOT_FOUND'));
       }
 
       await SongsService.add(message.channel.id, ...playlist.songs);
 
       if (args.now) {
-        throw new KitkatBotCommandError(Messages.STOP_TROLLING);
+        throw new KitkatBotCommandError(intl('STOP_TROLLING'));
       }
 
       await message.channel.send(embeds.success({
@@ -77,7 +77,7 @@ export const play: CommandRegistrator = (bot) => {
       const song = await SongsService.current();
 
       if (!song) {
-        throw new KitkatBotCommandError(Messages.CURRENT_SONG_NOT_FOUND);
+        throw new KitkatBotCommandError(intl('CURRENT_SONG_NOT_FOUND'));
       }
 
       await bot.voice.play(song.url);
@@ -159,7 +159,7 @@ export const queue: CommandRegistrator = (bot) => {
 export const skip: CommandRegistrator = (bot) => {
   bot.command('skip', async () => {
     if (!bot.voice.isPlaying) {
-      throw new KitkatBotCommandError(Messages.NOT_PLAYING_AUDIO);
+      throw new KitkatBotCommandError(intl('NOT_PLAYING_AUDIO'));
     }
 
     bot.voice.stop();
@@ -206,7 +206,7 @@ export const effect: CommandRegistrator = (bot) => {
     const effect = EffectsService.effect(args.name);
 
     if (!effect) {
-      throw new KitkatBotCommandError(Messages.BAD_EFFECT_NAME);
+      throw new KitkatBotCommandError(intl('BAD_EFFECT_NAME'));
     }
 
     if (!bot.voice.isConnected) {
@@ -245,7 +245,7 @@ export const join: CommandRegistrator = (bot) => {
 export const leave: CommandRegistrator = (bot) => {
   bot.command('leave', async () => {
     if (!bot.voice.isConnected) {
-      throw new KitkatBotCommandError(Messages.BOT_NOT_IN_VOICE_CHANNEL);
+      throw new KitkatBotCommandError(intl('BOT_NOT_IN_VOICE_CHANNEL'));
     }
 
     await bot.voice.leave();
@@ -262,7 +262,7 @@ export const leave: CommandRegistrator = (bot) => {
 export const stop: CommandRegistrator = (bot) => {
   bot.command('stop', async () => {
     if (!bot.voice.isPlaying) {
-      throw new KitkatBotCommandError(Messages.NOT_PLAYING_AUDIO);
+      throw new KitkatBotCommandError(intl('NOT_PLAYING_AUDIO'));
     }
 
     await SongsService.clear();
@@ -281,7 +281,7 @@ export const stop: CommandRegistrator = (bot) => {
 export const pause: CommandRegistrator = (bot) => {
   bot.command('pause', async () => {
     if (!bot.voice.isPlaying) {
-      throw new KitkatBotCommandError(Messages.NOT_PLAYING_AUDIO);
+      throw new KitkatBotCommandError(intl('NOT_PLAYING_AUDIO'));
     }
 
     await bot.voice.pause();
@@ -310,7 +310,7 @@ export const resume: CommandRegistrator = (bot) => {
     const currentSong = await SongsService.current();
 
     if (!currentSong) {
-      throw new KitkatBotCommandError(Messages.NOT_PLAYING_AUDIO);
+      throw new KitkatBotCommandError(intl('NOT_PLAYING_AUDIO'));
     }
 
     await bot.voice.play(currentSong.url);

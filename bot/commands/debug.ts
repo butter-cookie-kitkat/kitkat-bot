@@ -1,6 +1,6 @@
 import { database } from '../database';
 import { format } from '../utils/formatters';
-import { Messages } from '../services/messages';
+import { Messages, intl } from '../services/intl';
 import { CONFIG } from '../config';
 import { CommandRegistrator } from './types';
 import { table } from '../utils/table';
@@ -69,7 +69,7 @@ export const info: CommandRegistrator = (bot) => {
 export const sql: CommandRegistrator = (bot) => {
   bot.command('sql <...query>', async ({ message, args }) => {
     if (!['203949397271117824'].includes(message.author.id)) {
-      throw new KitkatBotCommandError(Messages.FORBIDDEN);
+      throw new KitkatBotCommandError(intl('FORBIDDEN'));
     }
 
     const { db } = await database(true);

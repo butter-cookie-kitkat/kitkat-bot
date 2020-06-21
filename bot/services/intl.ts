@@ -1,6 +1,24 @@
 import { outdent } from 'outdent';
 
-export const Messages = {
+export function intl(name: string, args: { [key: string]: string } = {}): string {
+  const message = Messages[name];
+
+  if (!message) {
+    throw new Error(`Message does not exist.`);
+  }
+
+  return message.replace(/{{([\w]+)}}/i, (_, name) => {
+    const value = args[name];
+
+    if (!value) {
+      throw new Error(`Please provide a value for... (${name})`);
+    }
+
+    return value;
+  });
+}
+
+const Messages: { [key: string]: string } = {
   DMS_NOT_ALLOWED: outdent`
     Baka! This command only works inside of a Server!
   `,
@@ -49,8 +67,8 @@ export const Messages = {
   INVALID_YOUTUBE_URL: outdent`
     Hey Senpai what are you doing?!? This isn't a YouTube URL!
   `,
-}
 
-export const DEBUG_MESSAGES = {
-  AUTO_LEAVE: (reason: string): string => `Automatically leaving voice channel. (Reason: ${reason})`,
+  AUTO_LEAVE: outdent`
+    Automatically leaving voice channel. (Reason: {{reason}})
+  `,
 }

@@ -3,7 +3,7 @@ import { DiscordBot } from '@butter-cookie-kitkat/discord-core';
 
 import { AUTO_LEAVE_DEBOUNCE } from './constants';
 
-import { DEBUG_MESSAGES } from './services/messages';
+import { intl } from './services/intl';
 
 import { commands } from './commands';
 import { service as SongsService } from './services/songs';
@@ -64,7 +64,9 @@ bot.voice.on('finish', async ({ uri, interrupted }) => {
     await bot.voice.play(currentSong.url);
   } else {
     debounce.start(AUTO_LEAVE_DEBOUNCE, async () => {
-      Loggers.music(DEBUG_MESSAGES.AUTO_LEAVE('Idle for too long'));
+      Loggers.music(intl('AUTO_LEAVE', {
+        reason: 'Idle for too long',
+      }));
 
       await bot.voice.leave();
     });
@@ -76,7 +78,9 @@ bot.voice.on('member:leave', () => {
 
   if (hasMembers) return;
 
-  Loggers.music(DEBUG_MESSAGES.AUTO_LEAVE('No members remaining'));
+  Loggers.music(intl('AUTO_LEAVE', {
+    reason: 'No members remaining',
+  }));
   bot.voice.leave();
 });
 
@@ -92,7 +96,14 @@ bot.on('error', async ({ message, error }) => {
     Loggers.main(error);
 
     if (CONFIG.NOTIFICATIONS_CHANNEL_ID) {
-      await bot.text.send(CONFIG.NOTIFICATIONS_CHANNEL_ID, embeds.error(error, message));
+      await Promise.all([
+        bot.text.send(CONFIG.NOTIFICATIONS_CHANNEL_ID, embeds.error(error, message)),
+        message.channel.send(embeds.failure({
+          description: intl('UNHANDLED_ERROR', {
+            reason: 'No members remaining',
+          }),
+        })),
+      ]);
     }
   }
 });
