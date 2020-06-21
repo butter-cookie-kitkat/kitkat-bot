@@ -67,7 +67,7 @@ export const info: CommandRegistrator = (bot) => {
  * Queries the database for information.
  */
 export const sql: CommandRegistrator = (bot) => {
-  bot.command('sql <...sql>', async ({ message, args }) => {
+  bot.command('sql <...query>', async ({ message, args }) => {
     if (!['203949397271117824'].includes(message.author.id)) {
       throw new KitkatBotCommandError(Messages.FORBIDDEN);
     }
@@ -75,20 +75,20 @@ export const sql: CommandRegistrator = (bot) => {
     const { db } = await database(true);
 
     try {
-      const [data]: any[][] = await db.query(args.sql);
+      const [data]: any[][] = await db.query(args.query);
 
       if (data.length === 0) {
-        if (args.sql.match(/^delete/i)) {
+        if (args.query.match(/^delete/i)) {
           return message.channel.send(embeds.success({
             title: ['SQL', 'Success!'],
             description: 'Rows deleted successfully!',
           }));
-        } else if (args.sql.match(/^update/i)) {
+        } else if (args.query.match(/^update/i)) {
           return message.channel.send(embeds.success({
             title: ['SQL', 'Success!'],
             description: 'Rows updated successfully!',
           }));
-        } else if (args.sql.match(/^drop/i)) {
+        } else if (args.query.match(/^drop/i)) {
           return message.channel.send(embeds.success({
             title: ['SQL', 'Success!'],
             description: 'Table dropped successfully!',
@@ -97,7 +97,7 @@ export const sql: CommandRegistrator = (bot) => {
 
         return message.channel.send(embeds.success({
           title: ['SQL', 'Success!'],
-          description: `No results found for... (${args.sql})`,
+          description: `No results found for... (${args.query})`,
         }));
       }
 
@@ -111,7 +111,7 @@ export const sql: CommandRegistrator = (bot) => {
         title: ['SQL', 'Success!'],
         fields: [{
           name: 'SQL',
-          value: format(args.sql).code().toString(),
+          value: format(args.query).code().toString(),
           inline: false,
         }, {
           name: 'Row Count',
@@ -131,7 +131,7 @@ export const sql: CommandRegistrator = (bot) => {
           description: 'Whoops! Looks like that sql was malformed, better check it again!',
           fields: [{
             name: 'Query',
-            value: format(args.sql).code({ multi: true, type: 'sql' }).toString(),
+            value: format(args.query).code({ multi: true, type: 'sql' }).toString(),
             inline: false,
           }],
         });
@@ -144,7 +144,7 @@ export const sql: CommandRegistrator = (bot) => {
     description: 'Queries the database for information.',
     group: 'Debug',
     args: {
-      sql: 'The sql to execute.',
+      query: 'The query to execute.',
     },
   });
 }

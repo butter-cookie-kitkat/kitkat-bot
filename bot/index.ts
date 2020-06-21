@@ -1,6 +1,5 @@
 import 'dotenv/config';
-import { DiscordBot, CommonCommands } from '@butter-cookie-kitkat/discord-core';
-import { outdent } from 'outdent';
+import { DiscordBot } from '@butter-cookie-kitkat/discord-core';
 
 import { AUTO_LEAVE_DEBOUNCE } from './constants';
 
@@ -15,7 +14,6 @@ import { debounce } from './utils/debounce';
 import { CONFIG } from './config';
 import { batch_jobs } from './batch';
 import { service as Announcements } from './services/announcements';
-import { MessageEmbed } from 'discord.js';
 import { KitkatBotCommandError } from './types';
 import { embeds } from './utils/embeds';
 import { duration } from './utils/duration';
@@ -110,7 +108,6 @@ bot.login().then(async () => {
   }
 
   Loggers.commands(`Setting up commands...`);
-  CommonCommands.help(bot);
   commands.forEach((commands) => Object.entries(commands).forEach(([name, command]) => {
     command(bot);
     Loggers.commands(`New command connected successfully! (${name})`);
@@ -151,18 +148,18 @@ bot.login().then(async () => {
     }));
   }
 
-  // Loggers.main(`Executing batch jobs...`);
+  Loggers.main(`Executing batch jobs...`);
 
-  // await Promise.all(Object.entries(batch_jobs).map(async ([name, job]) => {
-  //   try {
-  //     Loggers.main(`Executing batch job... (${name})`);
-  //     await job();
-  //     Loggers.main(`Successfully executed batch job! (${name})`);
-  //   } catch (error) {
-  //     Loggers.main(`Failed to execute batch job! (${name})`);
-  //     Loggers.main(error);
-  //   }
-  // }));
+  await Promise.all(Object.entries(batch_jobs).map(async ([name, job]) => {
+    try {
+      Loggers.main(`Executing batch job... (${name})`);
+      await job();
+      Loggers.main(`Successfully executed batch job! (${name})`);
+    } catch (error) {
+      Loggers.main(`Failed to execute batch job! (${name})`);
+      Loggers.main(error);
+    }
+  }));
 });
 
 ([

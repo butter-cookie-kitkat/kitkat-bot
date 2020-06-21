@@ -63,8 +63,18 @@ class Arrays {
       return true;
     })
   }
+
+  group<T>(list: T[], groupBy: (item: T) => string): GroupedLists<T> {
+    return list.reduce((output, item) => {
+      const key = groupBy(item);
+      output[key] = output[key] || [];
+      output[key].push(item);
+      return output;
+    }, {} as GroupedLists<T>);
+  }
 }
 
 export const arrays = new Arrays();
 
 export type IdentifierFunction<T> = (item: T) => any;
+export type GroupedLists<T> = { [key: string]: T[] };
