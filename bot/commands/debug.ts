@@ -1,6 +1,6 @@
 import { database } from '../database';
 import { format } from '../utils/formatters';
-import { Messages, intl } from '../services/intl';
+import { intl } from '../services/intl';
 import { CONFIG } from '../config';
 import { CommandRegistrator } from './types';
 import { table } from '../utils/table';

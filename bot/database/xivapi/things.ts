@@ -1,6 +1,6 @@
 import { Table, Column, Model, DataType, BelongsToMany } from 'sequelize-typescript';
 
-import { Points } from './points';
+import { Points, IPoints } from './points';
 import { ThingPoints } from './thing_points';
 
 export type THING_TYPE = ('BNPC'|'Node');
@@ -10,6 +10,7 @@ export interface IThings {
   type: THING_TYPE;
   name: string;
   hidden: boolean;
+  points?: IPoints[];
 }
 
 @Table

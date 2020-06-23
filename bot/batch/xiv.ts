@@ -1,7 +1,7 @@
 import * as Loggers from '../utils/loggers';
-import { database } from '../database';
 import { arrays } from '../utils/arrays';
 import { xivapi } from '../services/xivapi';
+import { service as XIVService } from '../services/xiv';
 import { BatchJob } from './types';
 import { IPoints } from '../database/xivapi/points';
 import { IThingPoints } from '../database/xivapi/thing_points';
@@ -14,26 +14,11 @@ export interface FlattenedOutput {
 }
 
 export const gathering: BatchJob = async () => {
-  const { XIV_API } = await database();
-
   const maps = await xivapi.extractor.GatheringMaps();
 
   Loggers.workers('Destroying Thing-Points Associations...');
 
-  await XIV_API.ThingPoints.destroy({
-    truncate: true,
-    cascade: true,
-  });
-
-  await XIV_API.Points.destroy({
-    truncate: true,
-    cascade: true,
-  });
-
-  await XIV_API.Things.destroy({
-    truncate: true,
-    cascade: true,
-  });
+  await XIVService.clear();
 
   const flattened = maps.reduce((output, map) =>
     map.GatheringNodes.reduce((output, node) => {
@@ -73,7 +58,7 @@ export const gathering: BatchJob = async () => {
     const range = `${i * CHUNK_SIZE}-${i * CHUNK_SIZE + rows.length}`;
     Loggers.workers(`Saving Things... (${range})`);
 
-    await XIV_API.Things.bulkCreate(rows);
+    await XIVService.createThings(...rows);
 
     Loggers.workers(`Successfully saved Things! (${range})`);
   }, Promise.resolve());
@@ -84,7 +69,7 @@ export const gathering: BatchJob = async () => {
     const range = `${i * CHUNK_SIZE}-${i * CHUNK_SIZE + rows.length}`;
     Loggers.workers(`Saving Points... (${range})`);
 
-    await XIV_API.Points.bulkCreate(rows);
+    await XIVService.createPoints(...rows);
 
     Loggers.workers(`Successfully saved Points! (${range})`);
   }, Promise.resolve());
@@ -95,7 +80,7 @@ export const gathering: BatchJob = async () => {
     const range = `${i * CHUNK_SIZE}-${i * CHUNK_SIZE + rows.length}`;
     Loggers.workers(`Saving Thing-Points Associations... (${range})`);
 
-    await XIV_API.ThingPoints.bulkCreate(rows);
+    await XIVService.createThingPoints(...rows);
 
     Loggers.workers(`Successfully saved Thing-Points Associations! (${range})`);
   }, Promise.resolve());

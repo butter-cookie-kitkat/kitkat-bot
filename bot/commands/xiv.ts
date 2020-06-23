@@ -2,9 +2,8 @@ import { outdent } from 'outdent';
 import Canvas from 'canvas';
 import Discord from 'discord.js';
 
-import { database } from '../database';
-import { Op } from 'sequelize';
 import { xivapi } from '../services/xivapi';
+import { service as XIVService } from '../services/xiv';
 import { arrays } from '../utils/arrays';
 import { CommandRegistrator } from './types';
 import { IPoints } from '../database/xivapi/points';
@@ -17,19 +16,7 @@ export type MapNodes = { [key: string]: IPoints[] };
  */
 export const xiv: CommandRegistrator = (bot) => {
   bot.command('xiv <...name>', async ({ message, args }) => {
-    const { XIV_API } = await database();
-
-    const thing = await XIV_API.Things.findOne({
-      where: {
-        name: {
-          [Op.like]: `%${args.name}%`,
-        },
-      },
-      include: [{
-        all: true,
-        model: XIV_API.Points,
-      }],
-    });
+    const thing = await XIVService.find(args.name);
 
     if (!thing) {
       throw new KitkatBotCommandError(`No Item / NPC exists with that name. (${args.name})`);

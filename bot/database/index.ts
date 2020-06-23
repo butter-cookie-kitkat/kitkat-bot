@@ -12,9 +12,9 @@ import * as Loggers from '../utils/loggers';
 let db: Promise<Sequelize>;
 
 /**
- *
+ * Initializes the database.
  */
-function init(models?: ModelCtor[]) {
+function init(models?: ModelCtor[]): Sequelize {
   return new Sequelize(CONFIG.DATABASE_URL, {
     logging: CONFIG.SEQUELIZE_LOGGING ? Loggers.database : false,
     typeValidation: true,

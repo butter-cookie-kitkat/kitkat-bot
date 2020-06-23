@@ -1,7 +1,5 @@
-import { outdent } from 'outdent';
-
 import { service as EffectsService } from '../services/effects';
-import { Messages, intl } from '../services/intl';
+import { intl } from '../services/intl';
 
 import { service as SongsService } from '../services/songs';
 import { service as YouTubeService } from '../services/youtube';
