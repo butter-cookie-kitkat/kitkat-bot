@@ -1,4 +1,4 @@
-import { Message, MessageEmbed, EmbedField } from 'discord.js';
+import { Message, MessageEmbed, EmbedField, MessageEmbedFooter } from 'discord.js';
 import { format } from './formatters';
 import { EMBED_COLORS } from '../constants';
 
@@ -58,6 +58,7 @@ export interface EmbedOptions {
   url?: string;
   description?: string;
   fields?: EmbedField[];
+  footer?: MessageEmbedFooter;
 }
 
 export const embeds = new Embeds();

@@ -25,6 +25,9 @@ export const changelog: AnnouncementJob = async () => {
         )).join('\r\n'),
         inline: false,
       })),
+      footer: {
+        text: 'changes are order chronologically.',
+      },
     }),
     marker: 'kitkat-bot.announcements.changelog',
   };
