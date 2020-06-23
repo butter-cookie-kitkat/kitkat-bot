@@ -20,7 +20,7 @@ export const changelog: AnnouncementJob = async () => {
         name: format(TYPE_HEADERS[name]).bold.toString(),
         value: commits[name].map((commit) => concat.join(
           '-',
-          commit.scope && `(${commit.scope}):`,
+          commit.scope && format(`(${commit.scope}):`).bold.toString(),
           `${commit.message} (by ${DISCORD_AUTHOR[commit.author] || commit.author})`,
         )).join('\r\n'),
         inline: false,
