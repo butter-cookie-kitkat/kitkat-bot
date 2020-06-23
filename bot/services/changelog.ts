@@ -89,7 +89,7 @@ export type CommitTypes = ('fix'|'feat');
 
 export interface Commit {
   type: CommitTypes;
-  scope: string,
+  scope?: string,
   message: string;
   author: string;
 }
