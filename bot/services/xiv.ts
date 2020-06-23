@@ -22,6 +22,9 @@ export class XIVService {
         all: true,
         model: XIV_API.Points,
       }],
+      order: [
+        [fn('length', col('name')), 'ASC'],
+      ],
       plain: true,
     });
 

@@ -168,13 +168,26 @@ describe('Service(XIV)', () => {
     });
 
     it('should find an item with the given name', async () => {
-      const thing = await XIVService.find(expectedThing.name) as MapData;
+      const { points, ...thing } = await XIVService.find(expectedThing.name) as MapData;
 
-      expect(thing).exist;
-      expect(thing.points).deep.equals([{
+      expect(thing).deep.equals(expectedThing);
+      expect(points).deep.equals([{
         ...expectedPoint,
         ThingPoints: expectedThingPoint,
       }]);
+    });
+
+    it('should prioritize the closer match (shorter name)', async () => {
+      await XIVService.createThings({
+        id: chance.integer(),
+        type: 'Node',
+        name: `${expectedThing.name} ${chance.word()}`,
+        hidden: false,
+      });
+
+      const { points, ...thing } = await XIVService.find(expectedThing.name) as MapData;
+
+      expect(thing).deep.equals(expectedThing);
     });
 
     it('should be case insensitive', async () => {
