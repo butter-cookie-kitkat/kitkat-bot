@@ -30,16 +30,17 @@ export class Changelog {
 
       this.#changelog = commits
         .filter(({ commit }: any) => !commit.author.name.includes('dependabot'))
-        .map(({ commit }: any) => ({
-          ...parser.sync(commit.message),
-          author: commit.author,
-        }))
-        .filter((commit: any) => ['fix', 'feat'].includes(commit.type))
-        .map((commit: any): Commit => ({
-          type: commit.type,
-          message: commit.subject,
-          author: commit.author.name,
-        }))
+        .map(({ commit }: any) => {
+          const info = parser.sync(commit.message);
+
+          return {
+            type: info.type,
+            scope: info.scope,
+            message: info.subject,
+            author: commit.author.name,
+          };
+        })
+        .filter((commit: Commit) => ['fix', 'feat'].includes(commit.type))
         .slice(0, limit)
         .reduce((output: GroupedCommits, commit: Commit) => {
           output[commit.type].push(commit);
@@ -88,6 +89,7 @@ export type CommitTypes = ('fix'|'feat');
 
 export interface Commit {
   type: CommitTypes;
+  scope: string,
   message: string;
   author: string;
 }

@@ -17,7 +17,7 @@ export const changelog: AnnouncementJob = async () => {
       title: 'Recent Changes',
       fields: ORDER.map((name) => ({
         name: format(TYPE_HEADERS[name]).bold.toString(),
-        value: commits[name].map((commit) => `- ${commit.message} (by ${DISCORD_AUTHOR[commit.author] || commit.author})`).join('\r\n'),
+        value: commits[name].map((commit) => `- (${commit.scope}): ${commit.message} (by ${DISCORD_AUTHOR[commit.author] || commit.author})`).join('\r\n'),
         inline: false,
       })),
     }),
