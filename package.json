@@ -40,7 +40,7 @@
     "outdent": "^0.7.1",
     "pg": "^8.2.1",
     "reflect-metadata": "^0.1.13",
-    "sequelize": "^5.21.13",
+    "sequelize": "^5.22.0",
     "sequelize-typescript": "^1.1.0",
     "table": "^5.4.6",
     "ts-node": "^8.10.2",
