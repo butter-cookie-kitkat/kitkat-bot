@@ -2,6 +2,7 @@ import { buildUrl } from '../../utils/fetch';
 import { XIVAPIBase } from './base';
 import { Item } from './items';
 import { MappyData } from './mappy';
+import { arrays } from '../../utils/arrays';
 
 const EXCLUDED_ITEM_IDS = [0];
 
@@ -24,43 +25,53 @@ export class Extractor extends XIVAPIBase {
   async GatheringNodes(items?: GatheringItem[]): Promise<(RawGatheringNode[]|PristineGatheringNode[])> {
     const [map, points] = await Promise.all([
       this.base.mappy.get(),
-      this.base.core.getAllPages(buildUrl('/GatheringItemPoint', {
-        columns: ['GatheringPoint.ID', 'GatheringPoint.GatheringPointBase', 'GatheringPoint.TerritoryType.PlaceName.Name', 'GatheringPoint.TerritoryType.PlaceNameZone.Name'],
+      this.base.core.getAllPages(buildUrl('/GatheringPoint', {
+        columns: ['ID', 'GatheringPointBase', 'TerritoryType.PlaceName.Name', 'TerritoryType.PlaceNameZone.Name'],
       })),
     ]);
+
+    const maps = arrays.flatten(await Promise.all(arrays.chunk(arrays.unique(map.map((map) => map.MapID)), 100).map((ids) => this.base.maps.getAll(ids))));
 
     return map
       .map((data) => ({
         data,
-        point: points.find((point) => data.NodeID === point.GatheringPoint.ID),
+        point: points.find((point) => data.NodeID === point.ID),
       }))
-      .filter(({ point }) => Boolean(point))
-      .map(({ data, point }) => ({
-        ...data,
-        NodeType: point.GatheringPoint.GatheringPointBase.GatheringType.Name,
-        NodeIcon: point.GatheringPoint.GatheringPointBase.GatheringType.IconMain,
-        Zone: point.GatheringPoint.TerritoryType.PlaceNameZone.Name,
-        Region: point.GatheringPoint.TerritoryType.PlaceName.Name,
-        Items: Object.entries(point.GatheringPoint.GatheringPointBase).reduce((output, [key, value]: any[]) => {
-          if (key.startsWith('Item')) {
-            if (items) {
-              if (!EXCLUDED_ITEM_IDS.includes(value)) {
-                const item = items.find((item) => item.ID === value);
+      .filter(({ point }) => Boolean(point) && point.GatheringPointBase.GatheringType.Name !== '●銛')
+      .map(({ data, point }) => {
+        const map = maps.find((map) => map.id === data.MapID);
 
-                if (!item) {
-                  throw new Error(`Unable to find item with the given ID. (${value})`);
+        if (!map) {
+          throw new Error(`Unable to find map for the given id. ${data.MapID}`);
+        }
+
+        return ({
+          ...data,
+          NodeType: point.GatheringPointBase.GatheringType.Name,
+          NodeIcon: point.GatheringPointBase.GatheringType.IconMain,
+          Zone: map.zone,
+          Region: map.region,
+          Items: Object.entries(point.GatheringPointBase).reduce((output, [key, value]: any[]) => {
+            if (key.startsWith('Item')) {
+              if (items) {
+                if (!EXCLUDED_ITEM_IDS.includes(value)) {
+                  const item = items.find((item) => item.ID === value);
+
+                  if (!item) {
+                    throw new Error(`Unable to find item with the given ID. (${value})`);
+                  }
+
+                  output.push(item);
                 }
-
-                output.push(item);
+              } else {
+                output.push(value);
               }
-            } else {
-              output.push(value);
             }
-          }
 
-          return output;
-        }, [] as any[]),
-      }));
+            return output;
+          }, [] as any[]),
+        })
+      });
   }
 
   /**
@@ -113,7 +124,7 @@ export interface Map {
   /**
    * The map id.
    */
-  ID: string;
+  ID: number;
 
   /**
    * The Zone Name. (e.g. Black Shroud)

@@ -1,14 +1,19 @@
 import { expect } from 'chai';
 
 import { xivapi } from '../index';
-import { RawGatheringNode, PristineGatheringNode, Map, GatheringItem } from '../extractor';
+import { RawGatheringNode, PristineGatheringNode, Map, GatheringItem, GatheringNode } from '../extractor';
 import { arrays } from '../../../utils/arrays';
 import { EXCLUDED_ITEM_IDS } from '../items';
 
-describe('Service(XIVAPI.Extractor)', () => {
+describe.only('Service(XIVAPI.Extractor)', () => {
   describe('func(GatheringItems)', () => {
-    it('should retrieve the gathering items', async () => {
-      const [gatheringItem] = await xivapi.extractor.GatheringItems();
+    let gatheringItems: GatheringItem[];
+    before(async () => {
+      gatheringItems = await xivapi.extractor.GatheringItems();
+    });
+
+    it('should retrieve the gathering items', () => {
+      const [gatheringItem] = gatheringItems;
 
       expect(gatheringItem).deep.equal({
         ID: 1,
@@ -31,16 +36,16 @@ describe('Service(XIVAPI.Extractor)', () => {
 
     it('should contain the preset DotL Node Types', () => {
       expect(arrays.unique(rawNodes.map(({ NodeType }) => NodeType))).deep.equals([
+        'Mining',
         'Harvesting',
         'Quarrying',
         'Logging',
-        'Mining',
       ]);
-    })
+    });
 
     describe('returns(RawGatheringNodes)', () => {
       it('should retrieve the gathering nodes', () => {
-        expect(rawNodes).length(815);
+        expect(rawNodes).length(4524);
       });
 
       it('should contain all of the keys', () => {
@@ -75,7 +80,10 @@ describe('Service(XIVAPI.Extractor)', () => {
       });
 
       it('should return the raw item ids', () => {
-        expect(rawNodes[0].Items).deep.equals([
+        const node = rawNodes.find(({ NodeID }) => NodeID === 32990) as RawGatheringNode;
+
+        expect(node).exist;
+        expect(node.Items).deep.equals([
           0,
           0,
           613,
@@ -112,7 +120,7 @@ describe('Service(XIVAPI.Extractor)', () => {
       });
 
       it('should retrieve the gathering nodes', () => {
-        expect(nodes).length(815);
+        expect(nodes).length(4524);
       });
 
       it('should contain all of the keys', () => {
@@ -147,7 +155,10 @@ describe('Service(XIVAPI.Extractor)', () => {
       });
 
       it('should return the raw item ids', () => {
-        expect(nodes[0].Items).deep.equals([
+        const node = nodes.find(({ NodeID }) => NodeID === 32990) as PristineGatheringNode;
+
+        expect(node).exist;
+        expect(node.Items).deep.equals([
           items.find(({ ID }) => ID === 613),
         ]);
       });
@@ -170,7 +181,9 @@ describe('Service(XIVAPI.Extractor)', () => {
         mapsWithFireShards = maps.filter((map) => map.GatheringNodes.find((node) => node.Items.find((item) => item.Item.Name === 'Fire Shard')));
       });
 
-      it('should be located on three maps', () => {
+      it.only('should be located on three maps', () => {
+        console.log(mapsWithFireShards);
+
         expect(mapsWithFireShards).length(3);
 
         expect(mapsWithFireShards.map(({ Region }) => Region)).deep.equals([

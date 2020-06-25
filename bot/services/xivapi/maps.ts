@@ -1,4 +1,5 @@
 import { XIVAPIBase } from './base';
+import { EnhancedRequestInit } from '../../utils/fetch';
 
 const COLUMNS = [
   'ID',
@@ -29,7 +30,7 @@ export class Maps extends XIVAPIBase {
    * @param id - the id of the map.
    * @returns the map info.
    */
-  async get(id: number): Promise<Map> {
+  async get(id: (string|number)): Promise<Map> {
     return this.format(await this.base.core.fetch(`/Map/${id}`, {
       query: {
         columns: COLUMNS,
@@ -43,9 +44,11 @@ export class Maps extends XIVAPIBase {
    * @param ids - the ids to search for.
    * @returns the map info.
    */
-  async getAll(ids: string[]): Promise<Map[]> {
+  async getAll(ids: (string|number)[], options: EnhancedRequestInit = {}): Promise<Map[]> {
     const maps = await this.base.core.fetch(`/Map`, {
+      ...options,
       query: {
+        ...options.query,
         columns: COLUMNS,
         ids,
       },
