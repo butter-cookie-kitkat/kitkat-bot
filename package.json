@@ -27,7 +27,7 @@
     "node": "12.0.x"
   },
   "dependencies": {
-    "@butter-cookie-kitkat/discord-core": "git+https://git@github.com/butter-cookie-kitkat/discord-core.git#v1.2.9",
+    "@butter-cookie-kitkat/discord-core": "git+https://git@github.com/butter-cookie-kitkat/discord-core.git#v1.2.10",
     "canvas": "^2.6.1",
     "cheerio": "^1.0.0-rc.3",
     "conventional-changelog": "^3.1.21",
