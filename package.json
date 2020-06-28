@@ -27,14 +27,12 @@
     "node": "12.0.x"
   },
   "dependencies": {
-    "@butter-cookie-kitkat/discord-core": "git+https://git@github.com/butter-cookie-kitkat/discord-core.git#v1.2.7",
-    "@discordjs/opus": "^0.3.2",
+    "@butter-cookie-kitkat/discord-core": "git+https://git@github.com/butter-cookie-kitkat/discord-core.git#v1.2.9",
     "canvas": "^2.6.1",
     "cheerio": "^1.0.0-rc.3",
     "conventional-changelog": "^3.1.21",
     "conventional-commits-parser": "^3.1.0",
     "debug": "^4.1.1",
-    "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
     "node-fetch": "^2.6.0",
     "outdent": "^0.7.1",
@@ -45,10 +43,7 @@
     "table": "^5.4.6",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.5",
-    "url-parse": "^1.4.7",
-    "yargs-parser": "^18.1.3",
-    "ytdl-core": "^3.1.1",
-    "ytdl-core-discord": "^1.2.1"
+    "url-parse": "^1.4.7"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
