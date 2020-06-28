@@ -127,7 +127,8 @@ export class SongsService {
       where: {
         url,
       },
-    })
+      limit: 1,
+    });
 
     return count > 0;
   }
