@@ -155,16 +155,31 @@ export const queue: CommandRegistrator = (bot) => {
  * Skips the current song.
  */
 export const skip: CommandRegistrator = (bot) => {
-  bot.command('skip', async () => {
-    if (!bot.voice.isPlaying) {
+  bot.command('skip', async ({ args }) => {
+    if (!bot.voice.isPlaying && !args.force) {
       throw new KitkatBotCommandError(intl('NOT_PLAYING_AUDIO'));
     }
 
-    bot.voice.stop();
+    if (args.force) {
+      const song = await SongsService.current();
+
+      if (song) {
+        await SongsService.remove(song.url);
+      }
+    } else {
+      bot.voice.stop();
+    }
   }).help({
     name: 'skip',
     description: 'Skips the current song.',
     group: 'Music',
+    args: {
+      force: {
+        description: `Forcibly skips the song even if it isn't playing`,
+        default: false,
+        type: 'boolean',
+      },
+    },
   });
 }
 
@@ -258,18 +273,27 @@ export const leave: CommandRegistrator = (bot) => {
  * Stops playing audio.
  */
 export const stop: CommandRegistrator = (bot) => {
-  bot.command('stop', async () => {
-    if (!bot.voice.isPlaying) {
+  bot.command('stop', async ({ args }) => {
+    if (!bot.voice.isPlaying && !args.force) {
       throw new KitkatBotCommandError(intl('NOT_PLAYING_AUDIO'));
     }
 
     await SongsService.clear();
 
-    await bot.voice.stop();
+    if (bot.voice.isPlaying) {
+      await bot.voice.stop();
+    }
   }).help({
     name: 'stop',
     description: 'Stops all audio.',
     group: 'Music',
+    args: {
+      force: {
+        description: `Forcibly clears the queue even if no audio is playing`,
+        default: false,
+        type: 'boolean',
+      },
+    },
   });
 }
 
