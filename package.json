@@ -53,7 +53,7 @@
     "@types/debug": "^4.1.5",
     "@types/mocha": "^8.0.2",
     "@types/node-fetch": "^2.5.7",
-    "@types/sinon": "^9.0.4",
+    "@types/sinon": "^9.0.5",
     "@types/table": "^5.0.0",
     "@types/url-parse": "^1.4.3",
     "@typescript-eslint/eslint-plugin": "^3.9.0",
