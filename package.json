@@ -40,7 +40,7 @@
     "reflect-metadata": "^0.1.13",
     "sequelize": "^5.22.3",
     "sequelize-typescript": "^1.1.0",
-    "table": "^5.4.6",
+    "table": "^6.0.1",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.7",
     "url-parse": "^1.4.7"
