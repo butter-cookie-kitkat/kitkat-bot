@@ -35,4 +35,8 @@ const Messages: { [key: string]: string } = {
   FORBIDDEN: outdent`
     Senpai, we're not supposed to touch that...
   `,
+
+  INVALID_OPT_ROLE: outdent`
+    This isn't a valid Rank.
+  `,
 }
