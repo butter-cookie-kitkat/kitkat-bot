@@ -30,20 +30,20 @@ export const rank: CommandRegistrator = (bot) => {
       throw new KitkatBotCommandError(intl('INVALID_OPT_ROLE'));
     }
 
-    const roleID = message.guild?.roles.cache.find((role) => role.name === args.rank)?.id;
+    const { guildMember: member, roles } = await ProtectService.guild(message);
 
-    if (!roleID) {
+    const role = roles.cache.find((role) => role.name === args.rank);
+
+    if (!role) {
       throw new KitkatBotCommandError(intl('INVALID_OPT_ROLE'));
     }
 
-    const { guildMember: member } = await ProtectService.guild(message);
-
-    if (member.roles.cache.has(roleID)) {
-      await member.roles.remove(roleID);
+    if (member.roles.cache.has(role.id)) {
+      await member.roles.remove(role.id);
 
       return message.reply(`you left ${format(args.rank).bold.toString()}`);
     } else {
-      await member.roles.add(roleID);
+      await member.roles.add(role.id);
 
       return message.reply(`you joined ${format(args.rank).bold.toString()}`);
     }
