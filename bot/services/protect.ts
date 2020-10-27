@@ -14,25 +14,6 @@ export class Protect {
     };
   }
 
-  /**
-   * Automatically determines if the user is in a voice channel we can join.
-   *
-   * @param message - The discord message.
-   * @returns the protected values.
-   */
-  public voice(message: Message): ProtectedVoice {
-    const guild = this.guild(message);
-
-    if (!guild.guildMember.voice.channelID) {
-      throw new KitkatBotCommandError(intl('NOT_IN_VOICE_CHANNEL'));
-    }
-
-    return {
-      ...guild,
-      voiceChannelID: guild.guildMember.voice.channelID,
-    }
-  }
-
   private isGuild(guild: (null|Guild)): guild is Guild {
     return Boolean(guild);
   }
@@ -47,10 +28,6 @@ export const service = new Protect();
 export interface ProtectedGuild {
   guild: Guild;
   guildMember: GuildMember;
-}
-
-export interface ProtectedVoice extends ProtectedGuild {
-  voiceChannelID: string;
 }
 
 export type ProtectionCallback<T> = (message: Message) => T;

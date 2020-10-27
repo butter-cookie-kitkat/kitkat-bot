@@ -1,7 +1,6 @@
 import { Sequelize, ModelCtor, Model } from 'sequelize-typescript';
 
 import { CONFIG } from '../config';
-import { Songs } from './songs';
 import { Things, Points, ThingPoints } from './xivapi';
 import { Announcements } from './announcements';
 import * as Loggers from '../utils/loggers';
@@ -49,7 +48,6 @@ export async function database(excludeModels?: boolean): Promise<DatabaseRespons
         Things,
         Points,
         ThingPoints,
-        Songs,
       ]);
 
       Loggers.database('Authenticating...');
@@ -67,7 +65,6 @@ export async function database(excludeModels?: boolean): Promise<DatabaseRespons
   return {
     db: sequelize,
     Announcements,
-    Songs,
     XIV_API: {
       Things,
       Points,
@@ -82,7 +79,6 @@ export interface DatabaseResponse {
 
 export interface DatabaseModelResponse extends DatabaseResponse {
   Announcements: ModelCtor<Model<Announcements, any>>;
-  Songs: ModelCtor<Model<Songs, any>>;
   XIV_API: {
     Things: ModelCtor<Model<Things, any>>;
     Points: ModelCtor<Model<Points, any>>;

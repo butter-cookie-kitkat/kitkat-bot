@@ -1,5 +1,4 @@
 import * as Help from './help';
-import * as Music from './music';
 import * as Fun from './fun';
 import * as RuneScape from './runescape';
 import * as DebugLocal from './debug.local';
@@ -11,7 +10,6 @@ import { CommandGroups } from './types';
 
 export const commands: CommandGroups[] = [
   Help,
-  Music,
   Fun,
   XIV,
   RuneScape,

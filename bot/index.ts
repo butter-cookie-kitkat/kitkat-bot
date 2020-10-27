@@ -1,22 +1,17 @@
 import 'dotenv/config';
 import { DiscordBot } from '@butter-cookie-kitkat/discord-core';
 
-import { AUTO_LEAVE_DEBOUNCE } from './constants';
-
 import { intl } from './services/intl';
 
 import { commands } from './commands';
-import { service as SongsService } from './services/songs';
 import { announcements } from './announcements';
 
 import * as Loggers from './utils/loggers';
-import { debounce } from './utils/debounce';
 import { CONFIG } from './config';
 import { batch_jobs } from './batch';
 import { service as Announcements } from './services/announcements';
 import { KitkatBotCommandError } from './types';
 import { embeds } from './utils/embeds';
-import { duration } from './utils/duration';
 
 const bot = new DiscordBot({
   token: CONFIG.DISCORD_TOKEN,
@@ -26,65 +21,6 @@ const bot = new DiscordBot({
 bot.on('command:before', ({ message, args }) => {
   Loggers.messages(`Author: ${message.author.username}#${message.author.discriminator}; Contents: ${message.content}; Args: ${JSON.stringify(args)}`);
 });
-
-bot.voice.on('start', async ({ uri }) => {
-  const song = await SongsService.get(uri);
-
-  if (!song) return;
-
-  debounce.clear(AUTO_LEAVE_DEBOUNCE);
-
-  await bot.text.send(song.channelID, embeds.success({
-    title: ['Music', 'Now Playing!'],
-    fields: [{
-      name: 'Title',
-      value: `[${song.title}](${song.url})`,
-      inline: true,
-    }, {
-      name: 'Duration',
-      value: duration.humanize(song.duration),
-      inline: true,
-    }],
-  }));
-});
-
-bot.voice.on('finish', async ({ uri, interrupted }) => {
-  Loggers.music(`Finished playing, '${uri}'.`);
-
-  if (interrupted) {
-    Loggers.music(`Interrupt detected, skipping removal.`);
-    return;
-  }
-
-  await SongsService.remove(uri);
-
-  const currentSong = await SongsService.current();
-
-  if (currentSong) {
-    await bot.voice.play(currentSong.url);
-  } else {
-    debounce.start(AUTO_LEAVE_DEBOUNCE, async () => {
-      Loggers.music(intl('AUTO_LEAVE', {
-        reason: 'Idle for too long',
-      }));
-
-      await bot.voice.leave();
-    });
-  }
-});
-
-bot.voice.on('member:leave', () => {
-  const hasMembers = bot.voice.members && bot.voice.members.some((member) => member.id !== bot.id);
-
-  if (hasMembers) return;
-
-  Loggers.music(intl('AUTO_LEAVE', {
-    reason: 'No members remaining',
-  }));
-  bot.voice.leave();
-});
-
-bot.voice.on('leave', SongsService.clear);
 
 bot.on('error', async ({ message, error }) => {
   if (error instanceof KitkatBotCommandError) {
@@ -178,12 +114,6 @@ bot.login().then(async () => {
   'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM',
 ] as NodeJS.Signals[]).forEach((sig) => {
   process.on(sig, () => {
-    if (bot.voice.isConnected) {
-      bot.voice.leave().then(() => {
-        process.exit(0);
-      });
-    } else {
-      process.exit(0);
-    }
+    process.exit(0);
   });
 });

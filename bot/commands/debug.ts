@@ -7,8 +7,6 @@ import { table } from '../utils/table';
 import { KitkatBotCommandError } from '../types';
 import { embeds } from '../utils/embeds';
 import { EmbedField } from 'discord.js';
-import { debounce } from '../utils/debounce';
-import { AUTO_LEAVE_DEBOUNCE } from '../constants';
 
 /**
  * Retrieves info about the bot!
@@ -24,32 +22,6 @@ export const info: CommandRegistrator = (bot) => {
       value: bot.name ? bot.name : 'Unknown',
       inline: true,
     }];
-
-    if (bot.voice.channelName && bot.voice.members) {
-      fields.push({
-        name: 'Voice Channel',
-        value: bot.voice.channelName,
-        inline: false,
-      });
-
-      fields.push({
-        name: 'Members in Voice Channel',
-        value: `${bot.voice.members.keyArray().length} (including self)`,
-        inline: false,
-      });
-    } else {
-      fields.push({
-        name: 'Voice Channel',
-        value: '_Not Connected_',
-        inline: false,
-      });
-    }
-
-    fields.push({
-      name: 'Auto Leave',
-      value: debounce.has(AUTO_LEAVE_DEBOUNCE) ? 'Active' : 'Inactive',
-      inline: false,
-    });
 
     await message.channel.send(embeds.success({
       title: `Bot Status (v${CONFIG.VERSION})`,
