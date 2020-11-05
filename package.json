@@ -30,7 +30,7 @@
     "@butter-cookie-kitkat/discord-core": "git+https://git@github.com/butter-cookie-kitkat/discord-core.git#v1.2.11",
     "canvas": "^2.6.1",
     "cheerio": "^1.0.0-rc.3",
-    "conventional-changelog": "^3.1.23",
+    "conventional-changelog": "^3.1.24",
     "conventional-commits-parser": "^3.1.0",
     "debug": "^4.1.1",
     "dotenv": "^8.2.0",
