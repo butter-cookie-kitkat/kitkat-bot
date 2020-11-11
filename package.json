@@ -51,7 +51,7 @@
     "@types/cheerio": "^0.22.22",
     "@types/conventional-commits-parser": "^3.0.1",
     "@types/debug": "^4.1.5",
-    "@types/mocha": "^8.0.3",
+    "@types/mocha": "^8.0.4",
     "@types/node-fetch": "^2.5.7",
     "@types/sinon": "^9.0.8",
     "@types/table": "^6.0.0",
