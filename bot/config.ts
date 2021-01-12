@@ -24,7 +24,6 @@ export const CONFIG = {
   DATABASE_URL: env('DATABASE_URL', 'sqlite://db.sqlite'),
   DISCORD_TOKEN: env('DISCORD_TOKEN'),
   YOUTUBE_API_KEY: env('YOUTUBE_API_KEY', null),
-  XIVAPI_KEY: env('XIVAPI_KEY', null),
 
   IS_LIVE: Boolean(env('IS_LIVE', false)),
   NOTIFICATIONS_CHANNEL_ID: env('NOTIFICATIONS_CHANNEL_ID', null),

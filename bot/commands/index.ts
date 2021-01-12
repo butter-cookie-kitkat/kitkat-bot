@@ -4,7 +4,6 @@ import * as RuneScape from './runescape';
 import * as DebugLocal from './debug.local';
 import * as Query from './debug';
 import * as Opt from './opt-in';
-import * as XIV from './xiv';
 
 import { CONFIG } from '../config';
 import { CommandGroups } from './types';
@@ -12,7 +11,6 @@ import { CommandGroups } from './types';
 export const commands: CommandGroups[] = [
   Help,
   Fun,
-  XIV,
   RuneScape,
   Query,
   Opt,
