@@ -50,9 +50,9 @@ export interface Response {
 function convertResultsToJSON(html: string): Response {
   const $ = cheerio.load(html);
 
-  const columns = $('.content > table > thead > tr > th').toArray().map((item) => {
+  const columns = $('.content > table > thead > tr > th').toArray().map((item: any) => {
     return item.children
-      .map((child) => {
+      .map((child: any) => {
         if (child.type === 'text') {
           return child.data;
         } else if (child.attribs.title) {
@@ -63,7 +63,7 @@ function convertResultsToJSON(html: string): Response {
 
         return null;
       })
-      .filter((child) => Boolean(child))
+      .filter(Boolean)
       .join(' ');
   });
 

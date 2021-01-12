@@ -4,7 +4,7 @@
  * @param element - the cheerio element.
  * @returns The element's contents.
  */
-export function getText(element: CheerioElement): string {
+export function getText(element: any): string {
   return element.children
     .reduce((output: string[], child: any) => {
       if (child.children && child.children.length) {
