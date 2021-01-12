@@ -47,7 +47,7 @@ export const sql: CommandRegistrator = (bot) => {
     const { db } = await database(true);
 
     try {
-      const [data]: any[][] = await db.query(args.query);
+      const [data] = await db.query(args.query);
 
       if (data.length === 0) {
         if (args.query.match(/^delete/i)) {
@@ -73,7 +73,7 @@ export const sql: CommandRegistrator = (bot) => {
         }));
       }
 
-      const headers = Object.keys(data[0]);
+      const headers = Object.keys((data[0] as any).toString());
       const rows: any[][] = data.map((row: any) => Object.values(row));
 
       const output = table(headers).rows(rows).toString({ truncate: 2000 });

@@ -12,7 +12,7 @@ let db: Promise<Sequelize>;
 /**
  * Initializes the database.
  */
-function init(models?: ModelCtor[]): Sequelize {
+function init(models?: any[]): Sequelize {
   return new Sequelize(CONFIG.DATABASE_URL, {
     logging: CONFIG.SEQUELIZE_LOGGING ? Loggers.database : false,
     typeValidation: true,
@@ -69,5 +69,5 @@ export interface DatabaseResponse {
 }
 
 export interface DatabaseModelResponse extends DatabaseResponse {
-  Announcements: ModelCtor<Model<Announcements, any>>;
+  Announcements: typeof Announcements;
 }
