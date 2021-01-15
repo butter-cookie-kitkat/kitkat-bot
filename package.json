@@ -52,7 +52,7 @@
     "@types/conventional-commits-parser": "^3.0.1",
     "@types/debug": "^4.1.5",
     "@types/mocha": "^8.2.0",
-    "@types/node-fetch": "^2.5.7",
+    "@types/node-fetch": "^2.5.8",
     "@types/sinon": "^9.0.10",
     "@types/table": "^6.0.0",
     "@types/url-parse": "^1.4.3",
