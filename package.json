@@ -31,7 +31,7 @@
     "canvas": "^2.6.1",
     "cheerio": "^1.0.0-rc.5",
     "conventional-changelog": "^3.1.24",
-    "conventional-commits-parser": "^3.2.0",
+    "conventional-commits-parser": "^3.2.1",
     "debug": "^4.3.1",
     "dotenv": "^8.2.0",
     "node-fetch": "^2.6.1",
