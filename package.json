@@ -57,7 +57,7 @@
     "@types/table": "^6.0.0",
     "@types/url-parse": "^1.4.3",
     "@typescript-eslint/eslint-plugin": "^4.17.0",
-    "@typescript-eslint/parser": "^4.16.1",
+    "@typescript-eslint/parser": "^4.17.0",
     "chai": "^4.3.3",
     "chance": "^1.1.7",
     "eslint": "^7.21.0",
