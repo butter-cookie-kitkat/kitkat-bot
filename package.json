@@ -54,7 +54,7 @@
     "@types/mocha": "^8.2.2",
     "@types/node-fetch": "^2.5.10",
     "@types/sinon": "^10.0.0",
-    "@types/table": "^6.0.0",
+    "@types/table": "^6.3.2",
     "@types/url-parse": "^1.4.3",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
