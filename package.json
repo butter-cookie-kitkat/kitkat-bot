@@ -46,7 +46,7 @@
     "url-parse": "^1.4.7"
   },
   "devDependencies": {
-    "@types/chai": "^4.2.16",
+    "@types/chai": "^4.2.18",
     "@types/chance": "^1.1.1",
     "@types/cheerio": "^0.22.28",
     "@types/conventional-commits-parser": "^3.0.1",
