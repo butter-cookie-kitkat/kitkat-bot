@@ -8,7 +8,7 @@
   "homepage": "https://github.com/butter-cookie-kitkat/kitkat-bot",
   "bugs": "https://github.com/butter-cookie-kitkat/kitkat-bot/issues",
   "contributors": [
-    "Nick Woodward <nick@salte.io>"
+    "Cecilia Woodward <ceci@salte.io>"
   ],
   "scripts": {
     "build": "ts-node ./scripts/version.ts",
@@ -22,9 +22,6 @@
     "test:tdd": "ts-mocha --watch",
     "lint": "eslint --ignore-path .gitignore bot/**/*.ts",
     "lint:fix": "eslint --ignore-path .gitignore --ignore-path .eslintignore --fix"
-  },
-  "engines": {
-    "node": "12.0.x"
   },
   "dependencies": {
     "@butter-cookie-kitkat/discord-core": "git+https://git@github.com/butter-cookie-kitkat/discord-core.git#v1.2.11",
